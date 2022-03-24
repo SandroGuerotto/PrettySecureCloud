@@ -27,3 +27,10 @@ hs_err_pid*
 .idea
 .gradle
 build
+/bin/
+
+# eclipse
+.metadata
+.classpath
+.project
+.settings
