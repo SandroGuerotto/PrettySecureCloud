@@ -2,8 +2,8 @@ package ch.psc.domain.storage.service;
 
 import java.util.List;
 import java.util.concurrent.Future;
+import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.File;
-import ch.psc.persistence.datastructure.Tree;
 
 public class DropBoxService extends CloudService {
 
