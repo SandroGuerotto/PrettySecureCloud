@@ -13,7 +13,7 @@ Bevor ein Pull-Request vom Entwickler erstellt wird, müssen die folgenden Bedin
 * Clean-Code Regeln wurden eingehalten, Imports optimiert und Code formatiert (durch Intellij)
 * Code ist kompilierbar
 
-Nachdem der Pull-Request von mindestens einem Code-Owner approved wurde, wird der Feature-Branch vom Ersteller
+Nachdem der Pull-Request approved wurde, wird der Feature-Branch vom Ersteller
 selbstständig in den dev-branch gemerged. Der Feature-Branch oder der Doc-Branch wird im Anschluss gelöscht.
 
 ![Branching Modell](doc/branching_modell.png)
