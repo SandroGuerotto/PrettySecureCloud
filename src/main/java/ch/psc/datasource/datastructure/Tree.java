@@ -1,4 +1,4 @@
-package ch.psc.persistence.datastructure;
+package ch.psc.datasource.datastructure;
 
 import java.util.LinkedList;
 import java.util.List;
