@@ -1,9 +1,10 @@
 package ch.psc.domain.storage.service;
 
-import java.util.List;
-import java.util.concurrent.Future;
 import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.File;
+
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class GoogleDriveService extends CloudService {
 
@@ -34,6 +35,11 @@ public class GoogleDriveService extends CloudService {
   public Tree<File> getFileTree() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public void login() {
+
   }
 
 }
