@@ -11,7 +11,7 @@ public interface FileStorage {
   
   public List<Future<File>> download(List<File> files);
   
-  public int getAvailableStorageSpace();
+  public double getAvailableStorageSpace();
   
   public Tree<File> getFileTree();
   

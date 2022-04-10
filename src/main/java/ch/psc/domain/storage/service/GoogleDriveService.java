@@ -25,7 +25,7 @@ public class GoogleDriveService extends CloudService {
   }
 
   @Override
-  public int getAvailableStorageSpace() {
+  public double getAvailableStorageSpace() {
     // TODO Auto-generated method stub
     return 0;
   }
