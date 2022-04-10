@@ -1,0 +1,34 @@
+.button-loginview {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-font-size: 18;
+    -fx-border-width: 1 2 2 1;
+    -fx-border-color: black;
+    -fx-font-family: Chalkboard;
+}
+
+.passwordfield-loginview{
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: black;
+    -fx-prompt-text-fill: gray;
+}
+
+.textfield-loginview{
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: black;
+    -fx-prompt-text-fill: gray, fontawe;
+}
+
+.button-register-loginview{
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-font-size: 18;
+    -fx-font-family: Chalkboard;
+    -fx-underline: true, black;
+    -fx-text-fill: #3e6eff;
+}
+
+.button-register-loginview:hover{
+    -fx-text-fill: #0000ff;
+}
+
