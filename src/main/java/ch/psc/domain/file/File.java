@@ -1,5 +1,7 @@
 package ch.psc.domain.file;
 
+import ch.psc.domain.cipher.EncryptionState;
+
 public class File {
   
   private String name;
@@ -7,6 +9,8 @@ public class File {
   private String path;
   
   private byte[] data;
+  
+  private EncryptionState encryptionState;
   
   public int getFileSize() {
     //TODO
@@ -37,4 +41,11 @@ public class File {
     this.data = data;
   }
   
+  public EncryptionState getEncryptionState() {
+    return encryptionState;
+  }
+  
+  public void setEncryptionState(EncryptionState encryptionState) {
+    this.encryptionState = encryptionState;
+  }
 }
