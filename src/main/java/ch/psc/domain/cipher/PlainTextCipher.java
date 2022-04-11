@@ -2,7 +2,7 @@ package ch.psc.domain.cipher;
 
 import java.security.NoSuchAlgorithmException;
 import javax.crypto.NoSuchPaddingException;
-import ch.psc.domain.error.FatalImplementationException;
+import ch.psc.exceptions.FatalImplementationException;
 
 /**
  * <b>Do not use this for secure Data!</b>

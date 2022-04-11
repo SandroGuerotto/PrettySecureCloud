@@ -13,8 +13,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import ch.psc.domain.error.FatalImplementationException;
 import ch.psc.domain.file.File;
+import ch.psc.exceptions.FatalImplementationException;
 
 public abstract class Cipher {
   

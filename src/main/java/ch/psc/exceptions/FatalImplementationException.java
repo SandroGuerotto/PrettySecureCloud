@@ -1,4 +1,4 @@
-package ch.psc.domain.error;
+package ch.psc.exceptions;
 
 import java.security.GeneralSecurityException;
 
