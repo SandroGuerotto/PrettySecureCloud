@@ -4,8 +4,8 @@ Pretty Secure and pretty :)
 ## Branching-Modell
 
 Die Entwickler erstellen für jedes Issue einen Feature-Branch direkt vom dev-branch.
-Dabei wird das folgende Naming eingehalten: `featture/<branch name>`. Ausserdem wird für
-Dokumentationen ein eigenes Branch eröffnet. Dabei wird das folgende Naming eingehalten: `doc/<branch name>`
+Dabei wird das folgende Naming eingehalten: `feature/(IssueNr)-<branch name>`. Ausserdem wird für
+Dokumentationen ein eigenes Branch eröffnet. Dabei wird das folgende Naming eingehalten: `doc/(IssueNr)-<branch name>`
 
 Bevor ein Pull-Request vom Entwickler erstellt wird, müssen die folgenden Bedingungen erfüllt sein:
 
