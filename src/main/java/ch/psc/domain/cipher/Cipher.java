@@ -64,7 +64,7 @@ public abstract class Cipher {
     encryptedFile.setName(file.getName());
     encryptedFile.setPath(file.getPath());
     performCipher(unencryptedData, encryptedFile, cipher);
-    encryptedFile.setEncryptionState(EncryptionState.ENRCYPTED);
+    encryptedFile.setEncryptionState(EncryptionState.ENCRYPTED);
     
     return encryptedFile;
   }
