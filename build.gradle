@@ -1,11 +1,13 @@
 plugins {
+    // Apply the java plugin to add support for Java
+    id 'java'
     // Apply the application plugin to add support for building a CLI application.
     id 'application'
     // Apply the JavaFX plugin
     id 'org.openjfx.javafxplugin' version '0.0.12'
 }
 
-group 'org.pm3_gruppe4'
+group 'ch.psc'
 version '1.0-SNAPSHOT'
 
 repositories {

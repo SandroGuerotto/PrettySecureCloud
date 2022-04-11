@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="startseite" xmlns="http://javafx.com/javafx/17.0.2"
+      fx:controller="ch.psc.gui.StartseiteController">
+    <VBox BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+        <Label alignment="CENTER" contentDisplay="CENTER" text="%startseite.ausblick">
+            <font>
+                <Font name="System Bold" size="24.0"/>
+            </font>
+        </Label>
+        <HBox prefHeight="48.0">
+            <Label fx:id="limiteStart" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+            <ProgressBar fx:id="limiteProgress" prefHeight="30.0" prefWidth="300.0">
+                <HBox.margin>
+                    <Insets left="10.0"/>
+                </HBox.margin>
+            </ProgressBar>
+        </HBox>
+        <ButtonBar prefHeight="40.0" prefWidth="200.0">
+            <buttons>
+                <Button text="%limite.limiteFestlegen" ButtonBar.buttonData="RIGHT"/>
+            </buttons>
+        </ButtonBar>
+        <VBox.margin>
+            <Insets left="20.0" right="20.0" top="20.0"/>
+        </VBox.margin>
+    </VBox>
+    <VBox BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+        <Label text="%startseite.letzten" VBox.vgrow="ALWAYS">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+            <padding>
+                <Insets bottom="10.0" />
+            </padding>
+        </Label>
+        <ButtonBar>
+            <buttons>
+                <Button onAction="#exampaleMethod1" text="%startseite.Erfassen" ButtonBar.buttonData="LEFT" />
+                <Button onAction="#exampaleMethod2" text="%startseite.visualisierung" />
+                <Button onAction="#exampaleMethod3" text="%startseite.Anzeigen" />
+            </buttons>
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
+        </ButtonBar>
+        <BorderPane.margin>
+            <Insets left="20.0" right="20.0" top="20.0" />
+        </BorderPane.margin>
+        <VBox.margin>
+            <Insets left="20.0" right="20.0" />
+        </VBox.margin>
+    </VBox>
+    <VBox VBox.vgrow="ALWAYS">
+        <Label text="%startseite.anstehende">
+            <BorderPane.margin>
+                <Insets bottom="10.0" />
+            </BorderPane.margin>
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Label>
+        <VBox.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        </VBox.margin>
+    </VBox>
+</VBox>
