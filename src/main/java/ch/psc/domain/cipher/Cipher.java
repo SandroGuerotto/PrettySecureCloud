@@ -112,7 +112,7 @@ public abstract class Cipher {
   }
   
   protected SecretKey generateKey(Key key) {
-    SecretKey secretKey = new SecretKeySpec(key.getKey(), getAlgorythm());
+    SecretKey secretKey = new SecretKeySpec(key.getKey().getEncoded(), getAlgorythm());
     return secretKey;
   }
 }

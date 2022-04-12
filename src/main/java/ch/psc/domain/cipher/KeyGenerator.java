@@ -3,12 +3,11 @@ package ch.psc.domain.cipher;
 import ch.psc.domain.error.FatalImplementationException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -35,34 +34,36 @@ import java.util.stream.Collectors;
  * Key sizes: use AES 256 if you can, else 128 is secure enough for time being. For RSA use at least 2048, consider 4096 or longer for future proofing.
  * There is a limit on how much plaintext can be safely encrypted using a single (key/IV) pair in CBC and CTR modes.
  * The randomness source of an IV comes from the IvParameterSpec class and not from init methods of the Cipher class.
+ *
+ *         Generate an key using KeyGenerator + Initialize the provided keysize
+ *          - Methode, welche prüft, ob algorithm und keyBites kompatibel sind?
+ *          - allenfalls auch eine abstrakte klasse mit entsprechenden implementationen? analog zu cipher
+ *          - To add to the complexity of a cipher, Initialization Vectors are used. Brauchen wir auch, vllt als Option?
+ *          - to consider: https://alex-labs.com/reasonably-secure-way-store-secret-java/
  */
 
 public class KeyGenerator {
 
     private static final int TO_INDEX = 1;
 
-    public SecretKeySpec generateKey(int keyBits, String algorithm) throws FatalImplementationException{
+    public Key generateKey(int keyBits, String algorithm) throws FatalImplementationException{
 
-        /**
-        Generate an key using KeyGenerator + Initialize the provided keysize
-         - Methode, welche prüft, ob algorithm und keyBites kompatibel sind?
-         - To add to the complexity of a cipher, Initialization Vectors are used. Brauchen wir auch, vllt als Option?
-        */
-        SecretKeySpec secretKeySpec;
+        Key skey = new Key();
+        skey.setType(algorithm);
+
         try {
             javax.crypto.KeyGenerator keyGenerator = javax.crypto.KeyGenerator.getInstance(algorithm);
-            keyGenerator.init(keyBits); // use 256 key bits if you can
+            keyGenerator.init(keyBits); // 128, 192 or 256 for AES
             SecretKey secretKey = keyGenerator.generateKey();
-            byte[] raw = secretKey.getEncoded();
-            secretKeySpec = new SecretKeySpec(raw, algorithm);
+            skey.setKey(secretKey);
         } catch (NoSuchAlgorithmException e) {
             throw new FatalImplementationException("Transformation '" + algorithm + "' does not exist!", e);
         }
-        saveCreatedKey(secretKeySpec);
-        loadExistingKey();
-        return secretKeySpec;
+
+        return skey;
     }
 
+    // This would be an option for RSA
     public IvParameterSpec generateInitVector(int keyBytes){
         SecureRandom srandom = new SecureRandom();
         byte[] iv = new byte[keyBytes];
@@ -71,13 +72,8 @@ public class KeyGenerator {
         return ivParameterSpec;
     }
 
-    //https://www.novixys.com/blog/java-aes-example/#3_Generate_an_Initialization_Vector_IV
-    private void loadExistingKey() {
-        File latestKeyFile = getLatestKeyFile();
-    }
-
-    private File getLatestKeyFile() {
-        File keyFolder = new File("src/main/resources/KeyChain");
+    public File loadLatestKeyFile(File keyFolder) {
+        //File keyFolder = new File("src/main/resources/KeyChain"); to be provided by caller, see parameter
         try {
             List<File> filesInFolder = Files.walk(Paths.get(String.valueOf(keyFolder)))
                     .filter(Files::isRegularFile)
@@ -85,7 +81,16 @@ public class KeyGenerator {
                     .collect(Collectors.toList());
             if (filesInFolder.size() != 0) {
                 File latestKeyFile = filesInFolder.get(filesInFolder.size() - TO_INDEX);
-                System.out.println(Files.readAllLines(Paths.get(String.valueOf(latestKeyFile)), Charset.defaultCharset()));
+                List<String> content = Files.readAllLines(Paths.get(String.valueOf(latestKeyFile)), Charset.defaultCharset());
+                if(content.size()==3){
+                    String keyAsString = content.get(0);
+                    String createdOnString = content.get(2);
+                    System.out.println("Key = '" + keyAsString + "' (" + createdOnString + ")");
+
+                } else {
+                    System.out.println("Provided key file does not match the required structure.");
+                }
+
                 return latestKeyFile;
             }
         } catch (IOException e) {
@@ -94,12 +99,13 @@ public class KeyGenerator {
         return null;
     }
 
-    public void saveCreatedKey(SecretKeySpec skey) {
-        File newArchiveFile = createNewKeyFile(skey);
+    public File saveCreatedKey(File keyFolder, Key skey) {
+        //keyFolder = new File("src/main/resources/KeyChain");
+        File newArchiveFile = createNewKeyFile(keyFolder, skey);
         byte[] lineSeparator = System.getProperty("line.separator").getBytes(); // absatzbefehl in bytes
         try {
             FileOutputStream fos = new FileOutputStream(newArchiveFile, true);  // true for append mode
-            fos.write(convertSecretKeyToString(skey).getBytes());
+            fos.write(convertSecretKeyToString(skey.getKey().getEncoded()).getBytes());
             fos.write("\n******************************************************".getBytes());
             fos.write(lineSeparator);
             fos.write("CREATED ON ".getBytes());
@@ -110,12 +116,13 @@ public class KeyGenerator {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return newArchiveFile;
     }
 
-    private File createNewKeyFile(SecretKeySpec skey) {
+    private File createNewKeyFile(File keyFolder, Key skey) {
 
-        File keyFolder = new File("src/main/resources/KeyChain");
-        String algo = skey.getAlgorithm();
+        //File keyFolder = new File("src/main/resources/KeyChain"); - to be provided by caller, see parameter
+        String algo = skey.getType();
         String dateToday = DateTimeFormatter.ofPattern("dd.MM.yyyy").withZone(ZoneId.systemDefault()).format(Instant.now());
         String createdOn = DateTimeFormatter.ofPattern("HHmmss").withZone(ZoneId.systemDefault()).format(Instant.now());
         File newKeyFile = new File(keyFolder.getPath() + "/keyFile_" + algo + "_" + dateToday + "_" + createdOn);
@@ -129,9 +136,8 @@ public class KeyGenerator {
         return newKeyFile;
     }
 
-    private static String convertSecretKeyToString(SecretKeySpec secretKey) throws NoSuchAlgorithmException {
-        byte[] rawData = secretKey.getEncoded();
-        String encodedKey = Base64.getEncoder().encodeToString(rawData);
+    private static String convertSecretKeyToString(byte[] secretKey) throws NoSuchAlgorithmException {
+        String encodedKey = Base64.getEncoder().encodeToString(secretKey);
         return encodedKey;
     }
 

@@ -1,15 +1,17 @@
 package ch.psc.domain.cipher;
 
+import javax.crypto.SecretKey;
+
 public class Key {
-  
-  private byte[] key;
+
+  private SecretKey key;
   private String type;
   
-  public byte[] getKey() {
+  public SecretKey getKey() {
     return key;
   }
-  
-  public void setKey(byte[] key) {
+
+  public void setKey(SecretKey key) {
     this.key = key;
   }
   
