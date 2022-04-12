@@ -1,7 +1,6 @@
 package ch.psc.domain.cipher;
 
-import java.security.NoSuchAlgorithmException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.NullCipher;
 import ch.psc.exceptions.FatalImplementationException;
 
 /**
@@ -13,7 +12,7 @@ import ch.psc.exceptions.FatalImplementationException;
 public class PlainTextCipher extends Cipher {
   
   private static final String TYPE = "Plain Text";
-  private static final String ALGORYTHM = "";
+  private static final String ALGORYTHM = "NONE";
   private static final String TRANSFORMATION = "";
   private static final SecurityLevel SECURITY_LEVEL = SecurityLevel.none;
 
@@ -39,13 +38,7 @@ public class PlainTextCipher extends Cipher {
   
   @Override
   protected javax.crypto.Cipher getCipher() throws FatalImplementationException {
-    javax.crypto.Cipher cipher;
-    try {
-      cipher = javax.crypto.NullCipher.getInstance(getTransformation());
-    }
-    catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-      throw new FatalImplementationException("Transformation '" + getTransformation() + "' does not exist!", e);
-    }
+    javax.crypto.Cipher cipher = new NullCipher();
     return cipher;
   }
 
