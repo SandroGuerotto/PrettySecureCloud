@@ -1,5 +1,8 @@
 package ch.psc.gui.util;
 
+import ch.psc.gui.ControlledScreen;
+import ch.psc.gui.SignUpController;
+import ch.psc.gui.StartseiteController;
 import ch.psc.presentation.Config;
 
 /**
@@ -18,15 +21,16 @@ public class JavaFxUtils {
     /**
      * Enum with the information about the controlled screens
      */
-    public enum RegistrierterScreen {
-        LOGINPAGE("Startseite.fxml", "startseite.titel");
+    public enum RegisteredScreen {
+        LOGIN_PAGE("Startseite.fxml", "startseite.titel", StartseiteController.class),
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
-//        REGISTERPAGE("", ""),
+        REGISTER_PAGE("register.fxml", "register.titel", SignUpController.class);
 //        CLOUDSERVICESPAGE("", ""),
 //        FILEBROWSERPAGE("", "");
 
         private final String fxmlFileName;
         private final String title;
+        private final Class<? extends ControlledScreen> controllerClass;
 
         /**
          * Set fxmlFileName and title
@@ -34,9 +38,10 @@ public class JavaFxUtils {
          * @param fxmlFileName Fxml file name of the controller
          * @param title Title of the window
          */
-        RegistrierterScreen(final String fxmlFileName, final String title) {
+        RegisteredScreen(final String fxmlFileName, final String title, final Class<? extends ControlledScreen> clazz) {
             this.fxmlFileName = fxmlFileName;
             this.title = Config.getResourceText(title);
+            controllerClass = clazz;
         }
 
         /**
@@ -55,6 +60,10 @@ public class JavaFxUtils {
          */
         public String getTitel() {
             return title;
+        }
+
+        public Class<?> getControllerClass(){
+            return controllerClass;
         }
     }
 }

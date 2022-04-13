@@ -10,59 +10,67 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public class PrettySecureCloud extends Application {
-  private final Map<JavaFxUtils.RegistrierterScreen, ControlledScreen> screens = new HashMap<>();
-  private Stage primaryStage;
-  
-  public static void main(String[] args) {
-    launch(args);
-  }
+    private final Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens = new HashMap<>();
+    private Stage primaryStage;
 
-  @Override
-  public void start(Stage primaryStage){
-    this.primaryStage = primaryStage;
-    loadAllControlledScreens();
-    primaryStage.setMinHeight(Config.MIN_HEIGHT);
-    primaryStage.setMinWidth(Config.MIN_WIDTH);
-    primaryStage.show();
-
-  }
-
-  /**
-   * Loads all screens which have been "registered" in the enum {@code RegisteredScreen}
-   */
-  private void loadAllControlledScreens() {
-    for (JavaFxUtils.RegistrierterScreen screen : JavaFxUtils.RegistrierterScreen.values()) {
-      loadScreen(screen);
+    public static void main(String[] args) {
+        launch(args);
     }
-  }
 
-  /**
-   * Loads the screen given as a parameter
-   *
-   * @param screen screen info (FXML File Name and Fixed Title)
-   */
-  private void loadScreen(JavaFxUtils.RegistrierterScreen screen) {
-    try {
-      FXMLLoader loader = new FXMLLoader(ControlledScreen.class.getResource(screen.getFxmlFileName()),
-              ResourceBundle.getBundle(Config.TEXT_BUNDLE_NAME));
-      Parent parent = loader.load();
-      ControlledScreen screenController = loader.getController();
-      screenController.setScreens(screens);
-      screenController.setPrimaryStage(primaryStage);
-      if (screen == JavaFxUtils.RegistrierterScreen.LOGINPAGE) {
-        Scene scene = new Scene(parent);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle(screen.getTitel());
-      }
-      screens.put(screen, screenController);
-    } catch (IOException e) {
-      e.printStackTrace();
+    @Override
+    public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        loadAllControlledScreens();
+        setStartScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
+        primaryStage.setMinHeight(Config.MIN_HEIGHT);
+        primaryStage.setMinWidth(Config.MIN_WIDTH);
+        primaryStage.show();
+
     }
-  }
+
+    private void setStartScreen(JavaFxUtils.RegisteredScreen startScreen) {
+        ControlledScreen start = screens.get(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
+//        Scene scene = new Scene(start.getRoot());
+//        primaryStage.setScene(scene);
+//        primaryStage.setTitle(startScreen.getTitel());
+//        scene.getStylesheets().add("/ch/psc/gui/styles.css");
+    }
+
+    /**
+     * Loads all screens which have been "registered" in the enum {@code RegisteredScreen}
+     */
+    private void loadAllControlledScreens() {
+        Arrays.stream(JavaFxUtils.RegisteredScreen.values())
+                .forEach(this::loadScreen);
+    }
+
+    /**
+     * Loads the screen given as a parameter
+     *
+     * @param screen screen info (FXML File Name and Fixed Title)
+     */
+    private void loadScreen(JavaFxUtils.RegisteredScreen screen) {
+        try {
+            FXMLLoader loader = new FXMLLoader(ControlledScreen.class.getResource(screen.getFxmlFileName()),
+                    ResourceBundle.getBundle(Config.TEXT_BUNDLE_NAME));
+            ControlledScreen screenController = (ControlledScreen) screen.getControllerClass()
+                    .getDeclaredConstructor().newInstance(primaryStage, screens);
+            loader.setController(screenController);
+            Parent parent = loader.load();
+//            ControlledScreen screenController = loader.getController();
+//            screenController.setScreens(screens);
+//            screenController.setPrimaryStage(primaryStage);
+            screens.put(screen, screenController);
+        } catch (IOException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

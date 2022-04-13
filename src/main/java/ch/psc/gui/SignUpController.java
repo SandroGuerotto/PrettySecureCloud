@@ -1,17 +1,21 @@
-package ch.psc.presentation.controller.register;
+package ch.psc.gui;
 
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.domain.user.User;
+import ch.psc.gui.components.signUp.SignUpFlowControl;
+import ch.psc.gui.util.JavaFxUtils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,26 +23,28 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 
-public class RegisterController {
+public class SignUpController extends ControlledScreen {
 
 
-    private final RegisterFlowControl flowControl;
+    private final SignUpFlowControl flowControl;
 
     @FXML
     private VBox registerMainPane;
 
-    public RegisterController(RegisterFlowControl flowControl) {
+    public SignUpController(SignUpFlowControl flowControl, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens,
+                            Stage primaryStage) {
+        super(primaryStage, screens);
         this.flowControl = flowControl;
     }
 
     @FXML
     private void initialize() {
         flowControl.getCurrentPosition().addListener((observable, oldValue, newValue) -> {
-            if (!oldValue.equals(newValue) && !flowControl.isDone().get() ) {
+            if (!oldValue.equals(newValue) && !flowControl.isDone()) {
                 buildControl();
             }
         });
-        flowControl.isDone().addListener((observable, old, newValue) -> finish());
+        flowControl.isDoneProperty().addListener((observable, old, newValue) -> finish());
         flowControl.next();
     }
 
@@ -64,7 +70,7 @@ public class RegisterController {
 
 
         FlowPane pane = new FlowPane();
-        pane.setPadding(new Insets(15,0,0,0));
+        pane.setPadding(new Insets(15, 0, 0, 0));
         pane.setAlignment(Pos.CENTER);
         pane.setHgap(20);
         Button prev = new Button("Prev");
@@ -97,4 +103,13 @@ public class RegisterController {
         );
     }
 
+    @Override
+    protected Parent getRoot() {
+        return registerMainPane;
+    }
+
+    @Override
+    protected JavaFxUtils.RegisteredScreen getScreen() {
+        return JavaFxUtils.RegisteredScreen.REGISTER_PAGE;
+    }
 }

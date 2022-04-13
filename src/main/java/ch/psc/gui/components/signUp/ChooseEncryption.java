@@ -1,4 +1,4 @@
-package ch.psc.presentation.controller.register;
+package ch.psc.gui.components.signUp;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -7,7 +7,7 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChooseEncryption extends VBox implements RegisterFlow{
+public class ChooseEncryption extends VBox implements SignUpFlow {
     public ChooseEncryption() {
         //TODO build cipher keys
 

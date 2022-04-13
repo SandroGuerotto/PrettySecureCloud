@@ -2,14 +2,11 @@ package ch.psc;
 
 import ch.psc.datasource.JSONWriterReader;
 import ch.psc.domain.user.User;
-import ch.psc.presentation.controller.register.RegisterController;
-import ch.psc.presentation.controller.register.RegisterFlowControl;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -29,12 +26,12 @@ public class PrettySecureCloud extends Application {
 
 //        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ch/psc/view/baseApp.fxml"));
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ch/psc/view/register.fxml"));
-        loader.setController(new RegisterController(new RegisterFlowControl()));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ch/psc/gui/register.fxml"));
+//        loader.setController(new RegisterController(new RegisterFlowControl(), screens));
 
 
         Scene scene = new Scene(loader.load());
-        scene.getStylesheets().add("/ch/psc/view/styles.css");
+        scene.getStylesheets().add("/ch/psc/gui/styles.css");
 
         primaryStage.setOnCloseRequest(event -> exit(primaryStage, user));
         primaryStage.setScene(scene);

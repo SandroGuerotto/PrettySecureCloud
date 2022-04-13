@@ -6,6 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import java.util.Map;
 
 /**
  * Controller für die Startseite
@@ -24,8 +27,10 @@ public class StartseiteController extends ControlledScreen {
     @FXML
     private Label limiteStart;
 
-    public StartseiteController() {
+    public StartseiteController(Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens,
+                                Stage primaryStage) {
         // do something here
+        super(primaryStage, screens);
     }
 
     @FXML
@@ -36,7 +41,7 @@ public class StartseiteController extends ControlledScreen {
 
 
     @Override
-    protected boolean init(JavaFxUtils.RegistrierterScreen vorherigerScreen, Object... params) {
+    protected boolean init(JavaFxUtils.RegisteredScreen vorherigerScreen, Object... params) {
         super.init(vorherigerScreen, params);
         initGuiElements();
         return true;
@@ -68,7 +73,7 @@ public class StartseiteController extends ControlledScreen {
     }
 
     @Override
-    protected JavaFxUtils.RegistrierterScreen getScreen() {
-        return JavaFxUtils.RegistrierterScreen.LOGINPAGE;
+    protected JavaFxUtils.RegisteredScreen getScreen() {
+        return JavaFxUtils.RegisteredScreen.LOGIN_PAGE;
     }
 }

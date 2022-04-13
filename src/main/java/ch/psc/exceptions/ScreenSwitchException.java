@@ -17,7 +17,7 @@ public class ScreenSwitchException extends Exception {
      * @param currentScreen current screen
      * @param newScreen    new screen
      */
-    public ScreenSwitchException(JavaFxUtils.RegistrierterScreen currentScreen, JavaFxUtils.RegistrierterScreen newScreen) {
+    public ScreenSwitchException(JavaFxUtils.RegisteredScreen currentScreen, JavaFxUtils.RegisteredScreen newScreen) {
         super(String.format(Config.getResourceText("screenWechselException.fehlerMeldung"), currentScreen.name(), newScreen.name()));
     }
 }

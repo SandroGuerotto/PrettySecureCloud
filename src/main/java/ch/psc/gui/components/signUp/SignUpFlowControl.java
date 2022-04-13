@@ -1,4 +1,4 @@
-package ch.psc.presentation.controller.register;
+package ch.psc.gui.components.signUp;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -12,13 +12,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RegisterFlowControl {
+public class SignUpFlowControl {
 
-    private final List<RegisterFlow> flow;
+    private final List<SignUpFlow> flow;
     private final IntegerProperty currentPosition;
     private final BooleanProperty isDone;
 
-    public RegisterFlowControl() {
+    public SignUpFlowControl() {
         flow = new ArrayList<>(Arrays.asList(
                 new CreateAccount(),
                 new ChooseEncryption(),
@@ -45,10 +45,6 @@ public class RegisterFlowControl {
         return currentPosition;
     }
 
-    public BooleanProperty isDone() {
-        return isDone;
-    }
-
     public BooleanProperty isDoneProperty() {
         return isDone;
     }
@@ -63,9 +59,12 @@ public class RegisterFlowControl {
 
     public List<Object> getData() {
         return flow.stream()
-                .map(RegisterFlow::getData)
+                .map(SignUpFlow::getData)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
+    public boolean isDone() {
+        return isDone.get();
+    }
 }

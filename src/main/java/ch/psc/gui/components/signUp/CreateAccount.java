@@ -1,6 +1,5 @@
-package ch.psc.presentation.controller.register;
+package ch.psc.gui.components.signUp;
 
-import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -10,7 +9,7 @@ import javafx.scene.layout.VBox;
 import java.util.Arrays;
 import java.util.List;
 
-public class CreateAccount extends VBox implements RegisterFlow {
+public class CreateAccount extends VBox implements SignUpFlow {
     private final TextField usernameField;
     private final TextField emailTextField;
     private final PasswordField passwordTextField;

@@ -1,4 +1,4 @@
-package ch.psc.presentation.controller.register;
+package ch.psc.gui.components.signUp;
 
 import ch.psc.domain.storage.service.DropBoxService;
 import ch.psc.domain.storage.service.StorageService;
@@ -11,10 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -23,8 +21,9 @@ import java.awt.*;
 import java.net.URI;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class ChooseStorageService extends VBox implements RegisterFlow {
+public class ChooseStorageService extends VBox implements SignUpFlow {
 
     private final Map<StorageService, Map<String, String>> choosenServices = new HashMap<>();
 
@@ -36,7 +35,8 @@ public class ChooseStorageService extends VBox implements RegisterFlow {
         List<Button> services = Arrays.stream(StorageService.values())
                 .filter(StorageService::isSupported)
                 .map(this::createStorageButton)
-                .toList();
+                .collect(Collectors.toList());
+
 
         Label title = new Label("Choose your cloud storage");
         FlowPane servicePane = new FlowPane();
