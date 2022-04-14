@@ -24,9 +24,6 @@
                            </HBox.margin>
                         </FontAwesomeIconView>
                         <TextField fx:id="enterMailTextfield" alignment="CENTER" prefHeight="29.0" prefWidth="225.0" promptText="user@email.com" styleClass="textfield-loginview" stylesheets="@../../../styles.css">
-                           <font>
-                              <Font name="Chalkboard" size="14.0" />
-                           </font>
                            <HBox.margin>
                               <Insets left="45.0" />
                            </HBox.margin>
@@ -41,9 +38,6 @@
                            </HBox.margin>
                         </FontAwesomeIconView>
                         <PasswordField fx:id="enterPasswordTextfield" alignment="CENTER" prefHeight="29.0" prefWidth="225.0" promptText="password" styleClass="passwordfield-loginview" stylesheets="@../../../styles.css">
-                           <font>
-                              <Font name="Chalkboard" size="14.0" />
-                           </font>
                            <HBox.margin>
                               <Insets left="45.0" />
                            </HBox.margin>
@@ -52,14 +46,14 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="56.0" prefWidth="560.0" spacing="30.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Button mnemonicParsing="false" styleClass="button-register-loginview" stylesheets="@../../../styles.css" text="register">
+                        <Button mnemonicParsing="false" onAction="#register" styleClass="button-register-loginview" stylesheets="@../../../styles.css" text="register">
                            <HBox.margin>
                               <Insets left="150.0" top="10.0" />
                            </HBox.margin>
                         </Button>
-                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" prefHeight="38.0" prefWidth="89.0" styleClass="button-loginview" stylesheets="@../../../styles.css" text="login">
+                        <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#login" prefHeight="38.0" prefWidth="89.0" styleClass="button-loginview" stylesheets="@../../../styles.css" text="login">
                            <font>
-                              <Font name="Chalkboard" size="11.0" />
+                              <Font size="11.0" />
                            </font>
                            <graphic>
                               <FontAwesomeIconView glyphName="SIGN_IN" size="18">

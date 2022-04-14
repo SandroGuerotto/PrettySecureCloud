@@ -19,7 +19,7 @@ import java.util.Map;
  * Controller for the LoginView.
  * Contains everything the controller has to reach in the login view and all methods the login view calls based on events.
  *
- * @author
+ * @author waldbsaf
  * @version 1.0
  */
 
@@ -66,11 +66,9 @@ public class LoginViewController {
      */
     @FXML
     private void login(){
-        loginButton.setOnAction(event -> {
             enterMailTextfield.getText();
             enterPasswordTextfield.getText();
             //Todo: Validation of login
-        });
 
 
     }
