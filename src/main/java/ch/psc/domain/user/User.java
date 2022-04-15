@@ -5,6 +5,11 @@ import ch.psc.domain.storage.service.StorageService;
 
 import java.util.Map;
 
+/**
+ * Holds all data of logged in user.
+ *
+ * @author SandroGuerotto
+ */
 public class User {
 
     private final String username;
@@ -36,6 +41,9 @@ public class User {
         return storageServiceConfig;
     }
 
+    /**
+     * Saves data to a JSON file
+     */
     public void save() {
         new JSONWriterReader().writeToJson("user.json", this);
     }

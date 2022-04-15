@@ -7,42 +7,69 @@ import com.dropbox.core.json.JsonReader;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.users.SpaceUsage;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+/**
+ * Wrapper for Dropbox requests. Handles all communication with Dropbox server.
+ *
+ * @author SandroGuerotto
+ */
 public class DropBoxService extends CloudService {
 
-    public static final String DROPBOX_PSC_APP = "dropbox-psc.app";
+    private static final String DROPBOX_PSC_APP = "dropbox-psc.app";
+    public static final String PRETTY_SECURE_CLOUD = "Pretty-Secure-Cloud";
     private DbxClientV2 client;
 
+    /**
+     * Create a new instance for Dropbox all communication.
+     * @param client Dropbox client with valid access token
+     */
     public DropBoxService(DbxClientV2 client) {
         this();
         this.client = client;
     }
 
+    /**
+     * Create a new instance for Dropbox communication.
+     * Only used for getting an access token.
+     */
     public DropBoxService() {
         super("Dropbox");
     }
 
     @Override
     public List<Future<File>> upload(List<File> files) {
-//    client.files().upload(files.get(1).getPath());
-        // TODO Auto-generated method stub
+        try { // todo pro file: evtl besser nur immer ein file als import und loop ausserhalb
+            client.files().upload(files.get(0).getPath());
+        } catch (DbxException e) {
+            e.printStackTrace(); // todo error handling
+        }
         return null;
     }
 
     @Override
     public List<Future<File>> download(List<File> files) {
-        // TODO Auto-generated method stub
+        try {
+            client.files().download(files.get(0).getPath());
+        } catch (DbxException e) {
+            e.printStackTrace(); // todo error handling
+        }
         return null;
     }
 
     @Override
-    public int getAvailableStorageSpace() {
-        // TODO Auto-generated method stub
+    public double getAvailableStorageSpace() {
+        try {
+            SpaceUsage spaceUsage = client.users().getSpaceUsage();
+            return spaceUsage.getAllocation().getIndividualValue().getAllocated() - spaceUsage.getUsed();
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
         return 0;
     }
 
@@ -68,16 +95,14 @@ public class DropBoxService extends CloudService {
         return null;
     }
 
-    @Override
-    public void login() {
-
-    }
-
-
+    /**
+     * Creates a new Dropbox configuration.
+     * Default parameter: clientID=Pretty-Secure-Cloud, Locale=de_CH
+     *
+     * @return new DbxRequestConfig instance
+     */
     public DbxRequestConfig getDbxRequestConfig() {
-        return DbxRequestConfig.newBuilder("Pretty-Secure-Cloud")
-                .withUserLocale("de_CH")
-                .build();
+        return DbxRequestConfig.newBuilder(PRETTY_SECURE_CLOUD).withUserLocale("de_CH").build();
     }
 
     private DbxAppInfo getDbxAppInfo() {
@@ -88,27 +113,39 @@ public class DropBoxService extends CloudService {
         }
     }
 
+    /**
+     * Creates an authorization request to access the user's data without a redirect URL.
+     * @return Dropbox authorization request
+     */
     public DbxWebAuth.Request buildAuthRequest() {
-        return DbxWebAuth.newRequestBuilder()
-                .withNoRedirect()
-                .build();
+        return DbxWebAuth.newRequestBuilder().withNoRedirect().build();
     }
 
+    /**
+     * Creates OAuth Dropbox request configuration
+     *
+     * @return OAuth Dropbox request configuration
+     */
     public DbxWebAuth createDbxWebAuth() {
         return new DbxWebAuth(getDbxRequestConfig(), getDbxAppInfo());
     }
 
-
-    public Map<String, String> finishFromCode(DbxWebAuth auth, String userCode) throws Exception {
-        userCode = userCode.trim();
-        DbxAuthFinish authFinish;
+    /**
+     * Called  after the user has visited the authorization URL and copy/pasted the authorization code that Dropbox gave them.
+     *
+     * @param auth     OAuth request configuration
+     * @param userCode The authorization code shown to the user when they clicked "Allow" on the authorization, page on the Dropbox website.
+     * @return a Map with OAuth access token used for authorization with Dropbox servers. Use key "access_token" to get the token.
+     * @throws Exception if wrong code was entered
+     */
+    public Map<String, String> finishFromCode(DbxWebAuth auth, final String userCode) throws Exception {
         try {
-            authFinish = auth.finishFromCode(userCode);
+            DbxAuthFinish authFinish = auth.finishFromCode(userCode.trim());
+            return Collections.singletonMap("access_token", authFinish.getAccessToken());
         } catch (DbxException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // TODO error handling
             throw new Exception("Wrong code");
         }
 
-        return Collections.singletonMap("access_token", authFinish.getAccessToken());
     }
 }

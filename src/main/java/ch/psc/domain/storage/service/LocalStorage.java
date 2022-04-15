@@ -24,7 +24,7 @@ public class LocalStorage implements FileStorage {
   }
 
   @Override
-  public int getAvailableStorageSpace() {
+  public double getAvailableStorageSpace() {
     // TODO Auto-generated method stub
     return 0;
   }
@@ -33,11 +33,6 @@ public class LocalStorage implements FileStorage {
   public Tree<File> getFileTree() {
     // TODO Auto-generated method stub
     return null;
-  }
-
-  @Override
-  public void login() {
-
   }
 
   public String getPath() {

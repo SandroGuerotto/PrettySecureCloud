@@ -31,11 +31,11 @@ public abstract class ControlledScreen {
      * @param params parameters which should be given to the controller
      * @throws ScreenSwitchException is thrown if there is a problem initializing the controller
      */
-    public void switchScreen(JavaFxUtils.RegisteredScreen newScreen, Object... params) throws ScreenSwitchException {
+    protected void switchScreen(JavaFxUtils.RegisteredScreen newScreen, Object... params) throws ScreenSwitchException {
         ControlledScreen newScreenController = screens.get(newScreen);
         //initialize the view and pass parameters
         if (newScreenController.init(getScreen(), params)) {
-            getRoot().getScene().setRoot(newScreenController.getRoot());
+            this.getRoot().getScene().setRoot(newScreenController.getRoot());
         } else {
             throw new ScreenSwitchException(getScreen(), newScreen);
         }
@@ -56,29 +56,11 @@ public abstract class ControlledScreen {
     }
 
     /**
-     * Set the map with all parent elements
-     *
-     * @param screens map which includes all controllable windows
-     */
-//    public void setScreens(Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
-//        this.screens = screens;
-//    }
-
-    /**
-     * Sets the primaryStage
-     *
-     * @param primaryStage primaryStage which is displayed
-     */
-//    public void setPrimaryStage(Stage primaryStage) {
-//        this.primaryStage = primaryStage;
-//    }
-
-    /**
      * Root element in fxml file
      *
      * @return root element in fxml file
      */
-    protected abstract Parent getRoot();
+    public abstract Parent getRoot();
 
     /**
      * The configuration for the controller which was registered in the config file

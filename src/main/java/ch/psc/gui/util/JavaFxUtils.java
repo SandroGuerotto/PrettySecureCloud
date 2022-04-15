@@ -2,13 +2,15 @@ package ch.psc.gui.util;
 
 import ch.psc.gui.ControlledScreen;
 import ch.psc.gui.SignUpController;
-import ch.psc.gui.StartseiteController;
 import ch.psc.presentation.Config;
+
+import java.awt.*;
+import java.net.URI;
 
 /**
  * Contains help methods for JavaFx
  *
- * @author sevimrid
+ * @author sevimrid, SandroGuerotto
  */
 public class JavaFxUtils {
 
@@ -19,12 +21,24 @@ public class JavaFxUtils {
     }
 
     /**
+     * Open url in default browser
+     * @param url the URL to be displayed in the user default browser
+     */
+    public static void openInBrowser(String url){
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Enum with the information about the controlled screens
      */
     public enum RegisteredScreen {
-        LOGIN_PAGE("Startseite.fxml", "startseite.titel", StartseiteController.class),
+       // LOGIN_PAGE("", "", .class), // TODO @bananasprout
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
-        REGISTER_PAGE("register.fxml", "register.titel", SignUpController.class);
+        SIGNUP_PAGE("signUp.fxml", "signup.titel", SignUpController.class);
 //        CLOUDSERVICESPAGE("", ""),
 //        FILEBROWSERPAGE("", "");
 
@@ -37,6 +51,7 @@ public class JavaFxUtils {
          *
          * @param fxmlFileName Fxml file name of the controller
          * @param title Title of the window
+         * @param clazz controller class type
          */
         RegisteredScreen(final String fxmlFileName, final String title, final Class<? extends ControlledScreen> clazz) {
             this.fxmlFileName = fxmlFileName;
@@ -62,7 +77,11 @@ public class JavaFxUtils {
             return title;
         }
 
-        public Class<?> getControllerClass(){
+        /**
+         * Returns controller Class
+         * @return class type of controller
+         */
+        public Class<? extends ControlledScreen> getControllerClass(){
             return controllerClass;
         }
     }

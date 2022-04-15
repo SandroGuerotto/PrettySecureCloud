@@ -12,10 +12,7 @@ public interface FileStorage {
   
   List<Future<File>> download(List<File> files);
   
-  int getAvailableStorageSpace();
+  double getAvailableStorageSpace();
   
   Tree<File> getFileTree();
-
-  void login();
-  
 }

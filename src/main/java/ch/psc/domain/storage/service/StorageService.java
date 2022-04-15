@@ -1,7 +1,13 @@
 package ch.psc.domain.storage.service;
 
+/**
+ * Contains all available storage types.
+ * Check if a service is supported by calling {@link #isSupported}.
+ */
 public enum StorageService {
-    DROPBOX(true,"images/dropbox/icon.png"), LOCAL(false,"path"), GOOGLE_DRIVE(false,"path");
+    DROPBOX(true,"images/dropbox/icon.png"),
+    LOCAL(false,"path"),
+    GOOGLE_DRIVE(false,"path");
 
     private final boolean isSupported;
     private final String imagePath;

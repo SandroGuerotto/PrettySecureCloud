@@ -1,8 +1,10 @@
+@font-face {
+    src: url('../fonts/Roboto.ttf');
+}
 
 *{
-    /*-fx-text-fill: #4A4A4A;
-    -fx-fill: #4A4A4A;
-    -fx-font-size: 15;*/
+    -fx-font-family: "Roboto";
+
     -fx-main: #4A4A4A;
     -fx-main2: #717171;
     -fx-accent1:#71A5DE;
