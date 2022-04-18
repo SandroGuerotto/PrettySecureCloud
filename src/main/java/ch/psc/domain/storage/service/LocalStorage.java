@@ -1,9 +1,10 @@
 package ch.psc.domain.storage.service;
 
-import java.util.List;
-import java.util.concurrent.Future;
 import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.File;
+
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class LocalStorage implements FileStorage {
   
@@ -23,7 +24,7 @@ public class LocalStorage implements FileStorage {
   }
 
   @Override
-  public int getAvailableStorageSpace() {
+  public double getAvailableStorageSpace() {
     // TODO Auto-generated method stub
     return 0;
   }

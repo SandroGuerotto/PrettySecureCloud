@@ -15,9 +15,14 @@ import java.util.Map;
  * @author sevimrid
  */
 public abstract class ControlledScreen {
-    protected Stage primaryStage;
-    protected JavaFxUtils.RegistrierterScreen previousScreen;
-    private Map<JavaFxUtils.RegistrierterScreen, ControlledScreen> screens;
+    protected final Stage primaryStage;
+    protected JavaFxUtils.RegisteredScreen previousScreen;
+    private final Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens;
+
+    protected ControlledScreen(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
+        this.primaryStage = primaryStage;
+        this.screens = screens;
+    }
 
     /**
      * Changes the scene in the primaryStage
@@ -26,11 +31,11 @@ public abstract class ControlledScreen {
      * @param params parameters which should be given to the controller
      * @throws ScreenSwitchException is thrown if there is a problem initializing the controller
      */
-    public void switchScreen(JavaFxUtils.RegistrierterScreen newScreen, Object... params) throws ScreenSwitchException {
+    protected void switchScreen(JavaFxUtils.RegisteredScreen newScreen, Object... params) throws ScreenSwitchException {
         ControlledScreen newScreenController = screens.get(newScreen);
         //initialize the view and pass parameters
         if (newScreenController.init(getScreen(), params)) {
-            getRoot().getScene().setRoot(newScreenController.getRoot());
+            this.getRoot().getScene().setRoot(newScreenController.getRoot());
         } else {
             throw new ScreenSwitchException(getScreen(), newScreen);
         }
@@ -44,28 +49,10 @@ public abstract class ControlledScreen {
      * @param params parameters needed to initialize the view
      * @return returns true if initialization was successful
      */
-    protected boolean init(JavaFxUtils.RegistrierterScreen previousScreen, Object... params) {
+    protected boolean init(JavaFxUtils.RegisteredScreen previousScreen, Object... params) {
         this.previousScreen = previousScreen;
         primaryStage.setTitle(getScreen().getTitel());
         return true;
-    }
-
-    /**
-     * Set the map with all parent elements
-     *
-     * @param screens map which includes all controllable windows
-     */
-    public void setScreens(Map<JavaFxUtils.RegistrierterScreen, ControlledScreen> screens) {
-        this.screens = screens;
-    }
-
-    /**
-     * Sets the primaryStage
-     *
-     * @param primaryStage primaryStage which is displayed
-     */
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
     }
 
     /**
@@ -73,13 +60,13 @@ public abstract class ControlledScreen {
      *
      * @return root element in fxml file
      */
-    protected abstract Parent getRoot();
+    public abstract Parent getRoot();
 
     /**
      * The configuration for the controller which was registered in the config file
      *
      * @return the screen configuration
      */
-    protected abstract JavaFxUtils.RegistrierterScreen getScreen();
+    protected abstract JavaFxUtils.RegisteredScreen getScreen();
 
 }

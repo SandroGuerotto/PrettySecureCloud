@@ -1,18 +1,18 @@
 package ch.psc.domain.storage.service;
 
-import java.util.List;
-import java.util.concurrent.Future;
 import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.File;
 
+import java.util.List;
+import java.util.concurrent.Future;
+
 public interface FileStorage {
   
-  public List<Future<File>> upload(List<File> files);
+  List<Future<File>> upload(List<File> files);
   
-  public List<Future<File>> download(List<File> files);
+  List<Future<File>> download(List<File> files);
   
-  public int getAvailableStorageSpace();
+  double getAvailableStorageSpace();
   
-  public Tree<File> getFileTree();
-  
+  Tree<File> getFileTree();
 }
