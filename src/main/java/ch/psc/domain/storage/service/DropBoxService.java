@@ -1,7 +1,7 @@
 package ch.psc.domain.storage.service;
 
 import ch.psc.datasource.datastructure.Tree;
-import ch.psc.domain.file.File;
+import ch.psc.domain.file.PscFile;
 import com.dropbox.core.*;
 import com.dropbox.core.json.JsonReader;
 import com.dropbox.core.v2.DbxClientV2;
@@ -43,7 +43,7 @@ public class DropBoxService extends CloudService {
     }
 
     @Override
-    public List<Future<File>> upload(List<File> files) {
+    public List<Future<PscFile>> upload(List<PscFile> files) {
         try { // todo pro file: evtl besser nur immer ein file als import und loop ausserhalb
             client.files().upload(files.get(0).getPath());
         } catch (DbxException e) {
@@ -53,7 +53,7 @@ public class DropBoxService extends CloudService {
     }
 
     @Override
-    public List<Future<File>> download(List<File> files) {
+    public List<Future<PscFile>> download(List<PscFile> files) {
         try {
             client.files().download(files.get(0).getPath());
         } catch (DbxException e) {
@@ -74,7 +74,7 @@ public class DropBoxService extends CloudService {
     }
 
     @Override
-    public Tree<File> getFileTree() {
+    public Tree<PscFile> getFileTree() {
         try {
             ListFolderResult result = client.files().listFolder("");
             while (true) {

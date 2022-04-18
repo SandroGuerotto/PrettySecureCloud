@@ -1,7 +1,7 @@
 package ch.psc.domain.storage;
 
 import ch.psc.datasource.datastructure.Tree;
-import ch.psc.domain.file.File;
+import ch.psc.domain.file.PscFile;
 import ch.psc.domain.storage.service.FileStorage;
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.domain.storage.service.StorageServiceFactory;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class StorageManager {
 
-    private Tree<File> managedFiles;
+    private Tree<PscFile> managedFiles;
     private List<FileStorage> storageOptions;
     private final User user;
 
@@ -22,16 +22,16 @@ public class StorageManager {
         this.user = user;
     }
 
-    public void uploadFiles(List<File> files) {
+    public void uploadFiles(List<PscFile> files) {
         //TODO
     }
 
-    public List<Future<File>> downloadFiles(List<File> files) {
+    public List<Future<PscFile>> downloadFiles(List<PscFile> files) {
         //TODO
         return null;
     }
 
-    public Tree<File> getManagedFiles() {
+    public Tree<PscFile> getManagedFiles() {
         return managedFiles;
     }
 
