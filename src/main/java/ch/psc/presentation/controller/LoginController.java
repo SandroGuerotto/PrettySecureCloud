@@ -1,6 +1,5 @@
 package ch.psc.presentation.controller;
 
-import ch.psc.presentation.Screens;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,7 +22,7 @@ import java.util.Map;
  * @version 1.0
  */
 
-public class LoginViewController {
+public class LoginController {
 
     @FXML
     private Button loginButton;
@@ -40,11 +39,6 @@ public class LoginViewController {
     @FXML
     private AnchorPane pane;
 
-    private final Map<Screens, Pane> screens;
-
-    public LoginViewController(Map<Screens, Pane> screens){
-        this.screens = screens;
-    }
 
 
     @FXML
@@ -58,7 +52,7 @@ public class LoginViewController {
     private void register(){
         enterMailTextfield.clear();
         enterPasswordTextfield.clear();
-        registerButton.getScene().setRoot(screens.get(Screens.REGISTER));
+        //registerButton.getScene().setRoot(screens.get(Screens.REGISTER));
     }
 
     /**
@@ -72,5 +66,14 @@ public class LoginViewController {
 
 
     }
+   /* @Override
+    public Parent getRoot() {
+        return loginPane;
+    }
+
+    @Override
+    protected JavaFxUtils.RegisteredScreen getScreen() {
+        return JavaFxUtils.RegisteredScreen.LOGIN_PAGE;
+    }*/
 
 }
