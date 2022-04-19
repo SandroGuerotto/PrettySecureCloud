@@ -7,6 +7,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -37,7 +38,7 @@ public class LoginController {
     private PasswordField enterPasswordTextfield;
 
     @FXML
-    private AnchorPane pane;
+    private HBox loginPane;
 
 
 
