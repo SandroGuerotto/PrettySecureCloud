@@ -1,18 +1,15 @@
-package ch.psc.presentation.controller;
+package ch.psc.gui;
 
-import javafx.event.ActionEvent;
+import ch.psc.exceptions.ScreenSwitchException;
+import ch.psc.gui.util.JavaFxUtils;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
-import java.awt.event.MouseEvent;
 import java.util.Map;
 
 /**
@@ -23,7 +20,7 @@ import java.util.Map;
  * @version 1.0
  */
 
-public class LoginController {
+public class LoginController extends ControlledScreen {
 
     @FXML
     private Button loginButton;
@@ -40,6 +37,19 @@ public class LoginController {
     @FXML
     private HBox loginPane;
 
+    public LoginController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
+        super(primaryStage, screens);
+    }
+
+    @Override
+    public Parent getRoot() {
+        return loginPane;
+    }
+
+    @Override
+    protected JavaFxUtils.RegisteredScreen getScreen() {
+        return JavaFxUtils.RegisteredScreen.LOGIN_PAGE;
+    }
 
 
     @FXML
@@ -50,10 +60,15 @@ public class LoginController {
      * Register screen will be shown.
      */
     @FXML
-    private void register(){
+    private void register() {
         enterMailTextfield.clear();
         enterPasswordTextfield.clear();
-        //registerButton.getScene().setRoot(screens.get(Screens.REGISTER));
+
+        try {
+            switchScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE);
+        } catch (ScreenSwitchException e) {
+            e.printStackTrace(); //Fehlermeldung an GUI mitgeben
+        }
     }
 
     /**
@@ -67,14 +82,5 @@ public class LoginController {
 
 
     }
-   /* @Override
-    public Parent getRoot() {
-        return loginPane;
-    }
-
-    @Override
-    protected JavaFxUtils.RegisteredScreen getScreen() {
-        return JavaFxUtils.RegisteredScreen.LOGIN_PAGE;
-    }*/
 
 }

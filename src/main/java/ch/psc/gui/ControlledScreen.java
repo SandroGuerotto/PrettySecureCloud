@@ -19,7 +19,7 @@ public abstract class ControlledScreen {
     protected JavaFxUtils.RegisteredScreen previousScreen;
     private final Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens;
 
-    protected ControlledScreen(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
+    public ControlledScreen(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
         this.primaryStage = primaryStage;
         this.screens = screens;
     }

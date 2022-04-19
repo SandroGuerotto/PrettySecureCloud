@@ -58,3 +58,37 @@
     -fx-fill: -fx-error;
     -fx-border-color: transparent transparent -fx-error transparent ;
 }
+
+
+
+.button-login{
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-font-size: 18;
+    -fx-border-width: 1 2 2 1;
+    -fx-border-color: -fx-main;
+}
+
+.passwordfield-login{
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: -fx-main;
+    -fx-prompt-text-fill: -fx-main2;
+}
+
+.textfield-login{
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: -fx-main;
+    -fx-prompt-text-fill: -fx-main2, fontawe;
+}
+
+.button-register-login{
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-font-size: 18;
+    -fx-underline: true, -fx-main;
+    -fx-text-fill: -fx-main;
+}
+
+.button-register-login:hover{
+    -fx-text-fill: -fx-accent1;
+}

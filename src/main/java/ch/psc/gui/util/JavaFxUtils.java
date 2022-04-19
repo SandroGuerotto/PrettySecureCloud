@@ -1,6 +1,7 @@
 package ch.psc.gui.util;
 
 import ch.psc.gui.ControlledScreen;
+import ch.psc.gui.LoginController;
 import ch.psc.gui.SignUpController;
 import ch.psc.presentation.Config;
 
@@ -10,7 +11,7 @@ import java.net.URI;
 /**
  * Contains help methods for JavaFx
  *
- * @author sevimrid, SandroGuerotto
+ * @author sevimrid, SandroGuerotto, bananasprout
  */
 public class JavaFxUtils {
 
@@ -36,9 +37,10 @@ public class JavaFxUtils {
      * Enum with the information about the controlled screens
      */
     public enum RegisteredScreen {
-       // LOGIN_PAGE("", "", .class), // TODO @bananasprout
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
-        SIGNUP_PAGE("signUp.fxml", "signup.titel", SignUpController.class);
+        //LOGIN_PAGE("login.fxml", "login.titel", LoginController.class), // TODO @bananasprout
+        SIGNUP_PAGE("signUp.fxml", "signup.titel", SignUpController.class),
+        LOGIN_PAGE("login.fxml", "signup.titel", LoginController.class);
 //        CLOUDSERVICESPAGE("", ""),
 //        FILEBROWSERPAGE("", "");
 
