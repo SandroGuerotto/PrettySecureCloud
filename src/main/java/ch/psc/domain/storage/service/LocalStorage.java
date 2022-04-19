@@ -4,6 +4,7 @@ import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
 
 import java.util.List;
+import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,9 +45,9 @@ public class LocalStorage implements FileStorage {
     long startTime = System.currentTimeMillis();
     Future<Double> future = executorService.submit(() -> {
       double result = 0;
-      java.io.File[] paths = java.io.File.listRoots();
-      for(java.io.File path: paths){
-        result += new java.io.File(path.toString()).getFreeSpace() / (1024.0 * 1024 * 1024);
+      File[] paths = File.listRoots();
+      for(File path: paths){
+        result += new File(path.toString()).getFreeSpace() / (1024.0 * 1024 * 1024);
       }
       return result;
     });
