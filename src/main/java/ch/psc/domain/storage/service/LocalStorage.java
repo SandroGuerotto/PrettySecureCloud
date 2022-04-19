@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 
 
 /**
- * Beinhaltet Methoden um loklae File Operationen durchzuführen
+ * Contains methods to perform local file operations
  *
  * @author sevimrid, walchr01
  */
@@ -34,9 +34,9 @@ public class LocalStorage implements FileStorage {
   }
 
   /**
-   * Gibt einen double Wert zurueck mit dem freien Speicher in GB
+   * Returns a double value with the free memory in GB
    *
-   * @return Groese des freien Speichers im System in GB
+   * @return Amount of free space in the system in GB
    */
   @Override
   public double getAvailableStorageSpace(){
