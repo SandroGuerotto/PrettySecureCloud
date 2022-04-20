@@ -35,8 +35,8 @@ public class PrettySecureCloud extends Application {
 
         this.primaryStage = primaryStage;
         loadAllControlledScreens();
-//        setStartScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
-        setStartScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE);
+        setStartScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
+        //setStartScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE);
         primaryStage.setMinHeight(Config.MIN_HEIGHT);
         primaryStage.setMinWidth(Config.MIN_WIDTH);
         primaryStage.setOnCloseRequest(event -> exit(primaryStage, user));
@@ -106,8 +106,8 @@ public class PrettySecureCloud extends Application {
                     ResourceBundle.getBundle(Config.TEXT_BUNDLE_NAME));
 
             ControlledScreen screenController = screen.getControllerClass()
-                    .getDeclaredConstructor(Map.class, Stage.class)
-                    .newInstance(screens, primaryStage);
+                    .getDeclaredConstructor(Stage.class, Map.class)
+                    .newInstance(primaryStage, screens);
 
             loader.setController(screenController);
             loader.load();

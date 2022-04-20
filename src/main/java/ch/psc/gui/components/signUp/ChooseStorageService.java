@@ -7,9 +7,6 @@ import ch.psc.presentation.Config;
 import com.dropbox.core.DbxWebAuth;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
@@ -18,9 +15,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.awt.*;
-import java.net.URI;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
