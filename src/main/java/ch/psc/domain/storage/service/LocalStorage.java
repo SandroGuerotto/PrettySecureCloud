@@ -20,6 +20,8 @@ public class LocalStorage implements FileStorage {
   
   private String path;
   private int maxStorage;
+  private Tree<PscFile> tree;
+
 
   @Override
   public List<Future<PscFile>> upload(List<PscFile> files) {
@@ -62,11 +64,23 @@ public class LocalStorage implements FileStorage {
     executorService.shutdown();
     return size;
   }
-  
+
+  /**
+   * Returns a file tree with all the files below the root
+   *
+   * @return File tree with path as root directory
+   */
   @Override
   public Tree<PscFile> getFileTree() {
-    // TODO Auto-generated method stub
-    return null;
+    Tree<PscFile> fileTree;
+    ExecutorService executorService = Executors.newSingleThreadExecutor();
+    executorService.submit(()->{
+      tree.getRoot().setValue(new PscFile());
+      tree.getRoot().getValue().setPath(path);
+      getSubtree(tree.getRoot());
+    });
+    executorService.shutdown();
+    return tree;
   }
 
   public String getPath() {
@@ -83,6 +97,30 @@ public class LocalStorage implements FileStorage {
 
   public void setMaxStorage(int maxStorage) {
     this.maxStorage = maxStorage;
+  }
+
+
+  /**
+   * Recursively creates the subtrees and saves them in the tree variable
+   */
+  private void getSubtree(Tree<PscFile>.Node<PscFile> parentNode){
+    File parentContentFile = new File(parentNode.getValue().getPath());
+    File[] parentContent = parentContentFile.listFiles();
+    assert parentContent != null;
+    if (parentContent.length!=0){
+      for (File childFile : parentContent){
+        PscFile folderCont = new PscFile();
+        folderCont.setPath(childFile.getPath());
+        if (childFile.isDirectory()){
+          Tree<PscFile>.Node<PscFile> directoryNode = tree.new Node<PscFile>(parentNode,folderCont);
+          parentNode.appendChild(directoryNode);
+          getSubtree(directoryNode);
+        }
+        else {
+          parentNode.appendChild(tree.new Node<PscFile>(parentNode,folderCont));
+        }
+      }
+    }
   }
   
 }
