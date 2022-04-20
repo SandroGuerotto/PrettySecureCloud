@@ -9,7 +9,7 @@ import ch.psc.exceptions.FatalImplementationException;
  * @author Lorenz
  *
  */
-public class PlainTextCipher extends Cipher {
+public class PlainTextCipher extends PscCipher {
   
   private static final String ALGORYTHM = "";
   private static final String TRANSFORMATION = "";

@@ -2,7 +2,7 @@ package ch.psc.domain.file;
 
 import ch.psc.domain.cipher.EncryptionState;
 
-public class File {
+public class PscFile {
   
   private String name;
 

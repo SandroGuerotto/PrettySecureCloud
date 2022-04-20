@@ -1,11 +1,16 @@
 package ch.psc.gui.util;
 
+import ch.psc.gui.ControlledScreen;
+import ch.psc.gui.SignUpController;
 import ch.psc.presentation.Config;
+
+import java.awt.*;
+import java.net.URI;
 
 /**
  * Contains help methods for JavaFx
  *
- * @author sevimrid
+ * @author sevimrid, SandroGuerotto
  */
 public class JavaFxUtils {
 
@@ -16,27 +21,42 @@ public class JavaFxUtils {
     }
 
     /**
+     * Open url in default browser
+     * @param url the URL to be displayed in the user default browser
+     */
+    public static void openInBrowser(String url){
+        try {
+            Desktop.getDesktop().browse(new URI(url));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Enum with the information about the controlled screens
      */
-    public enum RegistrierterScreen {
-        LOGINPAGE("Startseite.fxml", "startseite.titel");
+    public enum RegisteredScreen {
+       // LOGIN_PAGE("", "", .class), // TODO @bananasprout
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
-//        REGISTERPAGE("", ""),
+        SIGNUP_PAGE("signUp.fxml", "signup.titel", SignUpController.class);
 //        CLOUDSERVICESPAGE("", ""),
 //        FILEBROWSERPAGE("", "");
 
         private final String fxmlFileName;
         private final String title;
+        private final Class<? extends ControlledScreen> controllerClass;
 
         /**
          * Set fxmlFileName and title
          *
          * @param fxmlFileName Fxml file name of the controller
          * @param title Title of the window
+         * @param clazz controller class type
          */
-        RegistrierterScreen(final String fxmlFileName, final String title) {
+        RegisteredScreen(final String fxmlFileName, final String title, final Class<? extends ControlledScreen> clazz) {
             this.fxmlFileName = fxmlFileName;
             this.title = Config.getResourceText(title);
+            controllerClass = clazz;
         }
 
         /**
@@ -55,6 +75,14 @@ public class JavaFxUtils {
          */
         public String getTitel() {
             return title;
+        }
+
+        /**
+         * Returns controller Class
+         * @return class type of controller
+         */
+        public Class<? extends ControlledScreen> getControllerClass(){
+            return controllerClass;
         }
     }
 }

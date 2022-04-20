@@ -12,16 +12,23 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url = 'https://europe-maven.pkg.dev/jxbrowser/releases' }
 }
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
-    testImplementation 'org.mockito:mockito-inline:4.3.1'
-    /* implementation 'de.jensd:fontawesomefx-commons:11.0'
-     compile 'de.jensd:fontawesomefx-fontawesome:4.7.0-9'
-     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
-     compile 'org.hildan.fxgson:fx-gson:4.0.1'*/
+    testImplementation 'org.mockito:mockito-inline:4.4.0'
+
+    implementation "de.jensd:fontawesomefx-fontawesome:4.7.0-9.1.2"
+
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'org.hildan.fxgson:fx-gson:4.0.1'
+    implementation 'com.dropbox.core:dropbox-core-sdk:5.2.0'
+
+
+    //implementation 'com.google.oauth-client:google-oauth-client-jetty:1.33.1'
+
 }
 
 test {
@@ -30,10 +37,10 @@ test {
 
 application {
     // Define the main class for the application.
-    mainClassName = 'ch.psc.presentation.PrettySecureCloud'
+    mainClass.set('ch.psc.PrettySecureCloud')
 }
 
 javafx {
     version = '17.0.2'
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web' ]
 }

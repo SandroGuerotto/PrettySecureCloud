@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.crypto.SecretKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ch.psc.domain.file.File;
+import ch.psc.domain.file.PscFile;
 import ch.psc.exceptions.FatalImplementationException;
 
 class CipherTest {
@@ -14,13 +14,13 @@ class CipherTest {
   private static final String AES_128_KEY = "7CC52B54762BFD9726DF44F0422AB34D";
   private static final String AES_192_KEY = "4D92199549E0F2EF009B4160F3582E5528A11A45017F3EF8";
 
-  private Cipher unimplementedCipher;
-  private Cipher aesCipher;
-  private File file;
+  private PscCipher unimplementedCipher;
+  private PscCipher aesCipher;
+  private PscFile file;
   
   @BeforeEach
   private void beforeEach() {
-    unimplementedCipher = new Cipher() {
+    unimplementedCipher = new PscCipher() {
       @Override
       public String getTransformation() {
         return null;
@@ -35,7 +35,7 @@ class CipherTest {
       }
     };
     
-    aesCipher = new Cipher() {
+    aesCipher = new PscCipher() {
       @Override
       public SecurityLevel getSecurityLevel() {
         return null;
@@ -50,7 +50,7 @@ class CipherTest {
       }
     };
     
-    file = new File();
+    file = new PscFile();
     file.setData("Hello World!".getBytes());
     file.setEncryptionState(EncryptionState.DECRYPTED);
     file.setName("Lorem Ipsum");
