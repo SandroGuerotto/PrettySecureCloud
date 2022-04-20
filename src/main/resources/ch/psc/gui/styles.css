@@ -63,15 +63,19 @@
 
 .button-login{
     -fx-background-color: rgba(0, 0, 0, 0);
-    -fx-font-size: 18;
+    -fx-font-size: 15;
     -fx-border-width: 1 2 2 1;
     -fx-border-color: -fx-main;
 }
 
 .passwordfield-login{
     -fx-background-color: rgba(0, 0, 0, 0);
-    -fx-border-width: 0 0 2 0;
+    /*-fx-border-width: 0 0 2 0;
     -fx-border-color: -fx-main;
+     */
+    -fx-border-color: transparent transparent -fx-main2 transparent;
+    -fx-border-width: 2;
+    -fx-outline: 0;
     -fx-prompt-text-fill: -fx-main2;
 }
 
@@ -84,7 +88,7 @@
 
 .button-register-login{
     -fx-background-color: rgba(0, 0, 0, 0);
-    -fx-font-size: 18;
+    -fx-font-size: 15;
     -fx-underline: true, -fx-main;
     -fx-text-fill: -fx-main;
 }

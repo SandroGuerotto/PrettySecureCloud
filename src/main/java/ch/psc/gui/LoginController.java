@@ -2,14 +2,19 @@ package ch.psc.gui;
 
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.util.JavaFxUtils;
+import ch.psc.presentation.Config;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.util.Map;
 
 /**
@@ -54,6 +59,12 @@ public class LoginController extends ControlledScreen {
 
     @FXML
     public void initialize(){
+        enterMailTextfield.setPromptText(Config.getResourceText("login.prompt.email"));
+        enterPasswordTextfield.setPromptText(Config.getResourceText("login.prompt.password"));
+        registerButton.setText(Config.getResourceText("login.button.register"));
+        loginButton.setText(Config.getResourceText("login.button.login"));
+        loginButton.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.SIGN_IN));
+        loginButton.setContentDisplay(ContentDisplay.LEFT);
     }
 
     /**
