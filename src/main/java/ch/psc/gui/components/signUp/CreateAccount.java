@@ -1,10 +1,13 @@
 package ch.psc.gui.components.signUp;
 
+import ch.psc.gui.util.JavaFxUtils;
 import ch.psc.presentation.Config;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.util.Arrays;
@@ -49,7 +52,12 @@ public class CreateAccount extends VBox implements SignUpFlow {
 
         Label title = new Label(Config.getResourceText("signup.title.createAccount"));
 
-        this.getChildren().addAll(title, usernameField, emailTextField, passwordTextField, passwordConfirmTextField);
+        this.getChildren().addAll(title,
+                JavaFxUtils.addIconBefore(usernameField, FontAwesomeIcon.USER, "signup-icon"),
+                JavaFxUtils.addIconBefore(emailTextField, FontAwesomeIcon.ENVELOPE, "signup-icon"),
+                JavaFxUtils.addIconBefore(passwordTextField, FontAwesomeIcon.KEY, "signup-icon"),
+                JavaFxUtils.addIconBefore(passwordConfirmTextField, FontAwesomeIcon.KEY, "signup-icon")
+        );
         this.setMinHeight(250);
     }
 
@@ -63,9 +71,13 @@ public class CreateAccount extends VBox implements SignUpFlow {
     @Override
     public void clear() {
         usernameField.clear();
+        removeErrorClass(usernameField);
         emailTextField.clear();
+        removeErrorClass(emailTextField);
         passwordConfirmTextField.clear();
+        removeErrorClass(passwordConfirmTextField);
         passwordTextField.clear();
+        removeErrorClass(passwordTextField);
     }
 
     /**
@@ -79,12 +91,21 @@ public class CreateAccount extends VBox implements SignUpFlow {
         if (validateIsEmpty(passwordConfirmTextField)) return false;
 
 
-        passwordConfirmTextField.getStyleClass().remove("error");
+        removeErrorClass(passwordConfirmTextField);
         if (!passwordTextField.getText().equals(passwordConfirmTextField.getText())) {
-            passwordConfirmTextField.getStyleClass().add("error");
+            addErrorClass(passwordConfirmTextField);
             return false;
         }
         return true;
+    }
+
+    private void removeErrorClass(Region region) {
+        region.getStyleClass().remove("error");
+    }
+
+    private void addErrorClass(Region region) {
+        region.getStyleClass().add("error");
+        region.requestFocus();
     }
 
     /**
@@ -94,9 +115,9 @@ public class CreateAccount extends VBox implements SignUpFlow {
      * @return true, if not empty
      */
     private boolean validateIsEmpty(TextField field) {
-        field.getStyleClass().remove("error");
+        removeErrorClass(field);
         if (field.getText().isEmpty()) {
-            field.getStyleClass().add("error");
+            addErrorClass(field);
             return true;
         }
         return false;
