@@ -72,13 +72,23 @@ public class LocalStorage implements FileStorage {
    */
   @Override
   public Tree<PscFile> getFileTree() {
-    Tree<PscFile> fileTree;
+    tree = new Tree<>();
+    long startTime = System.currentTimeMillis();
     ExecutorService executorService = Executors.newSingleThreadExecutor();
-    executorService.submit(()->{
+    Future<Tree<PscFile>> future = executorService.submit(()->{
       tree.getRoot().setValue(new PscFile());
       tree.getRoot().getValue().setPath(path);
       getSubtree(tree.getRoot());
+      return tree;
     });
+    while(!future.isDone()){
+      double elapsedTimeInMillis = System.currentTimeMillis() - startTime;
+    }
+    try {
+      tree = future.get();
+    }catch (InterruptedException | ExecutionException  e) {
+      e.printStackTrace();
+    }
     executorService.shutdown();
     return tree;
   }
