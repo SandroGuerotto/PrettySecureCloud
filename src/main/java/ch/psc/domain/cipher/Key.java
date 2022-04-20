@@ -2,14 +2,14 @@ package ch.psc.domain.cipher;
 
 public class Key {
   
-  private String key;
+  private byte[] key;
   private String type;
   
-  public String getKey() {
+  public byte[] getKey() {
     return key;
   }
   
-  public void setKey(String key) {
+  public void setKey(byte[] key) {
     this.key = key;
   }
   
