@@ -28,12 +28,6 @@ import java.util.Map;
 public class LoginController extends ControlledScreen {
 
     @FXML
-    private Button loginButton;
-
-    @FXML
-    private Button registerButton;
-
-    @FXML
     private TextField enterMailTextfield;
 
     @FXML
@@ -59,8 +53,6 @@ public class LoginController extends ControlledScreen {
 
     @FXML
     public void initialize(){
-        enterMailTextfield.setPromptText(Config.getResourceText("login.prompt.email"));
-        enterPasswordTextfield.setPromptText(Config.getResourceText("login.prompt.password"));
     }
 
     /**
