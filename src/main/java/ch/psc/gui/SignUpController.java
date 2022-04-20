@@ -1,6 +1,6 @@
 package ch.psc.gui;
 
-import ch.psc.domain.storage.service.*;
+import ch.psc.domain.storage.service.StorageService;
 import ch.psc.domain.user.User;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.components.signUp.SignUpFlowControl;
@@ -38,8 +38,7 @@ public class SignUpController extends ControlledScreen {
     @FXML
     private VBox signupFormPane;
 
-    public SignUpController(Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens,
-                            Stage primaryStage) {
+    public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
         super(primaryStage, screens);
         this.flowControl = new SignUpFlowControl();
     }
@@ -64,7 +63,11 @@ public class SignUpController extends ControlledScreen {
     private void cancel() {
         //clear all
         flowControl.clear();
-//            switchScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
+        try {
+            switchScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
+        } catch (ScreenSwitchException e) {
+            e.printStackTrace();
+        }
 
     }
 
