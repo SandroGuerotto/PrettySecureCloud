@@ -61,10 +61,6 @@ public class LoginController extends ControlledScreen {
     public void initialize(){
         enterMailTextfield.setPromptText(Config.getResourceText("login.prompt.email"));
         enterPasswordTextfield.setPromptText(Config.getResourceText("login.prompt.password"));
-        registerButton.setText(Config.getResourceText("login.button.register"));
-        loginButton.setText(Config.getResourceText("login.button.login"));
-        loginButton.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.SIGN_IN));
-        loginButton.setContentDisplay(ContentDisplay.LEFT);
     }
 
     /**

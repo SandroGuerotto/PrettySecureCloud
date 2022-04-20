@@ -17,7 +17,7 @@
                <children>
                   <FontAwesomeIconView glyphName="ENVELOPE" size="16" text="">
                   </FontAwesomeIconView>
-                  <TextField fx:id="enterMailTextfield" alignment="CENTER" promptText="user@email.com" styleClass="textfield-login">
+                  <TextField fx:id="enterMailTextfield" alignment="CENTER" prefWidth="250.0" promptText="user@email.com" styleClass="textfield-login">
                   </TextField>
                </children>
             </HBox>
@@ -25,15 +25,15 @@
                <children>
                   <FontAwesomeIconView glyphName="KEY" size="16">
                   </FontAwesomeIconView>
-                  <PasswordField fx:id="enterPasswordTextfield" alignment="CENTER" promptText="password" styleClass="passwordfield-login">
+                  <PasswordField fx:id="enterPasswordTextfield" alignment="CENTER" prefWidth="250.0" promptText="password" styleClass="passwordfield-login">
                   </PasswordField>
                </children>
             </HBox>
             <HBox alignment="CENTER" spacing="60.0">
                <children>
-                  <Button fx:id="registerButton" onAction="#register" styleClass="button-register-login" text="register">
+                  <Button fx:id="registerButton" onAction="#register" styleClass="button-register-login" text="%login.button.register">
                   </Button>
-                  <Button fx:id="loginButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#login" styleClass="button-login" text="login">
+                  <Button fx:id="loginButton" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#login" styleClass="button-login" text="%login.button.login">
                      <font>
                         <Font size="11.0" />
                      </font>
