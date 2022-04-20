@@ -1,6 +1,8 @@
 package ch.psc.domain.cipher;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -22,7 +24,7 @@ class PlainTextCipherTest {
     cipher = new PlainTextCipher();
     key = new Key();
     key.setKey("key".getBytes());
-    key.setType(cipher.getType());
+    key.setType(cipher.getAlgorythm());
     file1 = new File();
     file1.setData("Hello World!".getBytes());
     file1.setEncryptionState(EncryptionState.DECRYPTED);

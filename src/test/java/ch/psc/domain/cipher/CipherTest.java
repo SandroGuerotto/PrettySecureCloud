@@ -22,10 +22,6 @@ class CipherTest {
   private void beforeEach() {
     unimplementedCipher = new Cipher() {
       @Override
-      public String getType() {
-        return null;
-      }
-      @Override
       public String getTransformation() {
         return null;
       }
@@ -40,10 +36,6 @@ class CipherTest {
     };
     
     aesCipher = new Cipher() {
-      @Override
-      public String getType() {
-        return "AES";
-      }
       @Override
       public SecurityLevel getSecurityLevel() {
         return null;

@@ -11,15 +11,9 @@ import ch.psc.exceptions.FatalImplementationException;
  */
 public class PlainTextCipher extends Cipher {
   
-  private static final String TYPE = "Plain Text";
-  private static final String ALGORYTHM = "NONE";
+  private static final String ALGORYTHM = "";
   private static final String TRANSFORMATION = "";
   private static final SecurityLevel SECURITY_LEVEL = SecurityLevel.none;
-
-  @Override
-  public String getType() {
-    return TYPE;
-  }
 
   @Override
   public SecurityLevel getSecurityLevel() {
