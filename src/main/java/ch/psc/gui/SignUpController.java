@@ -1,6 +1,8 @@
 package ch.psc.gui;
 
+import ch.psc.domain.storage.service.FileStorage;
 import ch.psc.domain.storage.service.StorageService;
+import ch.psc.domain.storage.service.StorageServiceFactory;
 import ch.psc.domain.user.User;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.components.signUp.SignUpFlowControl;
@@ -71,6 +73,7 @@ public class SignUpController extends ControlledScreen {
 
     }
 
+
     /**
      * Collects all data from sign-up process and creates a new user.
      * Switches screen to file browser.
@@ -83,9 +86,13 @@ public class SignUpController extends ControlledScreen {
                         (Map<StorageService, Map<String, String>>) data.get(3)
                 );
         user.save();
+
+//        StorageManager.destroy();
+//        StorageManager.getInstance().initialize(user);
+        //switchScreen();
 //        example on how to use service
-//        FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
-//        dropbox.getFileTree();
+        FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
+        dropbox.getFileTree();
 //        new StorageManager(user);
 //        registerMainPane.getScene().setRoot(screens.get(Screens.FILE_BROWSER)); //TODO
     }

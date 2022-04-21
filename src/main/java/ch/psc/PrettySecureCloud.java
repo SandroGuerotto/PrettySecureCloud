@@ -33,6 +33,8 @@ public class PrettySecureCloud extends Application {
     public void start(Stage primaryStage) {
         Optional<User> user = loadUser(); // TODO user handling
 
+
+
         this.primaryStage = primaryStage;
         loadAllControlledScreens();
         setStartScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);

@@ -1,20 +1,15 @@
 package ch.psc.gui;
 
+import ch.psc.domain.user.AuthService;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.util.Map;
 
 /**
@@ -27,6 +22,8 @@ import java.util.Map;
 
 public class LoginController extends ControlledScreen {
 
+    private AuthService authService;
+
     @FXML
     private TextField enterMailTextfield;
 
@@ -37,6 +34,7 @@ public class LoginController extends ControlledScreen {
     private HBox loginPane;
 
     public LoginController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
+
         super(primaryStage, screens);
     }
 
@@ -52,7 +50,8 @@ public class LoginController extends ControlledScreen {
 
 
     @FXML
-    public void initialize(){
+    public void initialize() {
+
     }
 
     /**
@@ -74,11 +73,14 @@ public class LoginController extends ControlledScreen {
      * Logindata of user will be checked and if approved the filebrowser will be shown.
      */
     @FXML
-    private void login(){
-            enterMailTextfield.getText();
-            enterPasswordTextfield.getText();
-            //Todo: Validation of login
-
+    private void login() {
+        enterMailTextfield.getText();
+        enterPasswordTextfield.getText();
+        //Todo: Validation of login
+//        User.setUser(authService.authticate("blasd", "gblaksedf"));
+        // authService.auth(user) -> user
+//        StorageManager.destroy();
+//        StorageManager.getInstance().initialize(user);
 
     }
 

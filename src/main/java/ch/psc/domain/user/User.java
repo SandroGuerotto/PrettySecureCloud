@@ -1,3 +1,4 @@
+
 package ch.psc.domain.user;
 
 import ch.psc.datasource.JSONWriterReader;
@@ -42,7 +43,7 @@ public class User {
     }
 
     /**
-     * Saves data to a JSON file
+     * Saves data to a JSON file (temporär)
      */
     public void save() {
         new JSONWriterReader().writeToJson("user.json", this);
