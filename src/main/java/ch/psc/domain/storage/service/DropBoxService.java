@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
  */
 public class DropBoxService extends CloudService {
 
-    private static final String DROPBOX_PSC_APP = "dropbox-psc.app";
+    private static final String DROPBOX_PSC_APP = "configs/dropbox-psc.app";
     public static final String PRETTY_SECURE_CLOUD = "Pretty-Secure-Cloud";
     private DbxClientV2 client;
 

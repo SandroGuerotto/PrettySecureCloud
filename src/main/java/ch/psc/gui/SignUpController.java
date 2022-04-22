@@ -1,9 +1,12 @@
 package ch.psc.gui;
 
+import ch.psc.domain.common.context.UserContext;
 import ch.psc.domain.storage.service.FileStorage;
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.domain.storage.service.StorageServiceFactory;
+import ch.psc.domain.user.AuthService;
 import ch.psc.domain.user.User;
+import ch.psc.exceptions.AuthenticationException;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.components.signUp.SignUpFlowControl;
 import ch.psc.gui.util.JavaFxUtils;
@@ -33,16 +36,25 @@ import java.util.stream.IntStream;
 public class SignUpController extends ControlledScreen {
 
 
-    private final SignUpFlowControl flowControl;
+    private SignUpFlowControl flowControl;
+    private final AuthService authService;
 
     @FXML
     private HBox signupMainPane;
     @FXML
     private VBox signupFormPane;
 
-    public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
+    public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthService authService) {
         super(primaryStage, screens);
-        this.flowControl = new SignUpFlowControl();
+        this.authService = authService;
+        flowControl = new SignUpFlowControl();
+    }
+
+    @Override
+    protected boolean init(JavaFxUtils.RegisteredScreen previousScreen, Object... params) {
+        flowControl = new SignUpFlowControl();
+        initialize();
+        return super.init(previousScreen, params);
     }
 
     @FXML
@@ -63,8 +75,6 @@ public class SignUpController extends ControlledScreen {
      * Clear all data and switches back to login page.
      */
     private void cancel() {
-        //clear all
-        flowControl.clear();
         try {
             switchScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
         } catch (ScreenSwitchException e) {
@@ -85,16 +95,15 @@ public class SignUpController extends ControlledScreen {
                         (String) data.get(0), (String) data.get(1), (String) data.get(2),
                         (Map<StorageService, Map<String, String>>) data.get(3)
                 );
-        user.save();
-
-//        StorageManager.destroy();
-//        StorageManager.getInstance().initialize(user);
-        //switchScreen();
+        try {
+            UserContext.setAuthorizedUser(authService.signup(user));
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+        }
+        //switchScreen(Screens.FILE_BROWSER);
 //        example on how to use service
         FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
         dropbox.getFileTree();
-//        new StorageManager(user);
-//        registerMainPane.getScene().setRoot(screens.get(Screens.FILE_BROWSER)); //TODO
     }
 
     /**

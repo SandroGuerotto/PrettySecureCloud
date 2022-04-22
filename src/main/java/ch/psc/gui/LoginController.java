@@ -1,6 +1,9 @@
 package ch.psc.gui;
 
+import ch.psc.domain.common.context.UserContext;
 import ch.psc.domain.user.AuthService;
+import ch.psc.domain.user.User;
+import ch.psc.exceptions.AuthenticationException;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.util.JavaFxUtils;
 import javafx.fxml.FXML;
@@ -22,7 +25,7 @@ import java.util.Map;
 
 public class LoginController extends ControlledScreen {
 
-    private AuthService authService;
+    private final AuthService authService;
 
     @FXML
     private TextField enterMailTextfield;
@@ -33,9 +36,10 @@ public class LoginController extends ControlledScreen {
     @FXML
     private HBox loginPane;
 
-    public LoginController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
+    public LoginController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthService authService) {
 
         super(primaryStage, screens);
+        this.authService = authService;
     }
 
     @Override
@@ -77,7 +81,17 @@ public class LoginController extends ControlledScreen {
         enterMailTextfield.getText();
         enterPasswordTextfield.getText();
         //Todo: Validation of login
-//        User.setUser(authService.authticate("blasd", "gblaksedf"));
+        try {
+            User user = authService.authenticate(enterMailTextfield.getText(), enterPasswordTextfield.getText());
+            UserContext.setAuthorizedUser(user);
+            System.out.println(user.getMail());
+            //switchScreen(Screens.FILE_BROWSER);
+//        example on how to use service
+//            FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
+//            dropbox.getFileTree();
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+        }
         // authService.auth(user) -> user
 //        StorageManager.destroy();
 //        StorageManager.getInstance().initialize(user);

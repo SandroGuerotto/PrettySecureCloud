@@ -101,12 +101,4 @@ public class SignUpFlowControl {
         return isCanceled.get();
     }
 
-    /**
-     * Iterates over all registered forms and invokes their clear method.
-     */
-    public void clear() {
-        currentPosition.set(0);
-        flow.forEach(SignUpFlow::clear);
-    }
-
 }

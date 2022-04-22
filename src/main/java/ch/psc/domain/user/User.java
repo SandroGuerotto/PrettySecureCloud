@@ -1,7 +1,6 @@
 
 package ch.psc.domain.user;
 
-import ch.psc.datasource.JSONWriterReader;
 import ch.psc.domain.storage.service.StorageService;
 
 import java.util.Map;
@@ -40,13 +39,6 @@ public class User {
 
     public Map<StorageService, Map<String, String>> getStorageServiceConfig() {
         return storageServiceConfig;
-    }
-
-    /**
-     * Saves data to a JSON file (temporär)
-     */
-    public void save() {
-        new JSONWriterReader().writeToJson("user.json", this);
     }
 
 }

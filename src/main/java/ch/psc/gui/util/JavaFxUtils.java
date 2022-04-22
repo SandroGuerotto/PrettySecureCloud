@@ -1,8 +1,5 @@
 package ch.psc.gui.util;
 
-import ch.psc.gui.ControlledScreen;
-import ch.psc.gui.LoginController;
-import ch.psc.gui.SignUpController;
 import ch.psc.presentation.Config;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -54,27 +51,24 @@ public class JavaFxUtils {
      */
     public enum RegisteredScreen {
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
-        LOGIN_PAGE("login.fxml", "login.titel", LoginController.class),
-        SIGNUP_PAGE("signUp.fxml", "signup.titel", SignUpController.class);
+        LOGIN_PAGE("login.fxml", "login.titel"),
+        SIGNUP_PAGE("signUp.fxml", "signup.titel");
 
 //        CLOUDSERVICESPAGE("", ""),
 //        FILEBROWSERPAGE("", "");
 
         private final String fxmlFileName;
         private final String title;
-        private final Class<? extends ControlledScreen> controllerClass;
 
         /**
          * Set fxmlFileName and title
          *
          * @param fxmlFileName Fxml file name of the controller
          * @param title Title of the window
-         * @param clazz controller class type
          */
-        RegisteredScreen(final String fxmlFileName, final String title, final Class<? extends ControlledScreen> clazz) {
+        RegisteredScreen(final String fxmlFileName, final String title) {
             this.fxmlFileName = fxmlFileName;
             this.title = Config.getResourceText(title);
-            controllerClass = clazz;
         }
 
         /**
@@ -95,12 +89,5 @@ public class JavaFxUtils {
             return title;
         }
 
-        /**
-         * Returns controller Class
-         * @return class type of controller
-         */
-        public Class<? extends ControlledScreen> getControllerClass(){
-            return controllerClass;
-        }
     }
 }
