@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.PasswordField?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ButtonBar?>
+
+
+<?import javafx.scene.control.TreeView?>
+
+<?import javafx.scene.control.TreeItem?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.TextArea?>
+<BorderPane fx:id="fileBrowser" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <HBox HBox.hgrow="ALWAYS">
+         <Button alignment="CENTER_RIGHT" mnemonicParsing="false"  styleClass="button-login" text="%login.button.login"/>
+         <Button layoutX="40.0" layoutY="360.0" mnemonicParsing="false" text="Settings"/>
+         <Button text="Help" layoutX="55.0" layoutY="400.0" ButtonBar.buttonData="LEFT"/>
+      </HBox>
+   </top>
+   <right>
+      <VBox>
+         <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: white;">
+            <Label text="Drag Something from your Desktop" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+         </HBox>
+         <StackPane BorderPane.alignment="CENTER">
+            <TextArea fx:id="textArea" prefHeight="350.0" prefWidth="200.0" />
+         </StackPane>
+      </VBox>
+      <!--      <FileBrowserTable fx:id="fileTree" prefHeight="200.0" VBox.vgrow="ALWAYS"/>-->
+   </right>
+   <center>
+      <VBox VBox.vgrow="ALWAYS">
+         <BorderPane.margin>
+            <Insets bottom="10.0"/>
+         </BorderPane.margin>
+         <TreeView fx:id = "treeView">
+         </TreeView>
+         <VBox.margin>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="20.0"/>
+         </VBox.margin>
+      </VBox>
+   </center>
+</BorderPane>

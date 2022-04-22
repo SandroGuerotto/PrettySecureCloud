@@ -2,6 +2,7 @@ package ch.psc.gui.util;
 
 import ch.psc.gui.ControlledScreen;
 import ch.psc.gui.LoginController;
+import ch.psc.gui.FileBrowserController;
 import ch.psc.gui.SignUpController;
 import ch.psc.presentation.Config;
 
@@ -39,10 +40,11 @@ public class JavaFxUtils {
     public enum RegisteredScreen {
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
         LOGIN_PAGE("login.fxml", "login.titel", LoginController.class),
-        SIGNUP_PAGE("signUp.fxml", "signup.titel", SignUpController.class);
+        SIGNUP_PAGE("signUp.fxml", "signup.titel", SignUpController.class),
+        FILEBROWSERPAGE("fileBrowser.fxml", "signup.titel", FileBrowserController.class);
 
 //        CLOUDSERVICESPAGE("", ""),
-//        FILEBROWSERPAGE("", "");
+
 
         private final String fxmlFileName;
         private final String title;

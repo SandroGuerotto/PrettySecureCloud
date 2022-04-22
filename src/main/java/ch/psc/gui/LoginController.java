@@ -64,7 +64,7 @@ public class LoginController extends ControlledScreen {
         enterPasswordTextfield.clear();
 
         try {
-            switchScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE);
+            switchScreen(JavaFxUtils.RegisteredScreen.FILEBROWSERPAGE);
         } catch (ScreenSwitchException e) {
             e.printStackTrace(); //Fehlermeldung an GUI mitgeben
         }
