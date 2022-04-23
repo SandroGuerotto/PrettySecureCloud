@@ -24,14 +24,14 @@ class PlainTextCipherTest {
     cipher = new PlainTextCipher();
     key = new Key();
     key.setKey("key".getBytes());
-    key.setType(cipher.getAlgorythm());
+    key.setType(cipher.getAlgorithm());
     file1 = new PscFile();
     file1.setData("Hello World!".getBytes());
     file1.setEncryptionState(EncryptionState.DECRYPTED);
     file1.setName("file1");
     file1.setPath("test/file1");
     file2 = new PscFile();
-    file2.setData("üöä!£$ü?+\"*ç%&/()=<>^~".getBytes());
+    file2.setData("ï¿½ï¿½ï¿½!ï¿½$ï¿½?+\"*ï¿½%&/()=<>^~".getBytes());
     file2.setEncryptionState(EncryptionState.DECRYPTED);
     file2.setName("file2");
     file2.setPath("dvelop.ch/file2");

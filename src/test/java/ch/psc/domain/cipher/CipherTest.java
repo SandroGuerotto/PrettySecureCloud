@@ -30,7 +30,7 @@ class CipherTest {
         return null;
       }
       @Override
-      public String getAlgorythm() {
+      public String getAlgorithm() {
         return null;
       }
     };
@@ -41,7 +41,7 @@ class CipherTest {
         return null;
       }
       @Override
-      public String getAlgorythm() {
+      public String getAlgorithm() {
         return "AES";
       }
       @Override

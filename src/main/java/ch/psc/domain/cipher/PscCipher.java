@@ -43,7 +43,7 @@ public abstract class PscCipher {
    * 
    * @return Name of the cryptographic algorithm
    */
-  public abstract String getAlgorythm();
+  public abstract String getAlgorithm();
   
   /**
    * Provides the Algorithm, Mode and Padding in the format "Algo/Mode/Padding". 
@@ -185,7 +185,7 @@ public abstract class PscCipher {
    * @return {@link SecretKey} which can be used with {@link javax.crypto.Cipher}s.
    */
   protected SecretKey generateKey(Key key) {
-    SecretKey secretKey = new SecretKeySpec(key.getKey(), getAlgorythm());
+    SecretKey secretKey = new SecretKeySpec(key.getKey(), getAlgorithm());
     return secretKey;
   }
 }
