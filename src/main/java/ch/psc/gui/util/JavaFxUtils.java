@@ -54,8 +54,8 @@ public class JavaFxUtils {
      */
     public enum RegisteredScreen {
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
-        LOGIN_PAGE("login.fxml", "login.titel", LoginController.class),
-        SIGNUP_PAGE("signUp.fxml", "signup.titel", SignUpController.class);
+        LOGIN_PAGE("login.fxml", "login.title", LoginController.class),
+        SIGNUP_PAGE("signUp.fxml", "signup.title", SignUpController.class);
 
 //        CLOUDSERVICESPAGE("", ""),
 //        FILEBROWSERPAGE("", "");

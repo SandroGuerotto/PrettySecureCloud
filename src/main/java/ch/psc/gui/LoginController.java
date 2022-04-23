@@ -1,20 +1,19 @@
 package ch.psc.gui;
 
 import ch.psc.exceptions.ScreenSwitchException;
+import ch.psc.gui.components.validator.RegexValidator;
 import ch.psc.gui.util.JavaFxUtils;
 import ch.psc.presentation.Config;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import com.jfoenix.controls.JFXPasswordField;
+import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.validation.RequiredFieldValidator;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.util.Map;
 
 /**
@@ -28,10 +27,10 @@ import java.util.Map;
 public class LoginController extends ControlledScreen {
 
     @FXML
-    private TextField enterMailTextfield;
+    private JFXTextField enterMailTextfield;
 
     @FXML
-    private PasswordField enterPasswordTextfield;
+    private JFXPasswordField enterPasswordTextfield;
 
     @FXML
     private HBox loginPane;
@@ -53,7 +52,33 @@ public class LoginController extends ControlledScreen {
 
     @FXML
     public void initialize(){
+        //Textfelder aus FXML mitgeben
+        //Pane alle Children mitgeben. Textfelder rauslöschen (Alle Elemente ausser Textfielder)
+        //addIconBefore in Liste mit Index, damit neue Textfelder an richtiger Stelle sind
+
+        RequiredFieldValidator inputMailValidator = new RequiredFieldValidator();
+        inputMailValidator.setMessage(Config.getResourceText("login.errorlabel.emailrequired"));
+        //inputMailValidator.setIcon(new FontAwesomeIconView(FontAwesomeIcon.WARNING));
+        enterMailTextfield.getValidators().add(inputMailValidator);
+        enterMailTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> o, Boolean oldVal, Boolean newValue) {
+                if (!newValue) enterMailTextfield.validate(); //wenn kein neuer Value, dann validate
+            }
+        });
+
+        RequiredFieldValidator inputPasswordValidator = new RequiredFieldValidator();
+        inputPasswordValidator.setMessage(Config.getResourceText("login.errorlabel.passwordrequired"));
+        enterPasswordTextfield.getValidators().add(inputPasswordValidator);
+        enterPasswordTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(!newValue) enterPasswordTextfield.validate();
+            }
+        });
+
     }
+
 
     /**
      * Register screen will be shown.
@@ -75,10 +100,15 @@ public class LoginController extends ControlledScreen {
      */
     @FXML
     private void login(){
-            enterMailTextfield.getText();
-            enterPasswordTextfield.getText();
-            //Todo: Validation of login
-
+        //if(EmailValidator.getInstance().isValid(enterMailTextfield.getText())){}
+            RegexValidator inputMailValidator = new RegexValidator();
+            inputMailValidator.setMessage(Config.getResourceText("login.errorlabel.emailnotvalid"));
+            inputMailValidator.setRegexPattern("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
+            enterMailTextfield.getValidators().add(inputMailValidator);
+            if (enterMailTextfield.validate()){
+                enterPasswordTextfield.getText();
+                //Todo: Validation of login
+            }
 
     }
 

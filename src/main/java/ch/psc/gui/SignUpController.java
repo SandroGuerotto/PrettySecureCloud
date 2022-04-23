@@ -6,13 +6,16 @@ import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.components.signUp.SignUpFlowControl;
 import ch.psc.gui.util.JavaFxUtils;
 import ch.psc.presentation.Config;
+import com.jfoenix.controls.JFXButton;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
+//import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -50,7 +53,12 @@ public class SignUpController extends ControlledScreen {
                 buildControl();
             }
         });
-        flowControl.isDoneProperty().addListener((observable, old, newValue) -> finish());
+        flowControl.isDoneProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean old, Boolean newValue) {
+                SignUpController.this.finish();
+            }
+        });
         flowControl.isCanceledProperty().addListener((observable, old, newValue) -> {
             if (newValue) cancel();
         });
@@ -101,11 +109,11 @@ public class SignUpController extends ControlledScreen {
         pane.setPadding(new Insets(15, 0, 0, 0));
         pane.setAlignment(Pos.CENTER);
         pane.setHgap(20);
-        Button prev = new Button(Config.getResourceText("signup.previous"));
+        JFXButton prev = new JFXButton(Config.getResourceText("signup.previous"));
         prev.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.ARROW_LEFT));
         prev.getStyleClass().add("control-button");
 
-        Button next = new Button(Config.getResourceText("signup.next"));
+        JFXButton next = new JFXButton(Config.getResourceText("signup.next"));
         next.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.ARROW_RIGHT));
         next.setContentDisplay(ContentDisplay.RIGHT);
         next.getStyleClass().add("control-button");
