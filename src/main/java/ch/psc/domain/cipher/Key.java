@@ -4,23 +4,18 @@ import javax.crypto.SecretKey;
 
 public class Key {
 
-  private SecretKey key;
-  private String type;
-  
+  private final SecretKey key;
+
+  public Key(SecretKey secretKey){
+    this.key = secretKey;
+  }
+
   public SecretKey getKey() {
     return key;
   }
 
-  public void setKey(SecretKey key) {
-    this.key = key;
-  }
-  
   public String getType() {
-    return type;
+    return key.getAlgorithm();
   }
-  
-  public void setType(String type) {
-    this.type = type;
-  }
-  
+
 }

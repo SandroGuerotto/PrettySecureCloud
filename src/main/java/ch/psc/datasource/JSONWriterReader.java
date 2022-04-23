@@ -1,7 +1,10 @@
 package ch.psc.datasource;
 
+import ch.psc.domain.cipher.SecretKeySerialization;
 import org.hildan.fxgson.FxGson;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -28,8 +31,11 @@ public class JSONWriterReader {
     public boolean writeToJson(String filePath, Object object) {
 
         try (FileWriter writer = new FileWriter(filePath)) {
+            SecretKeySerialization secretKeySerializer = new SecretKeySerialization();
             String json = FxGson.coreBuilder()
                     .setPrettyPrinting()
+                    .registerTypeAdapter(SecretKey.class, secretKeySerializer)
+                    .registerTypeAdapter(SecretKeySpec.class, secretKeySerializer)
                     .create().toJson(object);
 
             writer.write(json);
@@ -51,6 +57,10 @@ public class JSONWriterReader {
      */
     public <T> T readFromJson(String path, Class<T> clazz) throws IOException {
         Reader reader = Files.newBufferedReader(Paths.get(path));
-        return FxGson.create().fromJson(reader, clazz);
+        SecretKeySerialization secretKeySerialization = new SecretKeySerialization();
+        return FxGson.coreBuilder()
+                .registerTypeAdapter(SecretKey.class, secretKeySerialization)
+                .registerTypeAdapter(SecretKeySpec.class, secretKeySerialization)
+                .create().fromJson(reader, clazz);
     }
 }

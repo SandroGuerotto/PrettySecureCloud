@@ -17,7 +17,9 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -44,101 +46,23 @@ import java.util.stream.Collectors;
 
 public class KeyGenerator {
 
-    private static final int TO_INDEX = 1;
 
-    public Key generateKey(int keyBits, String algorithm) throws FatalImplementationException{
+    public Map<String, Key> generateKey(int keyBits, String algorithm) throws FatalImplementationException{
 
-        Key skey = new Key();
-        skey.setType(algorithm);
+        Map<String, Key> keyChain = new HashMap();
 
         try {
             javax.crypto.KeyGenerator keyGenerator = javax.crypto.KeyGenerator.getInstance(algorithm);
             keyGenerator.init(keyBits); // 128, 192 or 256 for AES
             SecretKey secretKey = keyGenerator.generateKey();
-            skey.setKey(secretKey);
+            //TODO currently only for 1 key, for 2 keys a loop must be considered here for each key to be added to the map
+            Key key = new Key(secretKey);
+            keyChain.put(algorithm, key);
         } catch (NoSuchAlgorithmException e) {
             throw new FatalImplementationException("Transformation '" + algorithm + "' does not exist!", e);
         }
 
-        return skey;
-    }
-
-    // This would be an option for RSA
-    public IvParameterSpec generateInitVector(int keyBytes){
-        SecureRandom srandom = new SecureRandom();
-        byte[] iv = new byte[keyBytes];
-        srandom.nextBytes(iv);
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
-        return ivParameterSpec;
-    }
-
-    public File loadLatestKeyFile(File keyFolder) {
-        //File keyFolder = new File("src/main/resources/KeyChain"); to be provided by caller, see parameter
-        try {
-            List<File> filesInFolder = Files.walk(Paths.get(String.valueOf(keyFolder)))
-                    .filter(Files::isRegularFile)
-                    .map(Path::toFile)
-                    .collect(Collectors.toList());
-            if (filesInFolder.size() != 0) {
-                File latestKeyFile = filesInFolder.get(filesInFolder.size() - TO_INDEX);
-                List<String> content = Files.readAllLines(Paths.get(String.valueOf(latestKeyFile)), Charset.defaultCharset());
-                if(content.size()==3){
-                    String keyAsString = content.get(0);
-                    String createdOnString = content.get(2);
-                    System.out.println("Key = '" + keyAsString + "' (" + createdOnString + ")");
-
-                } else {
-                    System.out.println("Provided key file does not match the required structure.");
-                }
-
-                return latestKeyFile;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public File saveCreatedKey(File keyFolder, Key skey) {
-        //keyFolder = new File("src/main/resources/KeyChain");
-        File newArchiveFile = createNewKeyFile(keyFolder, skey);
-        byte[] lineSeparator = System.getProperty("line.separator").getBytes(); // absatzbefehl in bytes
-        try {
-            FileOutputStream fos = new FileOutputStream(newArchiveFile, true);  // true for append mode
-            fos.write(convertSecretKeyToString(skey.getKey().getEncoded()).getBytes());
-            fos.write("\n******************************************************".getBytes());
-            fos.write(lineSeparator);
-            fos.write("CREATED ON ".getBytes());
-            String now = Instant.now().toString();
-            fos.write(now.getBytes());
-            fos.flush();
-            fos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return newArchiveFile;
-    }
-
-    private File createNewKeyFile(File keyFolder, Key skey) {
-
-        //File keyFolder = new File("src/main/resources/KeyChain"); - to be provided by caller, see parameter
-        String algo = skey.getType();
-        String dateToday = DateTimeFormatter.ofPattern("dd.MM.yyyy").withZone(ZoneId.systemDefault()).format(Instant.now());
-        String createdOn = DateTimeFormatter.ofPattern("HHmmss").withZone(ZoneId.systemDefault()).format(Instant.now());
-        File newKeyFile = new File(keyFolder.getPath() + "/keyFile_" + algo + "_" + dateToday + "_" + createdOn);
-        boolean successfullyCreated;
-        try {
-            //logging hinzufügen
-            successfullyCreated = newKeyFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return newKeyFile;
-    }
-
-    private static String convertSecretKeyToString(byte[] secretKey) throws NoSuchAlgorithmException {
-        String encodedKey = Base64.getEncoder().encodeToString(secretKey);
-        return encodedKey;
+        return keyChain;
     }
 
 }

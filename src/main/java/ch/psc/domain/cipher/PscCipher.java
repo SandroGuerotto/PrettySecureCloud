@@ -5,15 +5,13 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.*;
+
 import ch.psc.domain.file.PscFile;
 import ch.psc.exceptions.FatalImplementationException;
 
@@ -36,6 +34,13 @@ public abstract class PscCipher {
    * @return Level of security
    */
   public abstract SecurityLevel getSecurityLevel();
+
+  /**
+   * Returns the amount of bits required for the relevant algorithm.
+   *
+   * @return int number of bits
+   */
+  public abstract int getKeyBits();
   
   /**
    * The name of the cryptographic algorithm (e.g.: AES, RSA).
@@ -43,8 +48,8 @@ public abstract class PscCipher {
    * 
    * @return Name of the cryptographic algorithm
    */
-  public abstract String getAlgorythm();
-  
+  public abstract String getAlgorithm();
+
   /**
    * Provides the Algorithm, Mode and Padding in the format "Algo/Mode/Padding". 
    * See following sections for a List of combinations:
@@ -65,7 +70,7 @@ public abstract class PscCipher {
    * @return A List of {@link Future}s. Each {@link PscFile} is encrypted asynchronous, the result may be requested through the Future.
    */
   public List<Future<PscFile>> encrypt(Key key, List<PscFile> files) {
-    SecretKey secretKey = generateKey(key);
+    SecretKey secretKey = key.getKey();
     List<Future<PscFile>> encryptedFutures = new LinkedList<>();
     
     files.forEach( file -> {
@@ -85,7 +90,7 @@ public abstract class PscCipher {
    * @return A List of {@link Future}s. Each {@link PscFile} is decrypted asynchronous, the result may be requested through the Future.
    */
   public List<Future<PscFile>> decrypt(Key key, List<PscFile> files) {
-    SecretKey secretKey = generateKey(key);
+    SecretKey secretKey = key.getKey();
     List<Future<PscFile>> decryptedFiles = new LinkedList<>();
     
     files.forEach( file -> {
@@ -93,7 +98,7 @@ public abstract class PscCipher {
       decryptedFiles.add(decryptionTask);
       executor.execute(decryptionTask);
     });
-      
+
     return decryptedFiles;
   }
   
@@ -179,13 +184,14 @@ public abstract class PscCipher {
   }
   
   /**
-   * Creates a {@link SecretKey} from a {@link Key}. {@link SecretKey}s are required for working with {@link javax.crypto.Cipher}s.
-   * 
-   * @param key {@link Key} containing the secret of this algorithm.
-   * @return {@link SecretKey} which can be used with {@link javax.crypto.Cipher}s.
+   * Creates a {@link Key} from a {@link Key} which contains {@link SecretKey}s in order to work with {@link javax.crypto.Cipher}s.
+   *
+   * @return {@link Key} which can be used with {@link javax.crypto.Cipher}s.
    */
-  protected SecretKey generateKey(Key key) {
-    SecretKey secretKey = new SecretKeySpec(key.getKey(), getAlgorythm());
-    return secretKey;
+  public Map<String, Key> generateKey() throws ch.psc.domain.error.FatalImplementationException {
+    KeyGenerator keyGenerator = new KeyGenerator();
+    return keyGenerator.generateKey(getKeyBits(), getAlgorithm());
   }
+
+
 }
