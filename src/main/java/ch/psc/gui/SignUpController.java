@@ -1,5 +1,6 @@
 package ch.psc.gui;
 
+import ch.psc.domain.cipher.Key;
 import ch.psc.domain.common.context.UserContext;
 import ch.psc.domain.storage.service.FileStorage;
 import ch.psc.domain.storage.service.StorageService;
@@ -93,7 +94,7 @@ public class SignUpController extends ControlledScreen {
         User user =
                 new User(
                         (String) data.get(0), (String) data.get(1), (String) data.get(2),
-                        (Map<StorageService, Map<String, String>>) data.get(3)
+                        (Map<StorageService, Map<String, String>>) data.get(4), (Map<String, Key>) data.get(3)
                 );
         try {
             UserContext.setAuthorizedUser(authService.signup(user));

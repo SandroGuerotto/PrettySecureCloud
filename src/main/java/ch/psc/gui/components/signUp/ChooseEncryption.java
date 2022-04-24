@@ -1,12 +1,14 @@
 package ch.psc.gui.components.signUp;
 
+import ch.psc.domain.cipher.Key;
 import ch.psc.presentation.Config;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.*;
+
 /**
  * Handles all user data to customize his encryption.
  * The user can choose what level of encryption he wants to use for encrypting his data.
@@ -26,7 +28,9 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
 
     @Override
     public List<Object> getData() {
-        return new ArrayList<>();
+        Map<String, Key> encryption = new HashMap<>();
+        encryption.put("Test",new Key(new SecretKeySpec("test".getBytes(), "MD5")));
+        return Collections.singletonList(encryption);
     }
 
     @Override

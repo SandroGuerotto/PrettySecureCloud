@@ -27,7 +27,7 @@ public class JSONWriterReaderTest {
         cut = new JSONWriterReader();
         Map<StorageService, Map<String, String>> services = new HashMap<>();
         services.put(StorageService.DROPBOX, Collections.singletonMap("token", "abc"));
-        userData = new User("testname", "mail", "password", services);
+        userData = new User("testname", "mail", "password", services, null );
     }
 
     @AfterEach
