@@ -10,6 +10,8 @@ public class PscFile {
   
   private byte[] data;
   
+  private byte[] nonce;
+  
   private EncryptionState encryptionState;
   
   public int getFileSize() {
@@ -39,6 +41,14 @@ public class PscFile {
 
   public void setData(byte[] data) {
     this.data = data;
+  }
+
+  public byte[] getNonce() {
+    return nonce;
+  }
+  
+  public void setNonce(byte[] nonce) {
+    this.nonce = nonce;
   }
   
   public EncryptionState getEncryptionState() {
