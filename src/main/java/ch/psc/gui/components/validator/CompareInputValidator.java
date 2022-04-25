@@ -3,6 +3,12 @@ package ch.psc.gui.components.validator;
 import com.jfoenix.validation.base.ValidatorBase;
 import javafx.scene.control.TextInputControl;
 
+/**
+ * Compares to string inputs.
+ * @author bananasprout
+ */
+
+
 public class CompareInputValidator extends ValidatorBase {
 
     public CompareInputValidator(String message) {
@@ -25,9 +31,9 @@ public class CompareInputValidator extends ValidatorBase {
     private void evalTextInputField(){
         TextInputControl textField = (TextInputControl) srcControl.get();
         if(textField.getText().equals(comparingText)){
-            hasErrors.set(true);
-        }else{
             hasErrors.set(false);
+        }else{
+            hasErrors.set(true);
         }
     }
 

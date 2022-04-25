@@ -32,7 +32,6 @@ public class CreateAccount extends VBox implements SignUpFlow {
     private final JFXTextField emailTextField;
     private final JFXPasswordField passwordTextField;
     private final JFXPasswordField passwordConfirmTextField;
-    private boolean tempVariableForRefactoring;
 
     /**
      * Creates an account creation screen.
@@ -50,12 +49,13 @@ public class CreateAccount extends VBox implements SignUpFlow {
      * Initializes form and creates input field for creating a new account.
      */
     private void initialize() {
-        this.setSpacing(40);
+        this.setSpacing(40); //TODO: make appearance of textfields unified (in login and signup window)
         this.setPadding(new Insets(10, 20, 10, 20));
 
         usernameField.setPromptText(Config.getResourceText("signup.prompt.username"));
+        //Username field should not be empty
         RequiredFieldValidator requiredUserNameValidator = new RequiredFieldValidator();
-        requiredUserNameValidator.setMessage("Please enter a username");
+        requiredUserNameValidator.setMessage(Config.getResourceText("signup.errorLabel.usernameRequired"));
         usernameField.getValidators().add(requiredUserNameValidator);
         usernameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -66,11 +66,13 @@ public class CreateAccount extends VBox implements SignUpFlow {
 
 
         emailTextField.setPromptText(Config.getResourceText("signup.prompt.email"));
+        //Email address field should not be empty
         RequiredFieldValidator requiredEmailValidator = new RequiredFieldValidator();
-        requiredEmailValidator.setMessage("Please enter an email adress");
+        requiredEmailValidator.setMessage(Config.getResourceText("signup.errorLabel.emailRequired"));
         emailTextField.getValidators().add(requiredEmailValidator);
+        //Email address should be valid
         RegexValidator inputMailValidator = new RegexValidator();
-        inputMailValidator.setMessage(Config.getResourceText("login.errorlabel.emailnotvalid"));
+        inputMailValidator.setMessage(Config.getResourceText("signup.errorLabel.emailNotValid"));
         inputMailValidator.setRegexPattern("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
 
         emailTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
@@ -82,32 +84,32 @@ public class CreateAccount extends VBox implements SignUpFlow {
         });
 
 
-
-
-
         passwordTextField.setPromptText(Config.getResourceText("signup.prompt.enterPassword"));
         RegexValidator passwordValidator = new RegexValidator();
         //Regex, password must contain at least one digit from 0-9, spaces are not allowed, at least 8 characters and at most 20
         passwordValidator.setRegexPattern("^(?=.*[0-9])"+"(?=\\S+$).{8,20}$");
-        passwordValidator.setMessage("1 digit, 8 to 20 characters");
+        passwordValidator.setMessage(Config.getResourceText("signup.errorLabel.passwordNotValid"));
         passwordTextField.getValidators().add(passwordValidator);
         passwordTextField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(!newValue.equals(oldValue)) passwordTextField.validate();
+                if(newValue == "" ||!newValue.equals(oldValue)){
+                    passwordTextField.validate();
+                }
             }
         });
 
-
         passwordConfirmTextField.setPromptText(Config.getResourceText("signup.prompt.confirmPassword"));
         CompareInputValidator compareInputValidator = new CompareInputValidator();
-        compareInputValidator.setMessage("your password doesn't match");
+        compareInputValidator.setMessage(Config.getResourceText("signup.errorLabel.confirmationPasswordNotIdentical"));
         passwordConfirmTextField.getValidators().add(compareInputValidator);
-        passwordConfirmTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+        passwordConfirmTextField.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                compareInputValidator.setComparingText(passwordTextField.getText());
-                passwordConfirmTextField.validate();
+            public void changed(ObservableValue<? extends String> observable,String oldValue, String newValue) {
+                if(!passwordValidator.getHasErrors()){
+                    compareInputValidator.setComparingText(passwordTextField.getText());
+                    passwordConfirmTextField.validate();
+                }
             }
         });
 

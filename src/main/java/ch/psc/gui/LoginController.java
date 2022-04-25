@@ -57,7 +57,7 @@ public class LoginController extends ControlledScreen {
         //addIconBefore in Liste mit Index, damit neue Textfelder an richtiger Stelle sind
 
         RequiredFieldValidator inputMailValidator = new RequiredFieldValidator();
-        inputMailValidator.setMessage(Config.getResourceText("login.errorlabel.emailrequired"));
+        inputMailValidator.setMessage(Config.getResourceText("login.errorLabel.emailRequired"));
         //inputMailValidator.setIcon(new FontAwesomeIconView(FontAwesomeIcon.WARNING));
         enterMailTextfield.getValidators().add(inputMailValidator);
         enterMailTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
@@ -68,7 +68,7 @@ public class LoginController extends ControlledScreen {
         });
 
         RequiredFieldValidator inputPasswordValidator = new RequiredFieldValidator();
-        inputPasswordValidator.setMessage(Config.getResourceText("login.errorlabel.passwordrequired"));
+        inputPasswordValidator.setMessage(Config.getResourceText("login.errorLabel.passwordRequired"));
         enterPasswordTextfield.getValidators().add(inputPasswordValidator);
         enterPasswordTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -102,12 +102,12 @@ public class LoginController extends ControlledScreen {
     private void login(){
         //if(EmailValidator.getInstance().isValid(enterMailTextfield.getText())){}
             RegexValidator inputMailValidator = new RegexValidator();
-            inputMailValidator.setMessage(Config.getResourceText("login.errorlabel.emailnotvalid"));
+            inputMailValidator.setMessage(Config.getResourceText("login.errorLabel.emailNotValid"));
             inputMailValidator.setRegexPattern("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
             enterMailTextfield.getValidators().add(inputMailValidator);
             if (enterMailTextfield.validate()){
                 enterPasswordTextfield.getText();
-                //Todo: Validation of login
+                //Todo: Validation of login, if not valid -> errormessage
             }
 
     }

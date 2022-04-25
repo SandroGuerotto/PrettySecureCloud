@@ -18,6 +18,7 @@ public class RegexValidator extends ValidatorBase {
     }
     private Pattern regexPatternCompiled;
 
+    //Todo: JavaDoc
     /**
      * {@inheritDoc}
      */
@@ -37,9 +38,7 @@ public class RegexValidator extends ValidatorBase {
         }
     }
 
-    /*
-     * GETTER AND SETTER
-     */
+
     public void setRegexPattern(String regexPattern) {
         this.regexPattern = regexPattern;
         this.regexPatternCompiled = Pattern.compile(regexPattern);

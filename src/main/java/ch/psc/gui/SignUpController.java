@@ -59,8 +59,11 @@ public class SignUpController extends ControlledScreen {
                 SignUpController.this.finish();
             }
         });
-        flowControl.isCanceledProperty().addListener((observable, old, newValue) -> {
-            if (newValue) cancel();
+        flowControl.isCanceledProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean old, Boolean newValue) {
+                if (newValue) SignUpController.this.cancel();
+            }
         });
         flowControl.next();
     }
