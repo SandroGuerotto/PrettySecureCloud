@@ -1,7 +1,6 @@
 package ch.psc.domain.cipher;
 
 import javax.crypto.NullCipher;
-
 import ch.psc.exceptions.FatalImplementationException;
 
 /**
@@ -9,6 +8,7 @@ import ch.psc.exceptions.FatalImplementationException;
  * This Cipher is a dummy implementation and for easy testing purposes. It will not encrypt any data and return plain text.
  *
  * @author Lorenz
+ *
  */
 public class PlainTextCipher extends PscCipher {
 
@@ -36,5 +36,10 @@ public class PlainTextCipher extends PscCipher {
         javax.crypto.Cipher cipher = new NullCipher();
         return cipher;
     }
+
+  @Override
+  public int getKeyBits(){
+    return 16;
+  }
 
 }
