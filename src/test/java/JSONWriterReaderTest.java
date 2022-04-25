@@ -1,22 +1,20 @@
-import ch.psc.datasource.JSONWriterReader;
-import ch.psc.domain.cipher.Key;
-import ch.psc.domain.storage.service.StorageService;
-import ch.psc.domain.user.User;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
+import javax.crypto.spec.SecretKeySpec;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import ch.psc.datasource.JSONWriterReader;
+import ch.psc.domain.cipher.Key;
+import ch.psc.domain.storage.service.StorageService;
+import ch.psc.domain.user.User;
 
 
 public class JSONWriterReaderTest {
