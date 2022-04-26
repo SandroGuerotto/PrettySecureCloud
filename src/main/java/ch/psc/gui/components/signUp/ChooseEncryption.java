@@ -1,23 +1,21 @@
 package ch.psc.gui.components.signUp;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 import ch.psc.domain.cipher.CipherAlgorithms;
 import ch.psc.domain.cipher.CipherFactory;
 import ch.psc.domain.cipher.PscCipher;
-import ch.psc.domain.storage.service.StorageService;
+import ch.psc.exceptions.FatalImplementationException;
 import ch.psc.presentation.Config;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Handles all user data to customize his encryption.
@@ -82,7 +80,12 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
      * @param cipherAlgorithms uses selected service
      */
     private void register(CipherAlgorithms cipherAlgorithms) {
-        this.pscCipher = CipherFactory.createCipher(cipherAlgorithms.name());
+        try {
+          this.pscCipher = CipherFactory.createCipher(cipherAlgorithms.name());
+        } catch (FatalImplementationException e) {
+          this.pscCipher = null;
+          e.printStackTrace(); //TODO sophisticated error logging
+        }
     }
 
     @Override

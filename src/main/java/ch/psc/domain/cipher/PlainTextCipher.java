@@ -12,7 +12,7 @@ import ch.psc.exceptions.FatalImplementationException;
  */
 public class PlainTextCipher extends PscCipher {
 
-    private static final String ALGORITHM = "PlainText";
+    private static final String ALGORITHM = "PLAIN_TEXT";
     private static final String TRANSFORMATION = "";
     private static final SecurityLevel SECURITY_LEVEL = SecurityLevel.none;
 

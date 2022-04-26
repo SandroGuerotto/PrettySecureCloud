@@ -10,9 +10,9 @@ public enum CipherAlgorithms {
     RSA(false, null);
 
     private final boolean isSupported;
-    private final Class cipherClass;
+    private final Class<? extends PscCipher> cipherClass;
 
-    CipherAlgorithms(boolean isSupported, Class cipherClass) {
+    CipherAlgorithms(boolean isSupported, Class<? extends PscCipher> cipherClass) {
         this.isSupported = isSupported;
         this.cipherClass = cipherClass;
     }
@@ -21,7 +21,7 @@ public enum CipherAlgorithms {
         return isSupported;
     }
 
-    public Class getCipherClass(){
+    public Class<? extends PscCipher> getCipherClass(){
         return cipherClass;
     }
 

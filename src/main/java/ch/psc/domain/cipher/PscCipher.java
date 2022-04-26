@@ -25,6 +25,13 @@ import ch.psc.exceptions.FatalImplementationException;
  */
 public abstract class PscCipher {
   
+  /**
+   * Always provide a public empty constructor
+   */
+  public PscCipher() {
+    super();
+  }
+  
   private ExecutorService executor = Executors.newFixedThreadPool(5);
   
   /**
