@@ -5,7 +5,7 @@ import ch.psc.domain.common.context.UserContext;
 import ch.psc.domain.storage.service.FileStorage;
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.domain.storage.service.StorageServiceFactory;
-import ch.psc.domain.user.AuthService;
+import ch.psc.domain.user.AuthenticationService;
 import ch.psc.domain.user.User;
 import ch.psc.exceptions.AuthenticationException;
 import ch.psc.exceptions.ScreenSwitchException;
@@ -38,16 +38,16 @@ public class SignUpController extends ControlledScreen {
 
 
     private SignUpFlowControl flowControl;
-    private final AuthService authService;
+    private final AuthenticationService authenticationService;
 
     @FXML
     private HBox signupMainPane;
     @FXML
     private VBox signupFormPane;
 
-    public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthService authService) {
+    public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthenticationService authenticationService) {
         super(primaryStage, screens);
-        this.authService = authService;
+        this.authenticationService = authenticationService;
         flowControl = new SignUpFlowControl();
     }
 
@@ -96,7 +96,7 @@ public class SignUpController extends ControlledScreen {
                         (Map<StorageService, Map<String, String>>) data.get(4), (Map<String, Key>) data.get(3)
                 );
         try {
-            UserContext.setAuthorizedUser(authService.signup(user));
+            UserContext.setAuthorizedUser(authenticationService.signup(user));
         } catch (AuthenticationException e) {
             e.printStackTrace();
         }

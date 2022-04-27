@@ -1,7 +1,7 @@
 package ch.psc.gui;
 
 import ch.psc.domain.common.context.UserContext;
-import ch.psc.domain.user.AuthService;
+import ch.psc.domain.user.AuthenticationService;
 import ch.psc.domain.user.User;
 import ch.psc.exceptions.AuthenticationException;
 import ch.psc.exceptions.ScreenSwitchException;
@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class LoginController extends ControlledScreen {
 
-    private final AuthService authService;
+    private final AuthenticationService authenticationService;
 
     @FXML
     private TextField enterMailTextfield;
@@ -36,10 +36,10 @@ public class LoginController extends ControlledScreen {
     @FXML
     private HBox loginPane;
 
-    public LoginController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthService authService) {
+    public LoginController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthenticationService authenticationService) {
 
         super(primaryStage, screens);
-        this.authService = authService;
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class LoginController extends ControlledScreen {
         enterPasswordTextfield.getText();
         //Todo: Validation of login
         try {
-            User user = authService.authenticate(enterMailTextfield.getText(), enterPasswordTextfield.getText());
+            User user = authenticationService.authenticate(enterMailTextfield.getText(), enterPasswordTextfield.getText());
             UserContext.setAuthorizedUser(user);
             System.out.println(user.getMail());
             //switchScreen(Screens.FILE_BROWSER);
@@ -92,10 +92,6 @@ public class LoginController extends ControlledScreen {
         } catch (AuthenticationException e) {
             //TODO show error message
         }
-        // authService.auth(user) -> user
-//        StorageManager.destroy();
-//        StorageManager.getInstance().initialize(user);
-
     }
 
 }

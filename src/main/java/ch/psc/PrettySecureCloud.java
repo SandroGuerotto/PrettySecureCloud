@@ -2,7 +2,7 @@ package ch.psc;
 
 import ch.psc.datasource.JSONWriterReader;
 import ch.psc.domain.common.context.AuthenticationContext;
-import ch.psc.domain.user.JSONAuthService;
+import ch.psc.domain.user.JSONAuthenticationService;
 import ch.psc.gui.ControlledScreen;
 import ch.psc.gui.LoginController;
 import ch.psc.gui.SignUpController;
@@ -35,7 +35,7 @@ public class PrettySecureCloud extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        AuthenticationContext.setAuthService(new JSONAuthService(new JSONWriterReader()));
+        AuthenticationContext.setAuthService(new JSONAuthenticationService(new JSONWriterReader()));
 
         this.primaryStage = primaryStage;
         loadAllControlledScreens();
