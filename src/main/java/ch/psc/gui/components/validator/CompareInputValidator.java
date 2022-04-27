@@ -10,15 +10,12 @@ import javafx.scene.control.TextInputControl;
 
 public class CompareInputValidator extends ValidatorBase {
 
-    public CompareInputValidator(String message) {
+    private final TextInputControl comparingText;
+
+    public CompareInputValidator(String message, TextInputControl comparingText) {
         super(message);
+        this.comparingText = comparingText;
     }
-
-    public CompareInputValidator(){
-
-    }
-
-    private String comparingText;
 
     @Override
     protected void eval() {
@@ -29,15 +26,7 @@ public class CompareInputValidator extends ValidatorBase {
 
     private void evalTextInputField(){
         TextInputControl textField = (TextInputControl) srcControl.get();
-        if(textField.getText().equals(comparingText)){
-            hasErrors.set(false);
-        }else{
-            hasErrors.set(true);
-        }
-    }
-
-    public void setComparingText(String comparingText){
-        this.comparingText = comparingText;
+        hasErrors.set(!textField.getText().equals(comparingText.getText()));
     }
 
 

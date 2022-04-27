@@ -14,17 +14,10 @@ public class EmailValidator extends ValidatorBase {
 
     private final static String EMAIL_PATTERN = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
     private final Pattern regexPatternCompiled;
-    private String requiredEmailMessage;
-    private String emailNotValidMessage;
 
 
-    public EmailValidator(String requiredEmailMessage, String emailNotValidMessage) {
-        this.requiredEmailMessage = requiredEmailMessage;
-        this.emailNotValidMessage = emailNotValidMessage;
-        this.regexPatternCompiled = Pattern.compile(EMAIL_PATTERN);
-    }
     public EmailValidator(String emailNotValidMessage) {
-        this.emailNotValidMessage = emailNotValidMessage;
+        super(emailNotValidMessage);
         this.regexPatternCompiled = Pattern.compile(EMAIL_PATTERN);
     }
 
@@ -38,29 +31,7 @@ public class EmailValidator extends ValidatorBase {
 
     private void evalTextInputField() {
         TextInputControl textField = (TextInputControl) srcControl.get();
-        if (textField.getText() == null || textField.getText().isEmpty()) {
-            setMessage(requiredEmailMessage);
-            //System.out.println(getMessage());
-            hasErrors.set(true);
-            //System.out.println("1E");
-
-        } else if(!regexPatternCompiled.matcher(textField.getText()).matches()) {
-            setMessage(emailNotValidMessage);
-            //System.out.println(getMessage());
-            hasErrors.set(true);
-            //System.out.println("2E");
-            } else{
-                hasErrors.set(false);
-            //System.out.println("3E");
-        }
+        hasErrors.set(!regexPatternCompiled.matcher(textField.getText()).matches());
     }
 
-    public String getRegexPattern() {
-        return EMAIL_PATTERN;
-    }
-
-    @Override
-    public void setMessage(String message) {
-        this.message.set(message);
-    }
 }

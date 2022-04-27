@@ -8,15 +8,12 @@ import java.util.regex.Pattern;
 public class PasswordValidator extends ValidatorBase {
 
     //Regexpatter: contain at least one digit from 0-9, spaces are not allowed, at least 8 characters and at most 20
-    private final static String PASSWORD_PATTERN = "^(?=. *[0-9])" + "(?=\\S+$).{8,20}$";
-    private Pattern regexPatternCompiled;
-    private String requiredPasswordMessage;
-    private String passwordNotValidMessage;
+    private final static String PASSWORD_PATTERN = "^(?=. *[0-9])"+"(?=\\S+$).{8,20}$";
+    private final Pattern regexPatternCompiled;
 
 
-    public PasswordValidator(String requiredPasswordMessage, String passwordNotValidMessage) {
-        this.requiredPasswordMessage = requiredPasswordMessage;
-        this.passwordNotValidMessage = passwordNotValidMessage;
+    public PasswordValidator(String passwordNotValidMessage) {
+        super(passwordNotValidMessage);
         this.regexPatternCompiled = Pattern.compile(PASSWORD_PATTERN);
     }
 
@@ -33,20 +30,7 @@ public class PasswordValidator extends ValidatorBase {
      */
     private void evalTextInputField() {
         TextInputControl textField = (TextInputControl) srcControl.get();
-        if (textField.getText() == null || textField.getText().isEmpty()) {
-            hasErrors.set(true);
-            setMessage(requiredPasswordMessage);
-        } else if (!regexPatternCompiled.matcher(textField.getText()).matches()) {
-            hasErrors.set(true);
-            setMessage(passwordNotValidMessage);
-        } else {
-            hasErrors.set(false);
-        }
+        hasErrors.set(!regexPatternCompiled.matcher(textField.getText()).matches());
     }
-
-    public String getRegexPattern() {
-        return PASSWORD_PATTERN;
-    }
-
 
 }

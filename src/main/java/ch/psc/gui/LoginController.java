@@ -2,7 +2,6 @@ package ch.psc.gui;
 
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.components.validator.EmailValidator;
-import ch.psc.gui.components.validator.RegexValidator;
 import ch.psc.gui.util.JavaFxUtils;
 import ch.psc.presentation.Config;
 import com.jfoenix.controls.JFXPasswordField;

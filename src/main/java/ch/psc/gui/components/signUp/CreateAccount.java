@@ -1,18 +1,17 @@
 package ch.psc.gui.components.signUp;
 
-import ch.psc.gui.components.validator.*;
+import ch.psc.gui.components.validator.CompareInputValidator;
+import ch.psc.gui.components.validator.EmailValidator;
+import ch.psc.gui.components.validator.PasswordValidator;
+import ch.psc.gui.components.validator.RequiredInputValidator;
 import ch.psc.gui.util.JavaFxUtils;
 import ch.psc.presentation.Config;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Label;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,61 +51,40 @@ public class CreateAccount extends VBox implements SignUpFlow {
 
         usernameField.setPromptText(Config.getResourceText("signup.prompt.username"));
         //Input for username field required
-        RequiredInputValidator requiredUserNameValidator = new RequiredInputValidator(Config.getResourceText("signup.errorLabel.usernameRequired"));
-        usernameField.getValidators().add(requiredUserNameValidator);
-        usernameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (!newValue) usernameField.validate(); //wenn kein neuer Value, dann validate
-            }
+        RequiredInputValidator requiredInput = new RequiredInputValidator(Config.getResourceText("signup.errorLabel.usernameRequired"));
+        usernameField.getValidators().add(requiredInput);
+        usernameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) usernameField.validate();
         });
 
         emailTextField.setPromptText(Config.getResourceText("signup.prompt.email"));
-        //Email address field should not be empty, and should be valid
-        EmailValidator emailValidator = new EmailValidator(Config.getResourceText("signup.errorLabel.emailRequired"), Config.getResourceText("signup.errorLabel.emailNotValid"));
-        emailTextField.getValidators().add(emailValidator);
-        emailTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if(!newValue) emailTextField.validate(); //wenn kein neuer Value, dann validate
 
-            }
-        });
-        //For Testing Purposes
-        /*
-        emailTextField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(newValue == "" ||!newValue.equals(oldValue)){
-                    emailTextField.validate();
-                }
-            }
+        requiredInput = new RequiredInputValidator(Config.getResourceText("signup.errorLabel.emailRequired"));
+        EmailValidator emailValidator = new EmailValidator(Config.getResourceText("signup.errorLabel.emailNotValid"));
+        emailTextField.getValidators().addAll(requiredInput, emailValidator);
+        emailTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue) emailTextField.validate();
         });
 
-         */
         passwordTextField.setPromptText(Config.getResourceText("signup.prompt.enterPassword"));
-        PasswordValidator passwordValidator = new PasswordValidator(Config.getResourceText("signup.errorLabel.passwordRequired"), Config.getResourceText("signup.errorLabel.passwordNotValid"));
-        passwordTextField.getValidators().add(passwordValidator);
-        passwordTextField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(newValue == "" ||!newValue.equals(oldValue)){
-                    passwordTextField.validate();
-                }
+
+        requiredInput = new RequiredInputValidator(Config.getResourceText("signup.errorLabel.passwordRequired"));
+        PasswordValidator passwordValidator = new PasswordValidator(Config.getResourceText("signup.errorLabel.passwordNotValid"));
+        passwordTextField.getValidators().addAll(requiredInput, passwordValidator);
+        passwordTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue){
+                passwordTextField.validate();
             }
         });
 
         passwordConfirmTextField.setPromptText(Config.getResourceText("signup.prompt.confirmPassword"));
 
-        CompareInputValidator compareInputValidator = new CompareInputValidator(Config.getResourceText("signup.errorLabel.confirmationPasswordNotIdentical"));
-        passwordConfirmTextField.getValidators().add(compareInputValidator);
-        passwordConfirmTextField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable,String oldValue, String newValue) {
-                if(!passwordValidator.getHasErrors()){
-                    compareInputValidator.setComparingText(passwordTextField.getText());
-                    passwordConfirmTextField.validate();
-                }
+        CompareInputValidator compareInputValidator = new CompareInputValidator(Config.getResourceText("signup.errorLabel.confirmationPasswordNotIdentical"), passwordTextField);
+        requiredInput = new RequiredInputValidator(Config.getResourceText("signup.errorLabel.passwordRequired"));
+        passwordConfirmTextField.getValidators().addAll(requiredInput, compareInputValidator);
+        passwordConfirmTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue){
+                passwordConfirmTextField.validate();
             }
         });
 
@@ -129,10 +107,6 @@ public class CreateAccount extends VBox implements SignUpFlow {
                !passwordTextField.getActiveValidator().getHasErrors() ||
                !passwordConfirmTextField.getActiveValidator().getHasErrors() ||
                !usernameField.getActiveValidator().getHasErrors();
-
-  /*      return !validateIsEmpty(usernameField)
-                && !validateIsEmpty(emailTextField) // TODO proper validation: error message
-                && isPasswordValid();*/
     }
 
     @Override
