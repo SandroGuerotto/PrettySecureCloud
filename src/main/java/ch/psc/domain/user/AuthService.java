@@ -11,5 +11,5 @@ public interface AuthService {
 
     User signup(User user) throws AuthenticationException;
 
-    User update(User user);
+    User update(User user) throws Exception;
 }

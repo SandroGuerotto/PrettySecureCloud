@@ -81,7 +81,6 @@ public class SignUpController extends ControlledScreen {
         } catch (ScreenSwitchException e) {
             e.printStackTrace();
         }
-
     }
 
 

@@ -13,14 +13,14 @@ import java.util.Map;
  * @author Sandro
  */
 public class FileBrowserController extends  ControlledScreen{
-    private StorageManager storageManage;
+    private StorageManager storageManager;
     public FileBrowserController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
         super(primaryStage, screens);
     }
 
     @Override
     protected boolean init(JavaFxUtils.RegisteredScreen previousScreen, Object... params) {
-        storageManage = new StorageManager(UserContext.getAuthorizedUser());
+        storageManager = new StorageManager(UserContext.getAuthorizedUser());
         return super.init(previousScreen, params);
     }
 
@@ -34,5 +34,5 @@ public class FileBrowserController extends  ControlledScreen{
         return null;
     }
 
-    // onLogout(){  }
+    // TODO on logout or close: destroy storageManager and set User = null
 }

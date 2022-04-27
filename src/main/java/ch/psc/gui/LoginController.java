@@ -90,7 +90,7 @@ public class LoginController extends ControlledScreen {
 //            FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
 //            dropbox.getFileTree();
         } catch (AuthenticationException e) {
-            e.printStackTrace();
+            //TODO show error message
         }
         // authService.auth(user) -> user
 //        StorageManager.destroy();

@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 public class JSONAuthService implements AuthService {
 
     private static final String DEFAULT_FILE_PATH = "users/%s.json";
+    private static final String HMAC_SHA_256 = "HmacSHA256";
     private final JSONWriterReader jsonWriterReader;
 
     public JSONAuthService(JSONWriterReader jsonWriterReader) {
@@ -53,8 +54,8 @@ public class JSONAuthService implements AuthService {
     private String buildHash(String mail, String password) {
         try {
             final byte[] byteKey = password.getBytes(StandardCharsets.UTF_8);
-            Mac sha512Hmac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec keySpec = new SecretKeySpec(byteKey, "HmacSHA256");
+            Mac sha512Hmac = Mac.getInstance(HMAC_SHA_256);
+            SecretKeySpec keySpec = new SecretKeySpec(byteKey, HMAC_SHA_256);
             sha512Hmac.init(keySpec);
             byte[] macData = sha512Hmac.doFinal(mail.getBytes(StandardCharsets.UTF_8));
 
@@ -66,8 +67,16 @@ public class JSONAuthService implements AuthService {
     }
 
     @Override
-    public User update(User user) {
-        return null;
+    public User update(User user) throws Exception {
+        String hash = buildHash(user.getMail(), user.getPassword());
+        String path = buildPath(hash);
+        if (jsonWriterReader.writeToJson(path, JSONUser.toJson(user)))
+            throw new Exception("Failed to update user");
+        try {
+            return readUser(path);
+        } catch (AuthenticationException e) {
+            throw new Exception("Failed to update user", e);
+        }
     }
 
     private User readUser(String path) throws AuthenticationException {
@@ -79,8 +88,10 @@ public class JSONAuthService implements AuthService {
     }
 
 
-    public static class JSONUser {
+    private static class JSONUser {
 
+        public static final String JSON_TOKEN_SECRET = "secret";
+        public static final String JSON_TOKEN_ALGORITHM = "algorithm";
         private final String username;
         private final String mail;
         private final String password;
@@ -107,8 +118,8 @@ public class JSONAuthService implements AuthService {
         private static Map<String, String> serializeKeyChain(Key secretKey) {
             assert secretKey != null;
             Map<String, String> mapped = new HashMap<>();
-            mapped.put("algorithm", secretKey.getType());
-            mapped.put("secret", new String(secretKey.getKey().getEncoded()));
+            mapped.put(JSON_TOKEN_ALGORITHM, secretKey.getType());
+            mapped.put(JSON_TOKEN_SECRET, new String(secretKey.getKey().getEncoded()));
             return mapped;
         }
 
@@ -119,8 +130,8 @@ public class JSONAuthService implements AuthService {
                     .collect(Collectors.toMap(
                             Map.Entry::getKey, entry ->
                                 new Key(new SecretKeySpec(
-                                        entry.getValue().get("secret").getBytes(StandardCharsets.UTF_8),
-                                        entry.getValue().get("algorithm")))
+                                        entry.getValue().get(JSON_TOKEN_SECRET).getBytes(StandardCharsets.UTF_8),
+                                        entry.getValue().get(JSON_TOKEN_ALGORITHM)))
 
                     ));
         }
