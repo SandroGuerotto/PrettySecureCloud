@@ -1,13 +1,9 @@
 package ch.psc.domain.user;
 
+import java.util.Map;
 import ch.psc.datasource.JSONWriterReader;
 import ch.psc.domain.cipher.Key;
 import ch.psc.domain.storage.service.StorageService;
-
-import javax.crypto.SecretKey;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Holds all data of logged in user.

@@ -6,12 +6,13 @@ import ch.psc.exceptions.FatalImplementationException;
 /**
  * <b>Do not use this for secure Data!</b>
  * This Cipher is a dummy implementation and for easy testing purposes. It will not encrypt any data and return plain text.
+ *
  * @author Lorenz
  *
  */
 public class PlainTextCipher extends PscCipher {
-  
-  private static final String ALGORYTHM = "";
+
+  private static final String ALGORITHM = "PLAIN_TEXT";
   private static final String TRANSFORMATION = "";
   private static final SecurityLevel SECURITY_LEVEL = SecurityLevel.none;
 
@@ -22,14 +23,14 @@ public class PlainTextCipher extends PscCipher {
 
   @Override
   public String getAlgorithm() {
-    return ALGORYTHM;
+    return ALGORITHM;
   }
 
   @Override
   public String getTransformation() {
     return TRANSFORMATION;
   }
-  
+
   @Override
   protected javax.crypto.Cipher getCipher() throws FatalImplementationException {
     javax.crypto.Cipher cipher = new NullCipher();
@@ -37,7 +38,7 @@ public class PlainTextCipher extends PscCipher {
   }
 
   @Override
-  public int getKeyBits(){
+  public int getKeyBits() {
     return 16;
   }
 

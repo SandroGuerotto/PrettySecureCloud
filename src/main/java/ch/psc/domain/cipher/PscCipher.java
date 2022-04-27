@@ -25,6 +25,13 @@ import ch.psc.exceptions.FatalImplementationException;
  */
 public abstract class PscCipher {
   
+  /**
+   * Always provide a public empty constructor
+   */
+  public PscCipher() {
+    super();
+  }
+  
   private ExecutorService executor = Executors.newFixedThreadPool(5);
   
   /**
@@ -41,7 +48,7 @@ public abstract class PscCipher {
    * @return int number of bits
    */
   public abstract int getKeyBits();
-  
+
   /**
    * The name of the cryptographic algorithm (e.g.: AES, RSA).
    * For a list of available implementations in Java see: <a href='https://docs.oracle.com/en/java/javase/17/docs/specs/security/standard-names.html#cipher-algorithm-names'>Algorithm Names</a>
