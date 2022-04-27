@@ -1,22 +1,18 @@
 package ch.psc.gui.components.signUp;
 
-import ch.psc.gui.components.validator.CompareInputValidator;
-import ch.psc.gui.components.validator.RegexValidator;
+import ch.psc.gui.components.validator.*;
 import ch.psc.gui.util.JavaFxUtils;
 import ch.psc.presentation.Config;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.validation.RequiredFieldValidator;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-//import javafx.scene.control.PasswordField;
-//import javafx.scene.control.TextField;
-//import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +28,7 @@ public class CreateAccount extends VBox implements SignUpFlow {
     private final JFXTextField emailTextField;
     private final JFXPasswordField passwordTextField;
     private final JFXPasswordField passwordConfirmTextField;
+    private final Label errorLabel;
 
     /**
      * Creates an account creation screen.
@@ -41,6 +38,7 @@ public class CreateAccount extends VBox implements SignUpFlow {
         emailTextField = new JFXTextField();
         passwordTextField = new JFXPasswordField();
         passwordConfirmTextField = new JFXPasswordField();
+        errorLabel = new Label();
 
         initialize();
     }
@@ -49,13 +47,12 @@ public class CreateAccount extends VBox implements SignUpFlow {
      * Initializes form and creates input field for creating a new account.
      */
     private void initialize() {
-        this.setSpacing(40); //TODO: make appearance of textfields unified (in login and signup window)
+        this.setSpacing(30); //TODO: make appearance of textfields unified (in login and signup window)
         this.setPadding(new Insets(10, 20, 10, 20));
 
         usernameField.setPromptText(Config.getResourceText("signup.prompt.username"));
-        //Username field should not be empty
-        RequiredFieldValidator requiredUserNameValidator = new RequiredFieldValidator();
-        requiredUserNameValidator.setMessage(Config.getResourceText("signup.errorLabel.usernameRequired"));
+        //Input for username field required
+        RequiredInputValidator requiredUserNameValidator = new RequiredInputValidator(Config.getResourceText("signup.errorLabel.usernameRequired"));
         usernameField.getValidators().add(requiredUserNameValidator);
         usernameField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
@@ -64,31 +61,31 @@ public class CreateAccount extends VBox implements SignUpFlow {
             }
         });
 
-
         emailTextField.setPromptText(Config.getResourceText("signup.prompt.email"));
-        //Email address field should not be empty
-        RequiredFieldValidator requiredEmailValidator = new RequiredFieldValidator();
-        requiredEmailValidator.setMessage(Config.getResourceText("signup.errorLabel.emailRequired"));
-        emailTextField.getValidators().add(requiredEmailValidator);
-        //Email address should be valid
-        RegexValidator inputMailValidator = new RegexValidator();
-        inputMailValidator.setMessage(Config.getResourceText("signup.errorLabel.emailNotValid"));
-        inputMailValidator.setRegexPattern("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
-
+        //Email address field should not be empty, and should be valid
+        EmailValidator emailValidator = new EmailValidator(Config.getResourceText("signup.errorLabel.emailRequired"), Config.getResourceText("signup.errorLabel.emailNotValid"));
+        emailTextField.getValidators().add(emailValidator);
         emailTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                if (!newValue) emailTextField.validate(); //wenn kein neuer Value, dann validate
-                emailTextField.getValidators().add(inputMailValidator);
+                if(!newValue) emailTextField.validate(); //wenn kein neuer Value, dann validate
+
+            }
+        });
+        //For Testing Purposes
+        /*
+        emailTextField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if(newValue == "" ||!newValue.equals(oldValue)){
+                    emailTextField.validate();
+                }
             }
         });
 
-
+         */
         passwordTextField.setPromptText(Config.getResourceText("signup.prompt.enterPassword"));
-        RegexValidator passwordValidator = new RegexValidator();
-        //Regex, password must contain at least one digit from 0-9, spaces are not allowed, at least 8 characters and at most 20
-        passwordValidator.setRegexPattern("^(?=.*[0-9])"+"(?=\\S+$).{8,20}$");
-        passwordValidator.setMessage(Config.getResourceText("signup.errorLabel.passwordNotValid"));
+        PasswordValidator passwordValidator = new PasswordValidator(Config.getResourceText("signup.errorLabel.passwordRequired"), Config.getResourceText("signup.errorLabel.passwordNotValid"));
         passwordTextField.getValidators().add(passwordValidator);
         passwordTextField.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -100,8 +97,8 @@ public class CreateAccount extends VBox implements SignUpFlow {
         });
 
         passwordConfirmTextField.setPromptText(Config.getResourceText("signup.prompt.confirmPassword"));
-        CompareInputValidator compareInputValidator = new CompareInputValidator();
-        compareInputValidator.setMessage(Config.getResourceText("signup.errorLabel.confirmationPasswordNotIdentical"));
+
+        CompareInputValidator compareInputValidator = new CompareInputValidator(Config.getResourceText("signup.errorLabel.confirmationPasswordNotIdentical"));
         passwordConfirmTextField.getValidators().add(compareInputValidator);
         passwordConfirmTextField.textProperty().addListener(new ChangeListener<String>() {
             @Override
@@ -114,19 +111,24 @@ public class CreateAccount extends VBox implements SignUpFlow {
         });
 
         Label title = new Label(Config.getResourceText("signup.title.createAccount"));
+        errorLabel.setVisible(false);
 
         this.getChildren().addAll(title,
                 JavaFxUtils.addIconBefore(usernameField, FontAwesomeIcon.USER, "signup-icon"),
                 JavaFxUtils.addIconBefore(emailTextField, FontAwesomeIcon.ENVELOPE, "signup-icon"),
                 JavaFxUtils.addIconBefore(passwordTextField, FontAwesomeIcon.KEY, "signup-icon"),
-                JavaFxUtils.addIconBefore(passwordConfirmTextField, FontAwesomeIcon.KEY, "signup-icon")
+                JavaFxUtils.addIconBefore(passwordConfirmTextField, FontAwesomeIcon.KEY, "signup-icon"),
+                errorLabel
         );
         this.setMinHeight(250);
     }
 
     @Override
     public boolean isValid() {
-       return !emailTextField.getActiveValidator().getHasErrors() || !passwordTextField.getActiveValidator().getHasErrors();
+       return !emailTextField.getActiveValidator().getHasErrors() ||
+               !passwordTextField.getActiveValidator().getHasErrors() ||
+               !passwordConfirmTextField.getActiveValidator().getHasErrors() ||
+               !usernameField.getActiveValidator().getHasErrors();
 
   /*      return !validateIsEmpty(usernameField)
                 && !validateIsEmpty(emailTextField) // TODO proper validation: error message
@@ -136,56 +138,10 @@ public class CreateAccount extends VBox implements SignUpFlow {
     @Override
     public void clear() {
         usernameField.clear();
-        removeErrorClass(usernameField);
         emailTextField.clear();
-        removeErrorClass(emailTextField);
         passwordConfirmTextField.clear();
-        removeErrorClass(passwordConfirmTextField);
         passwordTextField.clear();
-        removeErrorClass(passwordTextField);
     }
-
-    /**
-     * Validates entered and confirmed password.
-     *
-     * @return true, if entered and confirmed are equal and not empty.
-     */
-
-
-    private void removeErrorClass(Region region) {
-        region.getStyleClass().remove("error");
-    }
-
-    private void addErrorClass(Region region) {
-        region.getStyleClass().add("error");
-        region.requestFocus();
-    }
-
-    /**
-     * Adds "error" CSS-class if input field is empty
-     *
-     * @param //field input field to check
-     * @return true, if not empty
-     */
-    /*private boolean validateIsEmpty(JFXTextField field) {
-        removeErrorClass(field);
-        if (field.getText().isEmpty()) {
-            addErrorClass(field);
-            return true;
-        }
-        return false;
-    }*/
-
- /*   private boolean validateIsEmpty(JFXPasswordField field) {
-        removeErrorClass(field);
-        if (field.getText().isEmpty()) {
-            addErrorClass(field);
-            return true;
-        }
-        return false;
-    }*/
-
-
 
     @Override
     public List<Object> getData() {

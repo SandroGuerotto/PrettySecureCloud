@@ -1,6 +1,7 @@
 package ch.psc.gui;
 
 import ch.psc.exceptions.ScreenSwitchException;
+import ch.psc.gui.components.validator.EmailValidator;
 import ch.psc.gui.components.validator.RegexValidator;
 import ch.psc.gui.util.JavaFxUtils;
 import ch.psc.presentation.Config;
@@ -76,7 +77,6 @@ public class LoginController extends ControlledScreen {
                 if(!newValue) enterPasswordTextfield.validate();
             }
         });
-
     }
 
 
@@ -101,10 +101,8 @@ public class LoginController extends ControlledScreen {
     @FXML
     private void login(){
         //if(EmailValidator.getInstance().isValid(enterMailTextfield.getText())){}
-            RegexValidator inputMailValidator = new RegexValidator();
-            inputMailValidator.setMessage(Config.getResourceText("login.errorLabel.emailNotValid"));
-            inputMailValidator.setRegexPattern("^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$");
-            enterMailTextfield.getValidators().add(inputMailValidator);
+            EmailValidator emailValidator = new EmailValidator(Config.getResourceText("login.errorLabel.emailNotValid"));
+            enterMailTextfield.getValidators().add(emailValidator);
             if (enterMailTextfield.validate()){
                 enterPasswordTextfield.getText();
                 //Todo: Validation of login, if not valid -> errormessage

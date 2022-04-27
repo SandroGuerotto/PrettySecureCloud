@@ -8,7 +8,6 @@ import javafx.scene.control.TextInputControl;
  * @author bananasprout
  */
 
-
 public class CompareInputValidator extends ValidatorBase {
 
     public CompareInputValidator(String message) {
