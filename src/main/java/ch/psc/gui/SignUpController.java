@@ -1,5 +1,6 @@
 package ch.psc.gui;
 
+import ch.psc.domain.cipher.Key;
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.domain.user.User;
 import ch.psc.exceptions.ScreenSwitchException;
@@ -80,7 +81,8 @@ public class SignUpController extends ControlledScreen {
         User user =
                 new User(
                         (String) data.get(0), (String) data.get(1), (String) data.get(2),
-                        (Map<StorageService, Map<String, String>>) data.get(3)
+                        (Map<StorageService, Map<String, String>>) data.get(3), null
+                        //TODO null must be changed to Map<String, Key> later
                 );
         user.save();
 //        example on how to use service

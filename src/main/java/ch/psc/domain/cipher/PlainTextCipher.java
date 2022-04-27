@@ -21,7 +21,7 @@ public class PlainTextCipher extends PscCipher {
   }
 
   @Override
-  public String getAlgorythm() {
+  public String getAlgorithm() {
     return ALGORYTHM;
   }
 
@@ -34,6 +34,11 @@ public class PlainTextCipher extends PscCipher {
   protected javax.crypto.Cipher getCipher() throws FatalImplementationException {
     javax.crypto.Cipher cipher = new NullCipher();
     return cipher;
+  }
+
+  @Override
+  public int getKeyBits(){
+    return 16;
   }
 
 }
