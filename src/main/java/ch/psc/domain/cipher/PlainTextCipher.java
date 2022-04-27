@@ -12,33 +12,33 @@ import ch.psc.exceptions.FatalImplementationException;
  */
 public class PlainTextCipher extends PscCipher {
 
-    private static final String ALGORITHM = "PLAIN_TEXT";
-    private static final String TRANSFORMATION = "";
-    private static final SecurityLevel SECURITY_LEVEL = SecurityLevel.none;
-
-    @Override
-    public SecurityLevel getSecurityLevel() {
-        return SECURITY_LEVEL;
-    }
-
-    @Override
-    public String getAlgorithm() {
-        return ALGORITHM;
-    }
-
-    @Override
-    public String getTransformation() {
-        return TRANSFORMATION;
-    }
-
-    @Override
-    protected javax.crypto.Cipher getCipher() throws FatalImplementationException {
-        javax.crypto.Cipher cipher = new NullCipher();
-        return cipher;
-    }
+  private static final String ALGORITHM = "PLAIN_TEXT";
+  private static final String TRANSFORMATION = "";
+  private static final SecurityLevel SECURITY_LEVEL = SecurityLevel.none;
 
   @Override
-  public int getKeyBits(){
+  public SecurityLevel getSecurityLevel() {
+    return SECURITY_LEVEL;
+  }
+
+  @Override
+  public String getAlgorithm() {
+    return ALGORITHM;
+  }
+
+  @Override
+  public String getTransformation() {
+    return TRANSFORMATION;
+  }
+
+  @Override
+  protected javax.crypto.Cipher getCipher() throws FatalImplementationException {
+    javax.crypto.Cipher cipher = new NullCipher();
+    return cipher;
+  }
+
+  @Override
+  public int getKeyBits() {
     return 16;
   }
 
