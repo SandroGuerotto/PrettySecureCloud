@@ -1,4 +1,5 @@
-import ch.psc.domain.storage.service.DropBoxService;
+package ch.psc.domain.storage.service;
+
 import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;

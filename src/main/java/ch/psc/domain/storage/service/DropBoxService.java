@@ -46,6 +46,7 @@ public class DropBoxService extends CloudService {
     public List<Future<PscFile>> upload(List<PscFile> files) {
         try { // todo pro file: evtl besser nur immer ein file als import und loop ausserhalb
             client.files().upload(files.get(0).getPath());
+
         } catch (DbxException e) {
             e.printStackTrace(); // todo error handling
         }

@@ -84,7 +84,6 @@ public class LoginController extends ControlledScreen {
         try {
             User user = authenticationService.authenticate(enterMailTextfield.getText(), enterPasswordTextfield.getText());
             UserContext.setAuthorizedUser(user);
-            System.out.println(user.getMail());
             //switchScreen(Screens.FILE_BROWSER);
 //        example on how to use service
 //            FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));

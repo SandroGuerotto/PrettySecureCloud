@@ -2,9 +2,7 @@ package ch.psc.gui;
 
 import ch.psc.domain.cipher.Key;
 import ch.psc.domain.common.context.UserContext;
-import ch.psc.domain.storage.service.FileStorage;
 import ch.psc.domain.storage.service.StorageService;
-import ch.psc.domain.storage.service.StorageServiceFactory;
 import ch.psc.domain.user.AuthenticationService;
 import ch.psc.domain.user.User;
 import ch.psc.exceptions.AuthenticationException;
@@ -89,21 +87,22 @@ public class SignUpController extends ControlledScreen {
      * Switches screen to file browser.
      */
     private void finish() {
-        List<Object> data = flowControl.getData();
-        User user =
-                new User(
-                        (String) data.get(0), (String) data.get(1), (String) data.get(2),
-                        (Map<StorageService, Map<String, String>>) data.get(4), (Map<String, Key>) data.get(3)
-                );
         try {
+            List<Object> data = flowControl.getData();
+            User user = createUser(data);
             UserContext.setAuthorizedUser(authenticationService.signup(user));
         } catch (AuthenticationException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // todo show error
         }
         //switchScreen(Screens.FILE_BROWSER);
 //        example on how to use service
-        FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
-        dropbox.getFileTree();
+    }
+
+    @SuppressWarnings("unchecked")
+    private User createUser(List<Object> data) {
+        Map<StorageService, Map<String, String>> services = (Map<StorageService, Map<String, String>>) data.get(4);
+        Map<String, Key> keyChain = (Map<String, Key>) data.get(3);
+        return new User((String) data.get(0), (String) data.get(1), (String) data.get(2), services, keyChain);
     }
 
     /**

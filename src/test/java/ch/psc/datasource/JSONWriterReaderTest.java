@@ -1,4 +1,5 @@
-import ch.psc.datasource.JSONWriterReader;
+package ch.psc.datasource;
+
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.domain.user.User;
 import org.junit.jupiter.api.AfterEach;

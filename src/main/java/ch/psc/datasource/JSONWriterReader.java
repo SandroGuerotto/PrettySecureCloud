@@ -27,7 +27,7 @@ public class JSONWriterReader {
      */
     public boolean writeToJson(String filePath, Object object) {
 
-        try (FileWriter writer = new FileWriter(filePath)) {
+        try(FileWriter writer = new FileWriter(filePath))  {
             String json = FxGson.coreBuilder()
                     .setPrettyPrinting()
                     .create().toJson(object);
