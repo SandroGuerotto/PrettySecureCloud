@@ -9,7 +9,6 @@ import ch.psc.exceptions.AuthenticationException;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.components.signUp.SignUpFlowControl;
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
@@ -63,7 +62,9 @@ public class SignUpController extends ControlledScreen {
                 buildControl();
             }
         });
-        flowControl.isDoneProperty().addListener((observable, old, newValue) -> finish());
+        flowControl.isDoneProperty().addListener((observable, old, newValue) -> {
+            if (newValue) finish();
+        });
         flowControl.isCanceledProperty().addListener((observable, old, newValue) -> {
             if (newValue) cancel();
         });
@@ -75,6 +76,7 @@ public class SignUpController extends ControlledScreen {
      */
     private void cancel() {
         try {
+            UserContext.setAuthorizedUser(null);
             switchScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
         } catch (ScreenSwitchException e) {
             e.printStackTrace();
@@ -88,6 +90,7 @@ public class SignUpController extends ControlledScreen {
      */
     private void finish() {
         try {
+            UserContext.setAuthorizedUser(null);
             List<Object> data = flowControl.getData();
             User user = createUser(data);
             UserContext.setAuthorizedUser(authenticationService.signup(user));

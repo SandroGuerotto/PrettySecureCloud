@@ -7,7 +7,7 @@ import ch.psc.gui.ControlledScreen;
 import ch.psc.gui.LoginController;
 import ch.psc.gui.SignUpController;
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
+import ch.psc.gui.Config;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;

@@ -1,7 +1,7 @@
 package ch.psc.gui.components.signUp;
 
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
+import ch.psc.gui.Config;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;

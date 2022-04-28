@@ -1,7 +1,8 @@
 package ch.psc.domain.cipher;
 
-import javax.crypto.NullCipher;
 import ch.psc.exceptions.FatalImplementationException;
+
+import javax.crypto.NullCipher;
 
 /**
  * <b>Do not use this for secure Data!</b>

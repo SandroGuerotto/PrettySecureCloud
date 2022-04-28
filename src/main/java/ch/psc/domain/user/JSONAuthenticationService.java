@@ -58,7 +58,8 @@ public class JSONAuthenticationService implements AuthenticationService {
     public User signup(User user) throws AuthenticationException {
         String hash = buildHash(user.getMail(), user.getPassword());
         String path = buildPath(hash);
-        assert jsonWriterReader.writeToJson(path, JSONUser.toJson(user));
+        if (!jsonWriterReader.writeToJson(path, JSONUser.toJson(user)))
+            throw new  AuthenticationException("Failed to write");
         return readUser(path);
     }
 
