@@ -1,6 +1,7 @@
 package ch.psc.domain.user;
 
 import ch.psc.exceptions.AuthenticationException;
+import ch.psc.exceptions.UpdateUserException;
 
 /**
  * A service for verifying credentials provided by a client.
@@ -27,5 +28,5 @@ public interface AuthenticationService {
      */
     User signup(User user) throws AuthenticationException;
 
-    User update(User user) throws Exception;
+    User update(User user) throws Exception, UpdateUserException;
 }

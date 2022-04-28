@@ -4,6 +4,7 @@ import ch.psc.datasource.JSONWriterReader;
 import ch.psc.domain.cipher.Key;
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.exceptions.AuthenticationException;
+import ch.psc.exceptions.UpdateUserException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -12,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -83,14 +85,15 @@ public class JSONAuthenticationService implements AuthenticationService {
     }
 
     @Override
-    public User update(User user) throws Exception {
+    public User update(User user) throws UpdateUserException {
         String hash = buildHash(user.getMail(), user.getPassword());
         String path = buildPath(hash);
-        if (jsonWriterReader.writeToJson(path, JSONUser.toJson(user))) throw new Exception("Failed to update user");
+        if (!jsonWriterReader.writeToJson(path, JSONUser.toJson(user)))
+            throw new UpdateUserException("Failed to update user. Write not possible");
         try {
             return readUser(path);
         } catch (AuthenticationException e) {
-            throw new Exception("Failed to update user", e);
+            throw new UpdateUserException("Failed to update user. Read failed", e);
         }
     }
 
@@ -120,13 +123,14 @@ public class JSONAuthenticationService implements AuthenticationService {
         private final String mail;
         private final String password;
         private final Map<StorageService, Map<String, String>> storageServiceConfig;
-        private Map<String, Map<String, String>> keyChain;
+        private final Map<String, Map<String, String>> keyChain;
 
-        JSONUser(String username, String mail, String password, Map<StorageService, Map<String, String>> storageServiceConfig) {
+        JSONUser(String username, String mail, String password, Map<StorageService, Map<String, String>> storageServiceConfig, Map<String, Map<String, String>> keyChain) {
             this.username = username;
             this.mail = mail;
             this.password = password;
             this.storageServiceConfig = storageServiceConfig;
+            this.keyChain = keyChain;
         }
 
         /**
@@ -137,14 +141,28 @@ public class JSONAuthenticationService implements AuthenticationService {
          * @return serializable user object
          */
         public static JSONUser toJson(User user) {
-            JSONUser jsonUser = new JSONUser(user.getUsername(), user.getMail(), user.getPassword(), user.getStorageServiceConfig());
-            jsonUser.keyChain = user.getKeyChain()
+            return new JSONUser(
+                    user.getUsername(),
+                    user.getMail(),
+                    user.getPassword(),
+                    user.getStorageServiceConfig(),
+                    serializeKeyChain(user.getKeyChain()));
+        }
+
+        /**
+         * Create a Map of type of key and a string-map with algorithm and secret.
+         * Uses {@link #serializeKey(Key)} to create the string-map.
+         *
+         * @param keyChain keychain of user
+         * @return serialized keychain
+         */
+        private static Map<String, Map<String, String>> serializeKeyChain(Map<String, Key> keyChain) {
+            return keyChain
                     .entrySet()
                     .stream()
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
-                            entry -> jsonUser.serializeKeyChain(entry.getValue())));
-            return jsonUser;
+                            entry -> serializeKey(entry.getValue())));
         }
 
         /**
@@ -153,7 +171,7 @@ public class JSONAuthenticationService implements AuthenticationService {
          * @param secretKey encryption key
          * @return map with algorithm and secret
          */
-        private Map<String, String> serializeKeyChain(Key secretKey) {
+        private static Map<String, String> serializeKey(Key secretKey) {
             assert secretKey != null;
             Map<String, String> mapped = new HashMap<>();
             mapped.put(JSON_TOKEN_ALGORITHM, secretKey.getType());
@@ -161,7 +179,7 @@ public class JSONAuthenticationService implements AuthenticationService {
             return mapped;
         }
 
-        private Key mapToKey(Map<String, String> map) {
+        private static Key deserializeToKey(Map<String, String> map) {
             return new Key(new SecretKeySpec(map.get(JSON_TOKEN_SECRET).getBytes(StandardCharsets.UTF_8), map.get(JSON_TOKEN_ALGORITHM)));
         }
 
@@ -172,13 +190,13 @@ public class JSONAuthenticationService implements AuthenticationService {
          * @param keyChain string-map of algorithm and secret
          * @return map of type and {@link Key}
          */
-        private Map<String, Key> deserializeKeyChain(Map<String, Map<String, String>> keyChain) {
+        private static Map<String, Key> deserializeKeyChain(Map<String, Map<String, String>> keyChain) {
             if (keyChain != null)
                 return keyChain.entrySet()
                         .stream()
-                        .collect(Collectors.toMap(Map.Entry::getKey, entry -> mapToKey(entry.getValue())
+                        .collect(Collectors.toMap(Map.Entry::getKey, entry -> deserializeToKey(entry.getValue())
                         ));
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
 
         /**
@@ -194,7 +212,7 @@ public class JSONAuthenticationService implements AuthenticationService {
                     jsonUser.mail,
                     jsonUser.password,
                     jsonUser.storageServiceConfig,
-                    jsonUser.deserializeKeyChain(jsonUser.keyChain));
+                    deserializeKeyChain(jsonUser.keyChain));
         }
     }
 
