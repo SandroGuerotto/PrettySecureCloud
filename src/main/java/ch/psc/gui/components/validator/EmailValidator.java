@@ -6,7 +6,9 @@ import javafx.scene.control.TextInputControl;
 import java.util.regex.Pattern;
 
 /**
- * Validatorclass for the purpose to validate text fields that require an email address of the user.
+ * Validator for the purpose to validate text fields
+ * that require a valid email address from the user, matching the criteria of the EMAIL_PATTERN.
+ *
  * @author bananasprout
  */
 

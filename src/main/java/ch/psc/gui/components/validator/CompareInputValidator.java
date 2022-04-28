@@ -5,6 +5,7 @@ import javafx.scene.control.TextInputControl;
 
 /**
  * Compares to string inputs.
+ *
  * @author bananasprout
  */
 

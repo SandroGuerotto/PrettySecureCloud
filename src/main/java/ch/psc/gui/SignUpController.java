@@ -9,18 +9,19 @@ import ch.psc.presentation.Config;
 import com.jfoenix.controls.JFXButton;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.animation.PathTransition;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-//import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ import java.util.stream.IntStream;
 /**
  * GUI Controller for Sign-up process.
  *
- * @author SandroGuerotto
+ * @author SandroGuerotto, bananasprout
  */
 public class SignUpController extends ControlledScreen {
 
@@ -38,6 +39,7 @@ public class SignUpController extends ControlledScreen {
 
     @FXML
     private HBox signupMainPane;
+
     @FXML
     private VBox signupFormPane;
 
@@ -53,17 +55,9 @@ public class SignUpController extends ControlledScreen {
                 buildControl();
             }
         });
-        flowControl.isDoneProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean old, Boolean newValue) {
-                SignUpController.this.finish();
-            }
-        });
-        flowControl.isCanceledProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean old, Boolean newValue) {
-                if (newValue) SignUpController.this.cancel();
-            }
+        flowControl.isDoneProperty().addListener((observable, old, newValue) -> SignUpController.this.finish());
+        flowControl.isCanceledProperty().addListener((observable, old, newValue) -> {
+            if (newValue) SignUpController.this.cancel();
         });
         flowControl.next();
     }
@@ -121,9 +115,26 @@ public class SignUpController extends ControlledScreen {
         next.setContentDisplay(ContentDisplay.RIGHT);
         next.getStyleClass().add("control-button");
 
+        Label signUpErrorLabel = new Label();
+        signUpErrorLabel.setPadding(new Insets(15, 0, 0, 0));
+        signUpErrorLabel.getStyleClass().add("error");
+
 
         prev.setOnAction(event -> flowControl.previous());
         prev.setCancelButton(true);
+        next.setOnMouseClicked(event -> { if(!flowControl.isValid() && event.getClickCount()==3){
+            Circle circle = new Circle(200);
+            circle.setCenterX(next.getLayoutX()-375);
+            circle.setCenterY(next.getLayoutY()-1);
+            PathTransition transition = new PathTransition();
+            transition.setNode(next);
+            transition.setDuration(Duration.seconds(3));
+            transition.setPath(circle);
+            transition.setCycleCount(1);
+            transition.play();
+
+        }
+        });
         next.setOnAction(event -> {
             if (flowControl.isValid()) flowControl.next();
         });
@@ -140,6 +151,7 @@ public class SignUpController extends ControlledScreen {
 
         signupFormPane.getChildren().addAll(
                 flowControl.getCurrentPane(),
+                signUpErrorLabel,
                 pane
         );
     }

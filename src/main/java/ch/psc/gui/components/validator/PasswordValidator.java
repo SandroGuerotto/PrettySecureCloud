@@ -5,10 +5,17 @@ import javafx.scene.control.TextInputControl;
 
 import java.util.regex.Pattern;
 
+/**
+ * Validator for the purpose to validate text fields
+ * that require a valid password from the user, matching the criteria of PASSWORD_PATTERN.
+ *
+ * @author bananasprout
+ */
+
 public class PasswordValidator extends ValidatorBase {
 
     //Regexpatter: contain at least one digit from 0-9, spaces are not allowed, at least 8 characters and at most 20
-    private final static String PASSWORD_PATTERN = "^(?=. *[0-9])"+"(?=\\S+$).{8,20}$";
+    private final static String PASSWORD_PATTERN = "^(?!.* )(?=.*\\d).{8,20}$";
     private final Pattern regexPatternCompiled;
 
 

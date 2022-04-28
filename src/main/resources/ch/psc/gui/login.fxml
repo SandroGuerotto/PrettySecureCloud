@@ -12,7 +12,7 @@
 
 <HBox fx:id="loginPane" alignment="CENTER" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox alignment="CENTER" minHeight="250.0" prefHeight="400.0" prefWidth="300.0" spacing="30.0">
+      <VBox alignment="CENTER" minHeight="250.0" prefHeight="400.0" prefWidth="300.0" spacing="35.0">
          <children>
             <HBox alignment="CENTER" spacing="10.0">
                <children>
@@ -30,16 +30,22 @@
                   </JFXPasswordField>
                </children>
             </HBox>
-            <HBox prefWidth="250.0">
+            <HBox alignment="CENTER" prefWidth="250.0">
                <children>
-                  <Label />
+                  <Label fx:id="loginErrorLabel" alignment="TOP_LEFT" contentDisplay="CENTER" prefWidth="250.0" styleClass="error">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <padding>
+                        <Insets top="15.0" />
+                     </padding></Label>
                </children>
             </HBox>
             <HBox alignment="CENTER" spacing="60.0">
                <children>
-                  <JFXButton onAction="#register" styleClass="button-register-login" text="%login.button.register">
+                  <JFXButton onAction="#register" styleClass="jfx-button-register-login" text="%login.button.register">
                   </JFXButton>
-                  <JFXButton alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#login" styleClass="button-login" text="%login.button.login">
+                  <JFXButton alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#login" styleClass="jfx-button-login" text="%login.button.login">
                      <font>
                         <Font size="11.0" />
                      </font>
@@ -52,9 +58,6 @@
                      </graphic>
                   </JFXButton>
                </children>
-               <padding>
-                  <Insets top="15.0" />
-               </padding>
             </HBox>
          </children>
          <padding>

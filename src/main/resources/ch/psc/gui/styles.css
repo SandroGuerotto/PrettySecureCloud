@@ -55,7 +55,7 @@
 .error {
     -fx-text-fill: -fx-error;
     -fx-fill: -fx-error;
-    -fx-border-color: transparent transparent -fx-error transparent ;
+    /*-fx-border-color: transparent transparent -fx-error transparent ; */
 }
 .error-label {
     -fx-text-fill: -fx-error;
