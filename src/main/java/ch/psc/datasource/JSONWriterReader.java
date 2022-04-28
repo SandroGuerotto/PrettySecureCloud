@@ -1,12 +1,11 @@
 package ch.psc.datasource;
 
-import org.hildan.fxgson.FxGson;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.hildan.fxgson.FxGson;
 
 /**
  * Class to read or write json files
@@ -30,6 +29,7 @@ public class JSONWriterReader {
         try(FileWriter writer = new FileWriter(filePath))  {
             String json = FxGson.coreBuilder()
                     .setPrettyPrinting()
+                    .registerTypeAdapterFactory(new SecretKeyTypeAdapterFactory())
                     .create().toJson(object);
 
             writer.write(json);
@@ -67,6 +67,8 @@ public class JSONWriterReader {
      */
     public <T> T readFromJson(String path, Class<T> clazz) throws IOException {
         Reader reader = Files.newBufferedReader(Paths.get(path));
-        return FxGson.create().fromJson(reader, clazz);
+        return FxGson.coreBuilder()
+                .registerTypeAdapterFactory(new SecretKeyTypeAdapterFactory())
+                .create().fromJson(reader, clazz);
     }
 }

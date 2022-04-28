@@ -17,4 +17,5 @@ public class Key {
   public String getType() {
     return key.getAlgorithm();
   }
+
 }
