@@ -2,6 +2,7 @@ package ch.psc.gui;
 
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.components.validator.EmailValidator;
+import ch.psc.gui.components.validator.PasswordValidator;
 import ch.psc.gui.components.validator.RequiredInputValidator;
 import ch.psc.gui.util.JavaFxUtils;
 import ch.psc.presentation.Config;
@@ -56,13 +57,12 @@ public class LoginController extends ControlledScreen {
     public void initialize(){
 
         enterMailTextfield.setLabelFloat(true);
-
-        RequiredInputValidator inputMailValidator = new RequiredInputValidator(Config.getResourceText("login.errorLabel.emailRequired"));
         //inputMailValidator.setIcon(new FontAwesomeIconView(FontAwesomeIcon.WARNING));
-        enterMailTextfield.getValidators().add(inputMailValidator);
-        enterMailTextfield.focusedProperty().addListener((o, oldVal, newValue) -> {
-            if (!newValue) enterMailTextfield.validate(); //wenn kein neuer Value, dann validate
-        });
+        enterMailTextfield.getValidators().addAll(
+                new RequiredInputValidator(Config.getResourceText("login.errorLabel.emailRequired")),
+                new EmailValidator(Config.getResourceText("login.errorLabel.emailNotValid"))
+                );
+
         enterMailTextfield.textProperty().addListener((observable, oldValue, newValue) -> {
             if(!newValue.equals(oldValue)){
                 enterMailTextfield.validate();
@@ -70,16 +70,12 @@ public class LoginController extends ControlledScreen {
         });
 
         enterPasswordTextfield.setLabelFloat(true);
-
-        RequiredInputValidator inputPasswordValidator = new RequiredInputValidator(Config.getResourceText("login.errorLabel.passwordRequired"));
-        enterPasswordTextfield.getValidators().add(inputPasswordValidator);
-        enterPasswordTextfield.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue) enterPasswordTextfield.validate();
-        });
+        enterPasswordTextfield.getValidators().addAll(
+                new RequiredInputValidator(Config.getResourceText("login.errorLabel.passwordRequired")),
+                new PasswordValidator(Config.getResourceText("login.errorLabel.passwordNotValid"))
+        );
         enterPasswordTextfield.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.equals(oldValue)){
-                enterPasswordTextfield.validate();
-            }
+            if (!newValue.equals(oldValue)) enterPasswordTextfield.validate();
         });
     }
 
@@ -88,10 +84,10 @@ public class LoginController extends ControlledScreen {
      */
     @FXML
     private void register() {
-        enterPasswordTextfield.resetValidation();
-        enterMailTextfield.resetValidation();
         enterMailTextfield.clear();
         enterPasswordTextfield.clear();
+        enterPasswordTextfield.resetValidation();
+        enterMailTextfield.resetValidation();
 
         try {
             switchScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE);
@@ -105,9 +101,7 @@ public class LoginController extends ControlledScreen {
      */
     @FXML
     private void login(){
-            EmailValidator emailValidator = new EmailValidator(Config.getResourceText("login.errorLabel.emailNotValid"));
-            enterMailTextfield.getValidators().add(emailValidator);
-            if (enterMailTextfield.validate()){
+            if (enterMailTextfield.validate() && enterPasswordTextfield.validate()){
                 enterMailTextfield.getText();
                 enterPasswordTextfield.getText();
                 //Todo: Validation of login, if not valid -> errormessage

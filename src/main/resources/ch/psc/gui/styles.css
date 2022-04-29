@@ -65,12 +65,6 @@
 
 }
 
-.jfx-button-login{
-    -fx-background-color: rgba(0, 0, 0, 0);
-    -fx-font-size: 15;
-    -fx-border-width: 1 2 2 1;
-    -fx-border-color: -fx-main;
-}
 
 .jfx-passwordfield-login{
     -fx-background-color: rgba(0, 0, 0, 0);
@@ -89,10 +83,24 @@
     -fx-prompt-text-fill: -fx-main2, fontawe;
 }
 
+
+.jfx-button-login:focused {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-font-size: 15;
+    /*-fx-border-width: 1 2 2 1;*/
+    /*-fx-border-color: -fx-main;*/
+}
+
+.jfx-button-login:hover, .jfx-button-login:hover .glyph-icon{
+    -fx-text-fill: -fx-main2;
+    -fx-fill: -fx-main2;
+}
+
+
 .jfx-button-register-login{
     -fx-background-color: rgba(0, 0, 0, 0);
     -fx-font-size: 15;
-    -fx-underline: true, -fx-main;
+    /*-fx-underline: true, -fx-main;*/
     -fx-text-fill: -fx-main;
 }
 

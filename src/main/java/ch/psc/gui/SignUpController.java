@@ -58,7 +58,7 @@ public class SignUpController extends ControlledScreen {
         });
         flowControl.isDoneProperty().addListener((observable, old, newValue) -> SignUpController.this.finish());
         flowControl.isCanceledProperty().addListener((observable, old, newValue) -> {
-            if (newValue) SignUpController.this.cancel();
+            if (newValue) cancel();
         });
         flowControl.next();
     }
@@ -124,19 +124,7 @@ public class SignUpController extends ControlledScreen {
 
         prev.setOnAction(event -> flowControl.previous());
         prev.setCancelButton(true);
-        next.setOnMouseClicked(event -> { if(!flowControl.isValid() && event.getClickCount()==3){
-            Circle circle = new Circle(200);
-            circle.setCenterX(next.getLayoutX()-375);
-            circle.setCenterY(next.getLayoutY()-1);
-            PathTransition transition = new PathTransition();
-            transition.setNode(next);
-            transition.setDuration(Duration.seconds(3));
-            transition.setPath(circle);
-            transition.setCycleCount(1);
-            transition.play();
-
-        }
-        });
+        easterEgg(next);
         next.setOnAction(event -> {
             if (flowControl.isValid()) flowControl.next();
         });
@@ -156,6 +144,21 @@ public class SignUpController extends ControlledScreen {
                 signUpErrorLabel,
                 pane
         );
+    }
+
+    private void easterEgg(JFXButton button){
+        button.setOnMouseClicked(event -> { if(!flowControl.isValid() && event.getClickCount()==3){
+            Circle circle = new Circle(200);
+            circle.setCenterX(button.getLayoutX()-375);
+            circle.setCenterY(button.getLayoutY()-1);
+            PathTransition transition = new PathTransition();
+            transition.setNode(button);
+            transition.setDuration(Duration.seconds(3));
+            transition.setPath(circle);
+            transition.setCycleCount(1);
+            transition.play();
+        }
+        });
     }
 
     @Override

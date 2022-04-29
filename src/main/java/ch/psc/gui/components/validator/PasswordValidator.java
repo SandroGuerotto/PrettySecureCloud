@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 /**
  * Validator for the purpose to validate text fields
- * that require a valid password from the user, matching the criteria of PASSWORD_PATTERN.
+ * that require a valid password from the user, matching the criteria of {@link #PASSWORD_PATTERN}.
  *
  * @author bananasprout
  */

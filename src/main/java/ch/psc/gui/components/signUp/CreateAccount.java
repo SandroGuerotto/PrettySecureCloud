@@ -50,11 +50,9 @@ public class CreateAccount extends VBox implements SignUpFlow {
         usernameField.setLabelFloat(true);
         usernameField.setPromptText(Config.getResourceText("signup.prompt.username"));
         //Input for username field required
-        RequiredInputValidator requiredInput = new RequiredInputValidator(Config.getResourceText("signup.errorLabel.usernameRequired"));
-        usernameField.getValidators().add(requiredInput);
-        usernameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) usernameField.validate();
-        });
+        //TODO Lösung wie bei Login oder wie hier?
+        usernameField.getValidators().addAll(
+                new RequiredInputValidator(Config.getResourceText("signup.errorLabel.usernameRequired")));
         usernameField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.equals(oldValue)) usernameField.validate();
         });
@@ -62,12 +60,9 @@ public class CreateAccount extends VBox implements SignUpFlow {
         emailTextField.setLabelFloat(true);
         emailTextField.setPromptText(Config.getResourceText("signup.prompt.email"));
 
-        requiredInput = new RequiredInputValidator(Config.getResourceText("signup.errorLabel.emailRequired"));
-        EmailValidator emailValidator = new EmailValidator(Config.getResourceText("signup.errorLabel.emailNotValid"));
-        emailTextField.getValidators().addAll(requiredInput, emailValidator);
-        emailTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue) emailTextField.validate();
-        });
+        emailTextField.getValidators().addAll(
+                new RequiredInputValidator(Config.getResourceText("signup.errorLabel.emailRequired")),
+                new EmailValidator(Config.getResourceText("signup.errorLabel.emailNotValid")));
         emailTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.equals(oldValue)) emailTextField.validate();
         });
@@ -75,15 +70,9 @@ public class CreateAccount extends VBox implements SignUpFlow {
         passwordTextField.setLabelFloat(true);
         passwordTextField.setPromptText(Config.getResourceText("signup.prompt.enterPassword"));
 
-
-        requiredInput = new RequiredInputValidator(Config.getResourceText("signup.errorLabel.passwordRequired"));
-        PasswordValidator passwordValidator = new PasswordValidator(Config.getResourceText("signup.errorLabel.passwordNotValid"));
-        passwordTextField.getValidators().addAll(requiredInput, passwordValidator);
-        passwordTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue){
-                passwordTextField.validate();
-            }
-        });
+        passwordTextField.getValidators().addAll(
+                new RequiredInputValidator(Config.getResourceText("signup.errorLabel.passwordRequired")),
+                new PasswordValidator(Config.getResourceText("signup.errorLabel.passwordNotValid")));
         passwordTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.equals(oldValue)) passwordTextField.validate();
         });
@@ -91,19 +80,12 @@ public class CreateAccount extends VBox implements SignUpFlow {
         passwordConfirmTextField.setLabelFloat(true);
         passwordConfirmTextField.setPromptText(Config.getResourceText("signup.prompt.confirmPassword"));
 
-        CompareInputValidator compareInputValidator = new CompareInputValidator(Config.getResourceText("signup.errorLabel.confirmationPasswordNotIdentical"), passwordTextField);
-        requiredInput = new RequiredInputValidator(Config.getResourceText("signup.errorLabel.passwordRequired"));
-        passwordConfirmTextField.getValidators().addAll(requiredInput, compareInputValidator);
-        passwordConfirmTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue){
-                passwordConfirmTextField.validate();
-            }
-        });
+        passwordConfirmTextField.getValidators().addAll(
+                new RequiredInputValidator(Config.getResourceText("signup.errorLabel.passwordRequired")),
+                new CompareInputValidator(Config.getResourceText("signup.errorLabel.confirmationPasswordNotIdentical"), passwordTextField));
         passwordConfirmTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (passwordTextField.validate() && !newValue.equals(oldValue)) passwordTextField.validate();
+            if (passwordTextField.validate() && !newValue.equals(oldValue)) passwordConfirmTextField.validate();
         });
-
-
 
         Label title = new Label(Config.getResourceText("signup.title.createAccount"));
 
@@ -118,20 +100,11 @@ public class CreateAccount extends VBox implements SignUpFlow {
 
     @Override
     public boolean isValid() {
-        boolean isValid = true;
-        if(emailTextField.getActiveValidator() != null ){
-            isValid = !emailTextField.getActiveValidator().getHasErrors();
-        }
-        if(passwordTextField.getActiveValidator() != null){
-            isValid = !passwordTextField.getActiveValidator().getHasErrors();
-        }
-        if(passwordConfirmTextField.getActiveValidator() != null){
-            isValid = !passwordConfirmTextField.getActiveValidator().getHasErrors();
-        }
-        if(usernameField.getActiveValidator() != null){
-            isValid = !usernameField.getActiveValidator().getHasErrors();
-        }
-       return isValid;
+        boolean isValid = emailTextField.validate();
+        isValid = passwordTextField.validate() && isValid;
+        isValid = usernameField.validate() && isValid;
+        isValid = passwordConfirmTextField.validate() && isValid;
+        return isValid;
     }
 
     @Override
