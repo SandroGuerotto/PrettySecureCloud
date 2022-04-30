@@ -1,4 +1,6 @@
-package ch.psc.exceptions;
+package ch.psc.domain.error;
+
+import java.security.GeneralSecurityException;
 
 public class FatalImplementationException extends Exception {
   
@@ -11,7 +13,7 @@ public class FatalImplementationException extends Exception {
     super(message);
   }
   
-  public FatalImplementationException(String message, Throwable parent) {
+  public FatalImplementationException(String message, GeneralSecurityException parent) {
     super(message, parent);
   }
 

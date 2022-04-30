@@ -17,82 +17,93 @@
     -fx-font-weight: bold;
 }
 
-.button{
+.jfx-button{
     -fx-background-color: rgba(0, 0, 0, 0);
     -fx-text-fill: -fx-main;
     -fx-fill: -fx-main;
     -fx-font-size: 15;
 }
 
-.control-button{
+.jfx-control-button{
     -fx-text-fill: #4A4A4A;
     -fx-fill: #4A4A4A;
 }
-.control-button:focused, .control-button:focused .glyph-icon,
+.jfx-control-button:focused, .control-button:focused .glyph-icon,
 .control-button:hover, .control-button:hover .glyph-icon {
     -fx-text-fill: -fx-main2;
     -fx-fill: -fx-main2;
 }
 
-.button-DROPBOX .glyph-icon{
+.jfx-button-DROPBOX .glyph-icon{
     -fx-text-fill: #007FE6;
     -fx-fill: #007FE6;
 }
-.button-DROPBOX:focused, .button-DROPBOX:focused .glyph-icon,
-.button-DROPBOX:hover, .button-DROPBOX:hover .glyph-icon {
+.jfx-button-DROPBOX:focused, .button-DROPBOX:focused .glyph-icon,
+.jfx-button-DROPBOX:hover, .button-DROPBOX:hover .glyph-icon {
     -fx-text-fill: #0066b9;
     -fx-fill: #0066b9;
 }
 
-.text-field {
+.jfx-text-field {
     -fx-background-color: rgba(0, 0, 0, 0);
-    -fx-border-color: transparent transparent -fx-main2 transparent ;
+    /*-fx-border-color: transparent transparent -fx-main2 transparent ; */
     -fx-border-width: 2;
     -fx-outline: 0;
     -fx-prompt-text-fill: -fx-main2;
 }
-
 
 .error {
     -fx-text-fill: -fx-error;
     -fx-fill: -fx-error;
-    -fx-border-color: transparent transparent -fx-error transparent ;
+    /*-fx-border-color: transparent transparent -fx-error transparent ; */
+}
+.error-label {
+    -fx-text-fill: -fx-error;
+    -fx-fill: -fx-error;
+    -fx-font-family: "Roboto";
+    -fx-font-size: 10;
+
 }
 
 
-
-.button-login{
-    -fx-background-color: rgba(0, 0, 0, 0);
-    -fx-font-size: 15;
-    -fx-border-width: 1 2 2 1;
-    -fx-border-color: -fx-main;
-}
-
-.passwordfield-login{
+.jfx-passwordfield-login{
     -fx-background-color: rgba(0, 0, 0, 0);
     /*-fx-border-width: 0 0 2 0;
     -fx-border-color: -fx-main;
-     */
     -fx-border-color: transparent transparent -fx-main2 transparent;
+     */
     -fx-border-width: 2;
     -fx-outline: 0;
     -fx-prompt-text-fill: -fx-main2;
 }
 
-.textfield-login{
+.jfx-textfield-login{
     -fx-background-color: rgba(0, 0, 0, 0);
     -fx-border-width: 0 0 2 0;
-    -fx-border-color: -fx-main;
     -fx-prompt-text-fill: -fx-main2, fontawe;
 }
 
-.button-register-login{
+
+.jfx-button-login:focused {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-font-size: 15;
+    /*-fx-border-width: 1 2 2 1;*/
+    /*-fx-border-color: -fx-main;*/
+}
+
+.jfx-button-login:hover, .jfx-button-login:hover .glyph-icon{
+    -fx-text-fill: -fx-main2;
+    -fx-fill: -fx-main2;
+}
+
+
+.jfx-button-register-login{
     -fx-background-color: rgba(0, 0, 0, 0);
     -fx-font-size: 15;
     -fx-underline: true, -fx-main;
     -fx-text-fill: -fx-main;
 }
 
-.button-register-login:hover{
+.jfx-button-register-login:hover{
     -fx-text-fill: -fx-accent1;
 }

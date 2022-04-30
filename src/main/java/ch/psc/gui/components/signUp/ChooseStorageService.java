@@ -124,7 +124,6 @@ public class ChooseStorageService extends VBox implements SignUpFlow {
         dialogVbox.setPadding(new Insets(10));
         codeInput.setPromptText(Config.getResourceText("signup.dropbox.prompt"));
 
-
         codeInput.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null && !newValue.isEmpty()) {
                 try {

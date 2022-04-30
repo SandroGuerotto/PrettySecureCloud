@@ -4,6 +4,13 @@ import ch.psc.gui.ControlledScreen;
 import ch.psc.gui.LoginController;
 import ch.psc.gui.SignUpController;
 import ch.psc.presentation.Config;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 
 import java.awt.*;
 import java.net.URI;
@@ -19,6 +26,15 @@ public class JavaFxUtils {
      * No instance necessary
      */
     private JavaFxUtils(){
+    }
+
+    public static Pane addIconBefore(Region field, FontAwesomeIcon icon, String cssClass) {
+        FontAwesomeIconView image = new FontAwesomeIconView(icon, "16");
+        image.getStyleClass().add(cssClass);
+        HBox pane = new HBox(10, image, field);
+        HBox.setHgrow(field, Priority.ALWAYS);
+        pane.setAlignment(Pos.CENTER_LEFT);
+        return pane;
     }
 
     /**
@@ -38,8 +54,8 @@ public class JavaFxUtils {
      */
     public enum RegisteredScreen {
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
-        LOGIN_PAGE("login.fxml", "login.titel", LoginController.class),
-        SIGNUP_PAGE("signUp.fxml", "signup.titel", SignUpController.class);
+        LOGIN_PAGE("login.fxml", "login.title", LoginController.class),
+        SIGNUP_PAGE("signUp.fxml", "signup.title", SignUpController.class);
 
 //        CLOUDSERVICESPAGE("", ""),
 //        FILEBROWSERPAGE("", "");
