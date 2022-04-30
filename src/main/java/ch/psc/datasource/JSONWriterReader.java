@@ -29,7 +29,7 @@ public class JSONWriterReader {
         try (FileWriter writer = new FileWriter(filePath)) {
             String json = FxGson.coreBuilder()
                     .setPrettyPrinting()
-                    .registerTypeAdapterFactory(new SecretKeyTypeAdapterFactory())
+                    .registerTypeAdapterFactory(new KeyTypeAdapterFactory())
                     .create().toJson(object);
 
             writer.write(json);
@@ -52,7 +52,7 @@ public class JSONWriterReader {
     public <T> T readFromJson(String path, Class<T> clazz) throws IOException {
         Reader reader = Files.newBufferedReader(Paths.get(path));
         return FxGson.coreBuilder()
-                .registerTypeAdapterFactory(new SecretKeyTypeAdapterFactory())
+                .registerTypeAdapterFactory(new KeyTypeAdapterFactory())
                 .create().fromJson(reader, clazz);
     }
 }

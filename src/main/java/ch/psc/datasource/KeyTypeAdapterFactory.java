@@ -1,7 +1,7 @@
 package ch.psc.datasource;
 
 import java.io.IOException;
-import javax.crypto.SecretKey;
+import java.security.Key;
 import javax.crypto.spec.SecretKeySpec;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -12,14 +12,14 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-public class SecretKeyTypeAdapterFactory implements TypeAdapterFactory {
+public class KeyTypeAdapterFactory implements TypeAdapterFactory {
   
   private static final String NAME_KEY = "key";
   private static final String NAME_ALGORITHM = "algorithm";
 
   @Override
   public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
-    if(!SecretKey.class.isAssignableFrom(type.getRawType())) {
+    if(!Key.class.isAssignableFrom(type.getRawType())) {
       return null;
     }
     
@@ -31,7 +31,7 @@ public class SecretKeyTypeAdapterFactory implements TypeAdapterFactory {
           out.nullValue();
         }
         else {
-          SecretKey key = (SecretKey) value;
+          Key key = (Key) value;
           out.beginObject();
           out.name(NAME_KEY);
           out.value(new String(key.getEncoded()));
