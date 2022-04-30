@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ch.psc.domain.file.PscFile;
 
+import javax.crypto.spec.SecretKeySpec;
+
 class AesCipherTest {
   
   private static final String data = "Hello World!";
@@ -26,9 +28,7 @@ class AesCipherTest {
   @BeforeEach
   private void beforeEcach() {
     cipher = new AesCipher();
-    key = new Key();
-    key.setKey(pass.getBytes());
-    key.setType(cipher.getAlgorythm());
+    key = new Key(new SecretKeySpec(pass.getBytes(), cipher.getAlgorithm()));
     file1 = new PscFile();
     file1.setData(data.getBytes());
     file1.setName("file1");
@@ -38,10 +38,8 @@ class AesCipherTest {
   
   @Test
   public void encryptTooShortKey() {
-    Key invalidKey = new Key();
-    invalidKey.setKey("tooShort".getBytes());
-    invalidKey.setType(cipher.getAlgorythm());
-    
+    Key invalidKey = new Key(new SecretKeySpec("tooShort".getBytes(), cipher.getAlgorithm()));
+
     assertThrows(ExecutionException.class, () -> {
       List<Future<PscFile>> encList = cipher.encrypt(invalidKey, Arrays.asList(file1));
       encList.get(0).get();
@@ -50,9 +48,7 @@ class AesCipherTest {
   
   @Test
   public void decryptTooShortKey() {
-    Key invalidKey = new Key();
-    invalidKey.setKey("tooShort".getBytes());
-    invalidKey.setType(cipher.getAlgorythm());
+    Key invalidKey = new Key(new SecretKeySpec("tooShort".getBytes(), cipher.getAlgorithm()));
     
     assertThrows(ExecutionException.class, () -> {
       List<Future<PscFile>> decList = cipher.decrypt(invalidKey, Arrays.asList(file1));

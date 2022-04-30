@@ -8,7 +8,7 @@ import ch.psc.domain.file.PscFile;
 public class AesCipher extends PscCipher {
   
   private static final SecurityLevel SECURITY_LEVEL = SecurityLevel.high;
-  private static final String ALGORYTHM = "AES";
+  private static final String ALGORITHM = "AES";
   private static final String TRANSFORMATION = "AES/GCM/NoPadding";
   private static final int AES_KEY_LENGTH = 256;
   private static final int GCM_NONCE_LENGTH = 12;
@@ -20,8 +20,13 @@ public class AesCipher extends PscCipher {
   }
 
   @Override
-  public String getAlgorythm() {
-    return ALGORYTHM;
+  public int getKeyBits() {
+    return AES_KEY_LENGTH;
+  }
+
+  @Override
+  public String getAlgorithm() {
+    return ALGORITHM;
   }
 
   @Override
