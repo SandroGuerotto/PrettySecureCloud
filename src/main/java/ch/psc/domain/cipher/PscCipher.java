@@ -77,7 +77,7 @@ public abstract class PscCipher {
    * @return A List of {@link Future}s. Each {@link PscFile} is encrypted asynchronous, the result may be requested through the Future.
    */
   public List<Future<PscFile>> encrypt(Key key, List<PscFile> files) {
-    SecretKey secretKey = key.getKey();
+    java.security.Key secretKey = key.getKey();
     List<Future<PscFile>> encryptedFutures = new LinkedList<>();
     
     files.forEach( file -> {
@@ -97,7 +97,7 @@ public abstract class PscCipher {
    * @return A List of {@link Future}s. Each {@link PscFile} is decrypted asynchronous, the result may be requested through the Future.
    */
   public List<Future<PscFile>> decrypt(Key key, List<PscFile> files) {
-    SecretKey secretKey = key.getKey();
+    java.security.Key secretKey = key.getKey();
     List<Future<PscFile>> decryptedFiles = new LinkedList<>();
     
     files.forEach( file -> {
@@ -119,7 +119,7 @@ public abstract class PscCipher {
    * @throws FatalImplementationException If this Cipher is fundamentally wrong implemented (e.g. non-existing Transformation).
    * @throws InvalidAlgorithmParameterException If the given algorithm parameters are inappropriate for this cipher. Check the Method {@link #getAlgorithmSpecification()}!
    */
-  protected PscFile encrypt(PscFile file, SecretKey key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
+  protected PscFile encrypt(PscFile file, java.security.Key key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
     javax.crypto.Cipher cipher = getCipher();
     cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
     
@@ -143,7 +143,7 @@ public abstract class PscCipher {
    * @throws FatalImplementationException If this Cipher is fundamentally wrong implemented (e.g. non-existing Transformation).
    * @throws InvalidAlgorithmParameterException 
    */
-  protected PscFile decrypt(PscFile file, SecretKey key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
+  protected PscFile decrypt(PscFile file, java.security.Key key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
     javax.crypto.Cipher cipher = getCipher();
     cipher.init(javax.crypto.Cipher.DECRYPT_MODE, key);
     
