@@ -15,7 +15,6 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * Controller for the LoginView.
@@ -52,7 +51,10 @@ public class LoginController extends ControlledScreen {
         return JavaFxUtils.RegisteredScreen.LOGIN_PAGE;
     }
 
-
+    /**
+     * Initializes validation for login data fields.
+     *
+     */
     @FXML
     public void initialize(){
 
@@ -80,7 +82,7 @@ public class LoginController extends ControlledScreen {
     }
 
     /**
-     * Register screen will be shown.
+     * Clears login data and switches to register screen.
      */
     @FXML
     private void register() {
@@ -97,7 +99,7 @@ public class LoginController extends ControlledScreen {
     }
 
     /**
-     * Logindata of user will be checked and if approved the filebrowser will be shown.
+     * Login data of user will be checked and if approved the filebrowser will be shown.
      */
     @FXML
     private void login(){

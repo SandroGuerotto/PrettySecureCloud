@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
- * GUI Controller for Sign-up process.
+ * GUI Controller for sign-up process.
  *
  * @author SandroGuerotto, bananasprout
  */
@@ -49,6 +49,9 @@ public class SignUpController extends ControlledScreen {
         this.flowControl = new SignUpFlowControl();
     }
 
+    /**
+     * Initializes components with listeners for flow control for registration purposes.
+     */
     @FXML
     private void initialize() {
         flowControl.getCurrentPosition().addListener((observable, oldValue, newValue) -> {

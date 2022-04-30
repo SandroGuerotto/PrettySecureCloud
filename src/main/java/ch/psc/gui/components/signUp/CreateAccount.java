@@ -44,13 +44,12 @@ public class CreateAccount extends VBox implements SignUpFlow {
      * Initializes form and creates input field for creating a new account.
      */
     private void initialize() {
-        this.setSpacing(35); //TODO: make appearance of textfields unified (in login and signup window)
+        this.setSpacing(35);
         this.setPadding(new Insets(10, 20, 10, 20));
 
         usernameField.setLabelFloat(true);
         usernameField.setPromptText(Config.getResourceText("signup.prompt.username"));
-        //Input for username field required
-        //TODO Lösung wie bei Login oder wie hier?
+
         usernameField.getValidators().addAll(
                 new RequiredInputValidator(Config.getResourceText("signup.errorLabel.usernameRequired")));
         usernameField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -84,7 +83,7 @@ public class CreateAccount extends VBox implements SignUpFlow {
                 new RequiredInputValidator(Config.getResourceText("signup.errorLabel.passwordRequired")),
                 new CompareInputValidator(Config.getResourceText("signup.errorLabel.confirmationPasswordNotIdentical"), passwordTextField));
         passwordConfirmTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (passwordTextField.validate() && !newValue.equals(oldValue)) passwordConfirmTextField.validate();
+            if (!newValue.equals(oldValue)) passwordConfirmTextField.validate();
         });
 
         Label title = new Label(Config.getResourceText("signup.title.createAccount"));
@@ -98,6 +97,11 @@ public class CreateAccount extends VBox implements SignUpFlow {
         this.setMinHeight(250);
     }
 
+    /**
+     * Checks if registration data is valid.
+     * @return true, if registration data meets validation criteria.
+     */
+
     @Override
     public boolean isValid() {
         boolean isValid = emailTextField.validate();
@@ -107,6 +111,9 @@ public class CreateAccount extends VBox implements SignUpFlow {
         return isValid;
     }
 
+    /**
+     * Clears register data and switches back to login screen.
+     */
     @Override
     public void clear() {
         usernameField.clear();
