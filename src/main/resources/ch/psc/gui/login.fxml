@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox fx:id="loginPane" alignment="CENTER" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox alignment="CENTER" minHeight="250.0" prefHeight="400.0" prefWidth="300.0" spacing="15.0">
+         <children>
+            <HBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <FontAwesomeIconView glyphName="ENVELOPE" size="16" text="">
+                  </FontAwesomeIconView>
+                  <TextField fx:id="enterMailTextfield" alignment="CENTER" prefWidth="250.0" promptText="%login.prompt.email" styleClass="textfield-login">
+                  </TextField>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <FontAwesomeIconView glyphName="KEY" size="16">
+                  </FontAwesomeIconView>
+                  <PasswordField fx:id="enterPasswordTextfield" alignment="CENTER" prefWidth="250.0" promptText="%login.prompt.password" styleClass="passwordfield-login">
+                  </PasswordField>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="60.0">
+               <children>
+                  <Button onAction="#register" styleClass="button-register-login" text="%login.button.register">
+                  </Button>
+                  <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#login" styleClass="button-login" text="%login.button.login">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                     <graphic>
+                        <FontAwesomeIconView glyphName="SIGN_IN" size="18">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </FontAwesomeIconView>
+                     </graphic>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets top="15.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
+      </VBox>
+   </children>
+</HBox>
