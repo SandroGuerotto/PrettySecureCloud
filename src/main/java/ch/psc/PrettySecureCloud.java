@@ -1,10 +1,13 @@
 package ch.psc;
 
 import ch.psc.datasource.JSONWriterReader;
-import ch.psc.domain.user.User;
+import ch.psc.domain.common.context.AuthenticationContext;
+import ch.psc.domain.user.JSONAuthenticationService;
 import ch.psc.gui.ControlledScreen;
+import ch.psc.gui.LoginController;
+import ch.psc.gui.SignUpController;
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
+import ch.psc.gui.Config;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -13,8 +16,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**
@@ -31,15 +35,14 @@ public class PrettySecureCloud extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Optional<User> user = loadUser(); // TODO user handling
+        AuthenticationContext.setAuthService(new JSONAuthenticationService(new JSONWriterReader()));
 
         this.primaryStage = primaryStage;
         loadAllControlledScreens();
         setStartScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
-        //setStartScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE);
         primaryStage.setMinHeight(Config.MIN_HEIGHT);
         primaryStage.setMinWidth(Config.MIN_WIDTH);
-        primaryStage.setOnCloseRequest(event -> exit(primaryStage, user));
+        primaryStage.setOnCloseRequest(event -> exit(primaryStage));
         primaryStage.show();
     }
 
@@ -55,17 +58,15 @@ public class PrettySecureCloud extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle(startScreen.getTitel());
         primaryStage.getIcons().add(new Image("images/logo/logo.png"));
-        scene.getStylesheets().add("/ch/psc/gui/styles.css");
+        scene.getStylesheets().add("ch/psc/gui/styles.css");
     }
 
     /**
      * Saves user data and exits application.
      *
      * @param stage primary stage
-     * @param user  logged in user
      */
-    public void exit(Stage stage, Optional<User> user) {
-        user.ifPresent(User::save);
+    public void exit(Stage stage) {
         stage.close();
         Platform.exit();
         System.exit(0);
@@ -75,23 +76,9 @@ public class PrettySecureCloud extends Application {
      * Loads all screens which have been "registered" in the enum {@code RegisteredScreen}
      */
     private void loadAllControlledScreens() {
-        Arrays.stream(JavaFxUtils.RegisteredScreen.values())
-                .forEach(this::loadScreen);
-    }
-
-    /**
-     * Loads user data from JSON.
-     *
-     * @return user data
-     */
-    private Optional<User> loadUser() {
-        try {
-
-            return Optional.ofNullable(new JSONWriterReader().readFromJson("user.json", User.class));
-        } catch (Exception e) {
-            //    Map<StorageService, Map<String, String>> storageServiceConfig = new HashMap<>();
-            return Optional.empty();// new User("name", "email", "pwd", storageServiceConfig);
-        }
+        loadScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE, new LoginController(primaryStage, screens, AuthenticationContext.getAuthService()));
+        loadScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE, new SignUpController(primaryStage, screens, AuthenticationContext.getAuthService()));
+        // add other screens here
     }
 
     /**
@@ -100,19 +87,16 @@ public class PrettySecureCloud extends Application {
      *
      * @param screen screen info (FXML File Name and Fixed Title)
      */
-    private void loadScreen(JavaFxUtils.RegisteredScreen screen) {
+    private void loadScreen(JavaFxUtils.RegisteredScreen screen, ControlledScreen screenController) {
         try {
-            FXMLLoader loader = new FXMLLoader(ControlledScreen.class.getResource(screen.getFxmlFileName()),
+            FXMLLoader loader = new FXMLLoader(
+                    ControlledScreen.class.getResource(screen.getFxmlFileName()),
                     ResourceBundle.getBundle(Config.TEXT_BUNDLE_NAME));
-
-            ControlledScreen screenController = screen.getControllerClass()
-                    .getDeclaredConstructor(Stage.class, Map.class)
-                    .newInstance(primaryStage, screens);
 
             loader.setController(screenController);
             loader.load();
             screens.put(screen, screenController);
-        } catch (IOException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

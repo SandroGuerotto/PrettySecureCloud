@@ -1,14 +1,12 @@
 package ch.psc.gui.components.signUp;
 
+import ch.psc.gui.Config;
 import ch.psc.gui.components.validator.CompareInputValidator;
 import ch.psc.gui.components.validator.EmailValidator;
 import ch.psc.gui.components.validator.PasswordValidator;
 import ch.psc.gui.components.validator.RequiredInputValidator;
-import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -88,12 +86,7 @@ public class CreateAccount extends VBox implements SignUpFlow {
 
         Label title = new Label(Config.getResourceText("signup.title.createAccount"));
 
-        this.getChildren().addAll(title,
-                JavaFxUtils.addIconBefore(usernameField, FontAwesomeIcon.USER, "signup-icon"),
-                JavaFxUtils.addIconBefore(emailTextField, FontAwesomeIcon.ENVELOPE, "signup-icon"),
-                JavaFxUtils.addIconBefore(passwordTextField, FontAwesomeIcon.KEY, "signup-icon"),
-                JavaFxUtils.addIconBefore(passwordConfirmTextField, FontAwesomeIcon.KEY, "signup-icon")
-        );
+        this.getChildren().addAll(title, usernameField, emailTextField, passwordTextField, passwordConfirmTextField);
         this.setMinHeight(250);
     }
 
@@ -101,7 +94,6 @@ public class CreateAccount extends VBox implements SignUpFlow {
      * Checks if registration data is valid.
      * @return true, if registration data meets validation criteria.
      */
-
     @Override
     public boolean isValid() {
         boolean isValid = emailTextField.validate();

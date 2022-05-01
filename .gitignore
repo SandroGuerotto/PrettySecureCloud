@@ -35,6 +35,8 @@ build
 .project
 .settings
 
-# PSC files
-dropbox-psc.app
-user.json
+# user data
+users
+
+# configs
+configs

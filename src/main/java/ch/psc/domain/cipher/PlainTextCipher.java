@@ -1,10 +1,11 @@
 package ch.psc.domain.cipher;
 
-import java.util.HashMap;
-import java.util.Map;
+import ch.psc.exceptions.FatalImplementationException;
+
 import javax.crypto.Cipher;
 import javax.crypto.NullCipher;
-import ch.psc.exceptions.FatalImplementationException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <b>Do not use this for secure Data!</b>
@@ -46,7 +47,7 @@ public class PlainTextCipher extends PscCipher {
   }
 
   @Override
-  public Map<String, Key> generateKey() throws ch.psc.domain.error.FatalImplementationException {
+  public Map<String, Key> generateKey() throws FatalImplementationException {
     return new HashMap<>();
   }
 

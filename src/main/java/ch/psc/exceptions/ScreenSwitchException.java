@@ -1,7 +1,7 @@
 package ch.psc.exceptions;
 
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
+import ch.psc.gui.Config;
 
 
 /**

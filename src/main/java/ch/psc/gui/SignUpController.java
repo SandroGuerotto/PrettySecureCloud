@@ -1,12 +1,14 @@
 package ch.psc.gui;
 
 import ch.psc.domain.cipher.Key;
+import ch.psc.domain.common.context.UserContext;
 import ch.psc.domain.storage.service.StorageService;
+import ch.psc.domain.user.AuthenticationService;
 import ch.psc.domain.user.User;
+import ch.psc.exceptions.AuthenticationException;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.components.signUp.SignUpFlowControl;
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
 import com.jfoenix.controls.JFXButton;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -36,7 +38,8 @@ import java.util.stream.IntStream;
 public class SignUpController extends ControlledScreen {
 
 
-    private final SignUpFlowControl flowControl;
+    private SignUpFlowControl flowControl;
+    private final AuthenticationService authenticationService;
 
     @FXML
     private HBox signupMainPane;
@@ -44,9 +47,17 @@ public class SignUpController extends ControlledScreen {
     @FXML
     private VBox signupFormPane;
 
-    public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
+    public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthenticationService authenticationService) {
         super(primaryStage, screens);
-        this.flowControl = new SignUpFlowControl();
+        this.authenticationService = authenticationService;
+        flowControl = new SignUpFlowControl();
+    }
+
+    @Override
+    protected boolean init(JavaFxUtils.RegisteredScreen previousScreen, Object... params) {
+        flowControl = new SignUpFlowControl();
+        initialize();
+        return super.init(previousScreen, params);
     }
 
     /**
@@ -59,7 +70,9 @@ public class SignUpController extends ControlledScreen {
                 buildControl();
             }
         });
-        flowControl.isDoneProperty().addListener((observable, old, newValue) -> SignUpController.this.finish());
+        flowControl.isDoneProperty().addListener((observable, old, newValue) -> {
+            if (newValue) finish();
+        });
         flowControl.isCanceledProperty().addListener((observable, old, newValue) -> {
             if (newValue) cancel();
         });
@@ -70,14 +83,12 @@ public class SignUpController extends ControlledScreen {
      * Clear all data and switches back to login page.
      */
     private void cancel() {
-        //clear all
-        flowControl.clear();
         try {
+            UserContext.setAuthorizedUser(null);
             switchScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
         } catch (ScreenSwitchException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -85,19 +96,23 @@ public class SignUpController extends ControlledScreen {
      * Switches screen to file browser.
      */
     private void finish() {
-        List<Object> data = flowControl.getData();
-        User user =
-                new User(
-                        (String) data.get(0), (String) data.get(1), (String) data.get(2),
-                        (Map<StorageService, Map<String, String>>) data.get(4), null
-                        //TODO null must be changed to Map<String, Key> later
-                );
-        user.save();
+        try {
+            UserContext.setAuthorizedUser(null);
+            List<Object> data = flowControl.getData();
+            User user = createUser(data);
+            UserContext.setAuthorizedUser(authenticationService.signup(user));
+        } catch (AuthenticationException e) {
+            e.printStackTrace(); // todo show error
+        }
+        //switchScreen(Screens.FILE_BROWSER);
 //        example on how to use service
-//        FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
-//        dropbox.getFileTree();
-//        new StorageManager(user);
-//        registerMainPane.getScene().setRoot(screens.get(Screens.FILE_BROWSER)); //TODO
+    }
+
+    @SuppressWarnings("unchecked")
+    private User createUser(List<Object> data) {
+        Map<StorageService, Map<String, String>> services = (Map<StorageService, Map<String, String>>) data.get(4);
+        Map<String, Key> keyChain = (Map<String, Key>) data.get(3);
+        return new User((String) data.get(0), (String) data.get(1), (String) data.get(2), services, keyChain);
     }
 
     /**
