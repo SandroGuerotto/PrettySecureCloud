@@ -9,7 +9,6 @@ import ch.psc.gui.components.validator.EmailValidator;
 import ch.psc.gui.components.validator.PasswordValidator;
 import ch.psc.gui.components.validator.RequiredInputValidator;
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;

@@ -1,19 +1,14 @@
 package ch.psc.gui.components.signUp;
 
+import ch.psc.gui.Config;
 import ch.psc.gui.components.validator.CompareInputValidator;
 import ch.psc.gui.components.validator.EmailValidator;
 import ch.psc.gui.components.validator.PasswordValidator;
 import ch.psc.gui.components.validator.RequiredInputValidator;
-import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.util.Arrays;
