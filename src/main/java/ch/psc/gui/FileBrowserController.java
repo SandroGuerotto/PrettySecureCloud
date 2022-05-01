@@ -23,6 +23,25 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -30,7 +49,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
+import ch.psc.gui.components.fileBrowser.FilePathTreeItem;
 import static java.util.logging.Level.SEVERE;
 
 /**
@@ -73,7 +92,25 @@ public class FileBrowserController extends ControlledScreen {
         });
         File[] paths = File.listRoots();
         String path = paths[0].toString();
-        displayTreeView("C:\\Something");
+        //displayTreeView("C:\\Something");
+
+        String hostName = "computer";
+        try {
+            hostName = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException x) {
+        }
+        TreeItem<String> rootNode = new TreeItem<>(hostName,new ImageView(new Image(ClassLoader.getSystemResourceAsStream("images/fileBrowser/computer.png"))));
+        Iterable<Path> rootDirectories = FileSystems.getDefault().getRootDirectories();
+        File fileInputDirectoryLocation = new File("C:\\ZHAW\\");
+        File fileList[] = fileInputDirectoryLocation.listFiles();
+        for(File file : fileList){
+            Path name = file.toPath();
+            FilePathTreeItem treeNode = new FilePathTreeItem(name);
+            rootNode.getChildren().add(treeNode);
+        }
+
+        rootNode.setExpanded(true);
+        treeView.setRoot(rootNode);
 
     }
 
@@ -89,25 +126,28 @@ public class FileBrowserController extends ControlledScreen {
     }
 
     public void displayTreeView(String inputDirectoryLocation) {
-        // Creates the root item.
-        CheckBoxTreeItem<String> rootItem = new CheckBoxTreeItem<>(inputDirectoryLocation);
 
-        // Hides the root item of the tree view.
-        treeView.setShowRoot(false);
+        //=====================================================
 
-        // Creates the cell factory.
-        treeView.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
-
-        // Get a list of files.
-        File fileInputDirectoryLocation = new File(inputDirectoryLocation);
-        File fileList[] = fileInputDirectoryLocation.listFiles();
-
-        // create tree
-        for (File file : fileList) {
-            createTree(file, rootItem);
-        }
-
-        treeView.setRoot(rootItem);
+//        // Creates the root item.
+//        CheckBoxTreeItem<String> rootItem = new CheckBoxTreeItem<>(inputDirectoryLocation);
+//
+//        // Hides the root item of the tree view.
+//        treeView.setShowRoot(false);
+//
+//        // Creates the cell factory.
+//        treeView.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
+//
+//        // Get a list of files.
+//        File fileInputDirectoryLocation = new File(inputDirectoryLocation);
+//        File fileList[] = fileInputDirectoryLocation.listFiles();
+//
+//        // create tree
+//        for (File file : fileList) {
+//            createTree(file, rootItem);
+//        }
+//
+//        treeView.setRoot(rootItem);
     }
 
     @Override
