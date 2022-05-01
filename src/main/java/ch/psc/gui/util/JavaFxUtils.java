@@ -1,5 +1,16 @@
 package ch.psc.gui.util;
 
+import ch.psc.gui.ControlledScreen;
+import ch.psc.gui.LoginController;
+import ch.psc.gui.SignUpController;
+import ch.psc.presentation.Config;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import ch.psc.gui.Config;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -51,8 +62,8 @@ public class JavaFxUtils {
      */
     public enum RegisteredScreen {
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
-        LOGIN_PAGE("login.fxml", "login.titel"),
-        SIGNUP_PAGE("signUp.fxml", "signup.titel");
+        LOGIN_PAGE("login.fxml", "login.title"),
+        SIGNUP_PAGE("signUp.fxml", "signup.title");
 
 //        CLOUDSERVICESPAGE("", ""),
 //        FILEBROWSERPAGE("", "");
