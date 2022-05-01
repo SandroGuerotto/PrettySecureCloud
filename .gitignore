@@ -34,3 +34,7 @@ build
 .classpath
 .project
 .settings
+
+# PSC files
+dropbox-psc.app
+user.json
