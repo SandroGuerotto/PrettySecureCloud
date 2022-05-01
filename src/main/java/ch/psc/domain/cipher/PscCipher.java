@@ -138,7 +138,6 @@ public abstract class PscCipher {
   protected PscFile encrypt(PscFile file, java.security.Key key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
     javax.crypto.Cipher cipher = getCipher();
     cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, key, getAlgorithmSpecification(file));
-    
     byte[] unencryptedData = file.getData();
     PscFile encryptedFile = new PscFile();
     encryptedFile.setName(file.getName());
@@ -146,7 +145,6 @@ public abstract class PscCipher {
     encryptedFile.setNonce(file.getNonce());
     performCipher(unencryptedData, encryptedFile, cipher);
     encryptedFile.setEncryptionState(EncryptionState.ENCRYPTED);
-    
     return encryptedFile;
   }
   
