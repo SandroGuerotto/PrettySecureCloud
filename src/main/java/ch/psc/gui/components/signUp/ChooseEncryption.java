@@ -9,10 +9,12 @@ import ch.psc.domain.cipher.CipherFactory;
 import ch.psc.domain.cipher.PscCipher;
 import ch.psc.exceptions.FatalImplementationException;
 import ch.psc.presentation.Config;
+import com.jfoenix.controls.JFXComboBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -42,7 +44,7 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
         this.setSpacing(50);
         this.setPadding(new Insets(10, 20, 10, 20));
 
-        ComboBox<CipherAlgorithms> algorithms = createStorageDropDown(Arrays.stream(CipherAlgorithms.values())
+        JFXComboBox<CipherAlgorithms> algorithms = createStorageDropDown(Arrays.stream(CipherAlgorithms.values())
                 .filter(CipherAlgorithms::isSupported)
                 .collect(Collectors.toList()));
 
@@ -61,11 +63,11 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
      * @param cipherAlgorithms supported algorithms for ciphers
      * @return designed button
      */
-    private ComboBox<CipherAlgorithms> createStorageDropDown(List<CipherAlgorithms> cipherAlgorithms) {
+    private JFXComboBox<CipherAlgorithms> createStorageDropDown(List<CipherAlgorithms> cipherAlgorithms) {
         ObservableList<CipherAlgorithms> algorithms = FXCollections.observableArrayList();
         algorithms.addAll(cipherAlgorithms);
 
-        ComboBox<CipherAlgorithms> cipherAlgorithmDropDown = new ComboBox<>();
+        JFXComboBox<CipherAlgorithms> cipherAlgorithmDropDown = new JFXComboBox<>();
         cipherAlgorithmDropDown.setItems(algorithms);
 
         cipherAlgorithmDropDown.setOnAction(e -> register(cipherAlgorithmDropDown.getValue()));
