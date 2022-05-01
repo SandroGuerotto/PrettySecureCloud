@@ -1,5 +1,6 @@
 package ch.psc.gui;
 
+import ch.psc.domain.storage.service.LocalStorage;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.util.JavaFxUtils;
 import javafx.concurrent.Task;
@@ -71,9 +72,24 @@ public class FileBrowserController extends ControlledScreen {
     @FXML
     private TreeView treeView;
 
+    @FXML
+    private ProgressBar localStorageSpace;
+
+    @FXML
+    private ProgressBar encryption;
+    @FXML
+    private ProgressBar upload;
+    @FXML
+    private Label availableLocalSpaceText;
+
+    private LocalStorage localStorage;
+
+
 
     public FileBrowserController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
         super(primaryStage, screens);
+        localStorage = new LocalStorage();
+
     }
 
     public void initialize(){
@@ -93,6 +109,10 @@ public class FileBrowserController extends ControlledScreen {
         File[] paths = File.listRoots();
         String path = paths[0].toString();
         //displayTreeView("C:\\Something");
+
+        availableLocalSpaceText.setText(String.format("%.2f GB",localStorage.getAvailableStorageSpace()));
+        localStorageSpace.setProgress(getPercentageOfAvailableStorageSpace());
+
 
         String hostName = "computer";
         try {
@@ -160,6 +180,12 @@ public class FileBrowserController extends ControlledScreen {
         return JavaFxUtils.RegisteredScreen.LOGIN_PAGE;
     }
 
+    private double getPercentageOfAvailableStorageSpace(){
+        double availableStorage = localStorage.getAvailableStorageSpace();
+        double maxStorage = localStorage.getMaxStorage();
+        double progress = (availableStorage/maxStorage);
+        return progress;
+    }
 
     private Task<String> fileLoaderTask(File fileToLoad){
         //Create a task to load the file asynchronously

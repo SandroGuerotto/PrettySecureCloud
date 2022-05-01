@@ -41,7 +41,7 @@ public class JavaFxUtils {
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
         LOGIN_PAGE("login.fxml", "login.titel", LoginController.class),
         SIGNUP_PAGE("signUp.fxml", "signup.titel", SignUpController.class),
-        FILEBROWSERPAGE("fileBrowser.fxml", "signup.titel", FileBrowserController.class);
+        FILEBROWSERPAGE("fileBrowser.fxml", "fileBrowser.titel", FileBrowserController.class);
 
 //        CLOUDSERVICESPAGE("", ""),
 

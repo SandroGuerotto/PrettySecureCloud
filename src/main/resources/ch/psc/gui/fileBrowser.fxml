@@ -15,7 +15,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ButtonBar?>
-
+<?import javafx.scene.control.ProgressBar?>
 
 <?import javafx.scene.control.TreeView?>
 
@@ -25,7 +25,6 @@
 <BorderPane fx:id="fileBrowser" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <HBox HBox.hgrow="ALWAYS">
-         <Button alignment="CENTER_RIGHT" mnemonicParsing="false"  styleClass="button-login" text="%login.button.login"/>
          <Button layoutX="40.0" layoutY="360.0" mnemonicParsing="false" text="Settings"/>
          <Button text="Help" layoutX="55.0" layoutY="400.0" ButtonBar.buttonData="LEFT"/>
       </HBox>
@@ -57,4 +56,50 @@
          </VBox.margin>
       </VBox>
    </center>
+   <bottom>
+      <HBox HBox.hgrow="ALWAYS">
+
+         <Label text="%fileBrowser.availableSpace" textAlignment="CENTER" wrapText="true">
+            <font>
+               <Font name="System Bold" size="12.0" />
+            </font>
+         </Label>
+
+         <Label fx:id="availableLocalSpaceText" text="%fileBrowser.availableSpace" textAlignment="CENTER" wrapText="true">
+            <font>
+               <Font name="System Bold" size="12.0" />
+            </font>
+         </Label>
+
+         <ProgressBar fx:id="localStorageSpace" styleClass="bar">
+            <HBox.margin>
+               <Insets left="10.0"/>
+            </HBox.margin>
+         </ProgressBar>
+
+         <Label text="%fileBrowser.encryptionLabel" textAlignment="CENTER" wrapText="true">
+            <font>
+               <Font name="System Bold" size="12.0" />
+            </font>
+         </Label>
+
+         <ProgressBar fx:id="encryption" styleClass="green-bar,bar">
+            <HBox.margin>
+               <Insets left="10.0"/>
+            </HBox.margin>
+         </ProgressBar>
+
+         <Label text="%fileBrowser.uploadLabel" textAlignment="CENTER" wrapText="true">
+            <font>
+               <Font name="System Bold" size="12.0" />
+            </font>
+         </Label>
+
+         <ProgressBar fx:id="upload" styleClass="green-bar,bar">
+            <HBox.margin>
+               <Insets left="10.0"/>
+            </HBox.margin>
+         </ProgressBar>
+      </HBox>
+   </bottom>
 </BorderPane>

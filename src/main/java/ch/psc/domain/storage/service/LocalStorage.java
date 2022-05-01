@@ -19,8 +19,12 @@ import java.util.concurrent.Future;
 public class LocalStorage implements FileStorage {
   
   private String path;
-  private int maxStorage;
+  private double maxStorage;
 
+
+  public LocalStorage(){
+    setMaxStorage();
+  }
   @Override
   public List<Future<PscFile>> upload(List<PscFile> files) {
     // TODO Auto-generated method stub
@@ -77,12 +81,15 @@ public class LocalStorage implements FileStorage {
     this.path = path;
   }
 
-  public int getMaxStorage() {
+  public double getMaxStorage() {
     return maxStorage;
   }
 
-  public void setMaxStorage(int maxStorage) {
-    this.maxStorage = maxStorage;
+  private void setMaxStorage() {
+    File[] paths = File.listRoots();
+    for(File path: paths){
+      this.maxStorage += new File(path.toString()).getTotalSpace() / (1024.0 * 1024 * 1024);
+    }
   }
   
 }

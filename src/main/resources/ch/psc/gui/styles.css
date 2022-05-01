@@ -96,3 +96,10 @@
 .button-register-login:hover{
     -fx-text-fill: -fx-accent1;
 }
+
+.green-bar  { -fx-accent: green;  }
+
+.bar{
+    -fx-height: "20.0";
+    -fx-width: "200.0";
+}
