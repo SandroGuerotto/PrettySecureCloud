@@ -33,14 +33,19 @@ public class PlainTextCipher extends PscCipher {
   }
 
   @Override
-  protected javax.crypto.Cipher getCipher() throws FatalImplementationException {
+  protected Cipher getCipher() throws FatalImplementationException {
     javax.crypto.Cipher cipher = new NullCipher();
     return cipher;
   }
-
+  
   @Override
   public int getKeyBits() {
     return 16;
+  }
+
+  @Override
+  public Map<String, Key> generateKey() throws ch.psc.domain.error.FatalImplementationException {
+    return new HashMap<>();
   }
 
 }

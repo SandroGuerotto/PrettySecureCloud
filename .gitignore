@@ -35,10 +35,8 @@ build
 .project
 .settings
 
-
 # user data
 users
-
 
 # configs
 configs
