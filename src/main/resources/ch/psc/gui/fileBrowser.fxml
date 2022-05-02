@@ -18,8 +18,8 @@
       <HBox HBox.hgrow="ALWAYS">
          <Button layoutX="40.0" layoutY="360.0" mnemonicParsing="false" text="Settings"/>
          <Button text="Help" layoutX="55.0" layoutY="400.0" ButtonBar.buttonData="LEFT"/>
-         <Button onAction="#cancel" text="Cancel" layoutX="100.0" layoutY="400.0" ButtonBar.buttonData="RIGHT"/>
-         <Button text="Upload" layoutX="150.0" layoutY="400.0" ButtonBar.buttonData="RIGHT"/>
+         <Button onAction="#clear" text="%fileBrowser.clear" layoutX="100.0" layoutY="400.0" ButtonBar.buttonData="RIGHT"/>
+         <Button onAction="#upload" text="%fileBrowser.upload" layoutX="150.0" layoutY="400.0" ButtonBar.buttonData="RIGHT"/>
       </HBox>
    </top>
    <right>
