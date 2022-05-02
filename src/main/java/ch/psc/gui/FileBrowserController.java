@@ -2,9 +2,11 @@ package ch.psc.gui;
 
 import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
+import ch.psc.domain.storage.StorageManager;
 import ch.psc.domain.storage.service.LocalStorage;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.util.JavaFxUtils;
+import ch.psc.domain.common.context.UserContext;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -37,6 +39,10 @@ import ch.psc.gui.components.fileBrowser.FilePathTreeItem;
  * @version 1.0
  */
 
+/**
+ * Dummy controller
+ * @author Sandro
+ */
 public class FileBrowserController extends ControlledScreen{
 
     @FXML
@@ -59,12 +65,17 @@ public class FileBrowserController extends ControlledScreen{
     private Tree<PscFile> tree;
     private TreeItem<String> rootNode;
 
+        private StorageManager storageManager;
+        public FileBrowserController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
+            super(primaryStage, screens);
+            localStorage = new LocalStorage();
+        }
 
-    public FileBrowserController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
-        super(primaryStage, screens);
-        localStorage = new LocalStorage();
-    }
-
+        @Override
+        protected boolean init(JavaFxUtils.RegisteredScreen previousScreen, Object... params) {
+            storageManager = new StorageManager(UserContext.getAuthorizedUser());
+            return super.init(previousScreen, params);
+        }
 
     public void initialize(){
         File[] paths = File.listRoots();

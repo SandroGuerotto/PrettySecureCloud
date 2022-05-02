@@ -3,8 +3,8 @@ package ch.psc.domain.storage.service;
 import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
 
-import java.util.List;
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

@@ -1,13 +1,14 @@
 package ch.psc.domain.cipher;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import javax.crypto.SecretKey;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import ch.psc.domain.file.PscFile;
 import ch.psc.exceptions.FatalImplementationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CipherTest {
   
@@ -29,8 +30,14 @@ class CipherTest {
       public SecurityLevel getSecurityLevel() {
         return null;
       }
+
       @Override
-      public String getAlgorythm() {
+      public int getKeyBits() {
+        return 0;
+      }
+
+      @Override
+      public String getAlgorithm() {
         return null;
       }
     };
@@ -41,12 +48,16 @@ class CipherTest {
         return null;
       }
       @Override
-      public String getAlgorythm() {
+      public String getAlgorithm() {
         return "AES";
       }
       @Override
       public String getTransformation() {
         return "AES";
+      }
+      @Override
+      public int getKeyBits() {
+        return 128;
       }
     };
     
@@ -59,39 +70,16 @@ class CipherTest {
   }
   
   @Test
-  public void generateKeyTestAES128() {
-    Key key = new Key();
-    key.setKey(AES_128_KEY.getBytes());
-    SecretKey generated = aesCipher.generateKey(key);
-    
-    assertEquals("AES", generated.getAlgorithm());
-    assertArrayEquals(AES_128_KEY.getBytes(), generated.getEncoded());
+  public void generateKeyTestAES128() throws FatalImplementationException {
+    Map<String, Key> generated = aesCipher.generateKey();
+
+    assertEquals("AES", generated.get("AES").getType());
+    assertEquals(128/8, generated.get("AES").getKey().getEncoded().length);
   }
-  
-  @Test
-  public void generateKeyTestAES192() {
-    Key key = new Key();
-    key.setKey(AES_192_KEY.getBytes());
-    SecretKey generated = aesCipher.generateKey(key);
-    
-    assertEquals("AES", generated.getAlgorithm());
-    assertArrayEquals(AES_192_KEY.getBytes(), generated.getEncoded());
-  }
-  
-  @Test
-  public void generateNullKeyTest() {
-    Key key = new Key();
-    key.setKey(null);
-    
-    assertThrows(IllegalArgumentException.class, () -> aesCipher.generateKey(key));
-  }
-  
+
   @Test
   public void generateUnimplementedKeyTest() {
-    Key key = new Key();
-    key.setKey(AES_192_KEY.getBytes());
-    
-    assertThrows(IllegalArgumentException.class, () -> unimplementedCipher.generateKey(key));
+    assertThrows(NullPointerException.class, () -> unimplementedCipher.generateKey());
   }
   
   @Test

@@ -1,48 +1,68 @@
 package ch.psc.gui;
 
+import ch.psc.domain.cipher.Key;
+import ch.psc.domain.common.context.UserContext;
 import ch.psc.domain.storage.service.StorageService;
+import ch.psc.domain.user.AuthenticationService;
 import ch.psc.domain.user.User;
+import ch.psc.exceptions.AuthenticationException;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.components.signUp.SignUpFlowControl;
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
+import com.jfoenix.controls.JFXButton;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.animation.PathTransition;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
 /**
- * GUI Controller for Sign-up process.
+ * GUI Controller for sign-up process.
  *
- * @author SandroGuerotto
+ * @author SandroGuerotto, bananasprout
  */
 public class SignUpController extends ControlledScreen {
 
 
-    private final SignUpFlowControl flowControl;
+    private SignUpFlowControl flowControl;
+    private final AuthenticationService authenticationService;
 
     @FXML
     private HBox signupMainPane;
+
     @FXML
     private VBox signupFormPane;
 
-    public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
+    public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthenticationService authenticationService) {
         super(primaryStage, screens);
-        this.flowControl = new SignUpFlowControl();
+        this.authenticationService = authenticationService;
+        flowControl = new SignUpFlowControl();
     }
 
+    @Override
+    protected boolean init(JavaFxUtils.RegisteredScreen previousScreen, Object... params) {
+        flowControl = new SignUpFlowControl();
+        initialize();
+        return super.init(previousScreen, params);
+    }
+
+    /**
+     * Initializes components with listeners for flow control for registration purposes.
+     */
     @FXML
     private void initialize() {
         flowControl.getCurrentPosition().addListener((observable, oldValue, newValue) -> {
@@ -50,7 +70,9 @@ public class SignUpController extends ControlledScreen {
                 buildControl();
             }
         });
-        flowControl.isDoneProperty().addListener((observable, old, newValue) -> finish());
+        flowControl.isDoneProperty().addListener((observable, old, newValue) -> {
+            if (newValue) finish();
+        });
         flowControl.isCanceledProperty().addListener((observable, old, newValue) -> {
             if (newValue) cancel();
         });
@@ -61,14 +83,12 @@ public class SignUpController extends ControlledScreen {
      * Clear all data and switches back to login page.
      */
     private void cancel() {
-        //clear all
-        flowControl.clear();
         try {
+            UserContext.setAuthorizedUser(null);
             switchScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE);
         } catch (ScreenSwitchException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -76,18 +96,23 @@ public class SignUpController extends ControlledScreen {
      * Switches screen to file browser.
      */
     private void finish() {
-        List<Object> data = flowControl.getData();
-        User user =
-                new User(
-                        (String) data.get(0), (String) data.get(1), (String) data.get(2),
-                        (Map<StorageService, Map<String, String>>) data.get(3)
-                );
-        user.save();
+        try {
+            UserContext.setAuthorizedUser(null);
+            List<Object> data = flowControl.getData();
+            User user = createUser(data);
+            UserContext.setAuthorizedUser(authenticationService.signup(user));
+        } catch (AuthenticationException e) {
+            e.printStackTrace(); // todo show error
+        }
+        //switchScreen(Screens.FILE_BROWSER);
 //        example on how to use service
-//        FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
-//        dropbox.getFileTree();
-//        new StorageManager(user);
-//        registerMainPane.getScene().setRoot(screens.get(Screens.FILE_BROWSER)); //TODO
+    }
+
+    @SuppressWarnings("unchecked")
+    private User createUser(List<Object> data) {
+        Map<StorageService, Map<String, String>> services = (Map<StorageService, Map<String, String>>) data.get(4);
+        Map<String, Key> keyChain = (Map<String, Key>) data.get(3);
+        return new User((String) data.get(0), (String) data.get(1), (String) data.get(2), services, keyChain);
     }
 
     /**
@@ -101,18 +126,23 @@ public class SignUpController extends ControlledScreen {
         pane.setPadding(new Insets(15, 0, 0, 0));
         pane.setAlignment(Pos.CENTER);
         pane.setHgap(20);
-        Button prev = new Button(Config.getResourceText("signup.previous"));
+        JFXButton prev = new JFXButton(Config.getResourceText("signup.previous"));
         prev.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.ARROW_LEFT));
         prev.getStyleClass().add("control-button");
 
-        Button next = new Button(Config.getResourceText("signup.next"));
+        JFXButton next = new JFXButton(Config.getResourceText("signup.next"));
         next.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.ARROW_RIGHT));
         next.setContentDisplay(ContentDisplay.RIGHT);
         next.getStyleClass().add("control-button");
 
+        Label signUpErrorLabel = new Label();
+        signUpErrorLabel.setPadding(new Insets(15, 0, 0, 0));
+        signUpErrorLabel.getStyleClass().add("error");
+
 
         prev.setOnAction(event -> flowControl.previous());
         prev.setCancelButton(true);
+        easterEgg(next);
         next.setOnAction(event -> {
             if (flowControl.isValid()) flowControl.next();
         });
@@ -129,8 +159,24 @@ public class SignUpController extends ControlledScreen {
 
         signupFormPane.getChildren().addAll(
                 flowControl.getCurrentPane(),
+                signUpErrorLabel,
                 pane
         );
+    }
+
+    private void easterEgg(JFXButton button){
+        button.setOnMouseClicked(event -> { if(!flowControl.isValid() && event.getClickCount()==3){
+            Circle circle = new Circle(200);
+            circle.setCenterX(button.getLayoutX()-375);
+            circle.setCenterY(button.getLayoutY()-1);
+            PathTransition transition = new PathTransition();
+            transition.setNode(button);
+            transition.setDuration(Duration.seconds(3));
+            transition.setPath(circle);
+            transition.setCycleCount(1);
+            transition.play();
+        }
+        });
     }
 
     @Override

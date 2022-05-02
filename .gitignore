@@ -34,3 +34,9 @@ build
 .classpath
 .project
 .settings
+
+# user data
+users
+
+# configs
+configs

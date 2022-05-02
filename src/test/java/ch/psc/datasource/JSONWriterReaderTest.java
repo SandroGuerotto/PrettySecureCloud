@@ -1,4 +1,5 @@
-import ch.psc.datasource.JSONWriterReader;
+package ch.psc.datasource;
+
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.domain.user.User;
 import org.junit.jupiter.api.AfterEach;
@@ -27,7 +28,7 @@ public class JSONWriterReaderTest {
         cut = new JSONWriterReader();
         Map<StorageService, Map<String, String>> services = new HashMap<>();
         services.put(StorageService.DROPBOX, Collections.singletonMap("token", "abc"));
-        userData = new User("testname", "mail", "password", services);
+        userData = new User("testname", "mail", "password", services, Collections.emptyMap());
     }
 
     @AfterEach
@@ -53,5 +54,6 @@ public class JSONWriterReaderTest {
         assertEquals(userData.getPassword(),act.getPassword());
         assertEquals(Collections.singletonMap("path", "/path/test"),act.getStorageServiceConfig().get(StorageService.LOCAL));
         assertEquals(Collections.singletonMap("token", "abc"),act.getStorageServiceConfig().get(StorageService.DROPBOX));
+
     }
 }
