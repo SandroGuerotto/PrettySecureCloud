@@ -7,12 +7,10 @@ import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.util.JavaFxUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.Node;
@@ -56,6 +54,7 @@ public class FileBrowserController extends ControlledScreen{
     @FXML
     private Label availableLocalSpaceText;
 
+
     private LocalStorage localStorage;
     private Tree<PscFile> tree;
     private TreeItem<String> rootNode;
@@ -65,21 +64,8 @@ public class FileBrowserController extends ControlledScreen{
         super(primaryStage, screens);
         localStorage = new LocalStorage();
     }
-    EventHandler<MouseEvent> mouseEventHandle = (MouseEvent event) -> {
-        handleMouseClicked(event);
-    };
 
-    private void handleMouseClicked(MouseEvent event) {
-        Node node = event.getPickResult().getIntersectedNode();
-        node = node.getParent();
-        StringBuilder pahtBuilder = new StringBuilder();
-        System.out.println(node.getParent());
-        // Accept clicks only on node cells, and not on empty spaces of the TreeView
-//        if (node instanceof Text || (node instanceof TreeCell && ((TreeCell) node).getText() != null)) {
-//            String name = (String) ((TreeItem)treeView.getSelectionModel().getSelectedItem()).getValue();
-//            System.out.println("Node click: " + name);
-//        }
-    }
+
     public void initialize(){
         MultipleSelectionModel<TreeItem<String>> tvSelModel = treeView.getSelectionModel();
         // Use a change listener to respond to a selection within
@@ -115,30 +101,6 @@ public class FileBrowserController extends ControlledScreen{
                     }
                 });
 
-        EventHandler<MouseEvent> mouseEventHandle = (MouseEvent event) -> {
-            handleMouseClicked(event);
-        };
-
-        treeView.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandle);
-
-        Node dragAndDropAreaNode = dragAndDropArea;
-        dragAndDropAreaNode.setOnDragOver(event -> {
-            event.acceptTransferModes(TransferMode.MOVE);
-        });
-
-        dragAndDropAreaNode.setOnDragDropped(event -> {
-           Dragboard db = event.getDragboard();
-           if(event.getDragboard().hasFiles()){
-               List<File> filesToLoad = db.getFiles();
-               TreeItem<String> rootNode = new TreeItem<>("Computer");
-               dragAndDropArea.setShowRoot(false);
-               for(File fileToLoad: filesToLoad){
-                   FilePathTreeItem treeNode = new FilePathTreeItem(fileToLoad.toPath());
-                   rootNode.getChildren().add(treeNode);
-               }
-               dragAndDropArea.setRoot(rootNode);
-            }
-        });
         File[] paths = File.listRoots();
         String path = paths[0].toString();
         //displayTreeView("C:\\Something");
@@ -146,6 +108,7 @@ public class FileBrowserController extends ControlledScreen{
         availableLocalSpaceText.setText(String.format("%.2f GB",localStorage.getAvailableStorageSpace()));
         localStorageSpace.setProgress(getPercentageOfAvailableStorageSpace());
 
+        generateDragAndDropArea();
 
         String hostName = "computer";
         try {
@@ -187,6 +150,34 @@ public class FileBrowserController extends ControlledScreen{
                 }
             }
         }
+    }
+
+    private void generateDragAndDropArea(){
+        Node dragAndDropAreaNode = dragAndDropArea;
+        dragAndDropAreaNode.setOnDragOver(event -> {
+            event.acceptTransferModes(TransferMode.MOVE);
+        });
+
+        dragAndDropAreaNode.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            if(event.getDragboard().hasFiles()){
+                List<File> filesToLoad = db.getFiles();
+                TreeItem<String> rootNode = new TreeItem<>("Computer");
+                dragAndDropArea.setShowRoot(false);
+                for(File fileToLoad: filesToLoad){
+                    FilePathTreeItem treeNode = new FilePathTreeItem(fileToLoad.toPath());
+                    rootNode.getChildren().add(treeNode);
+                }
+                dragAndDropArea.setRoot(rootNode);
+            }
+        });
+    }
+
+    @FXML
+    private void cancel(){
+        TreeItem<String> rootNode = new TreeItem<>("Computer");
+        dragAndDropArea.setShowRoot(false);
+        dragAndDropArea.setRoot(rootNode);
     }
 
     @Override
