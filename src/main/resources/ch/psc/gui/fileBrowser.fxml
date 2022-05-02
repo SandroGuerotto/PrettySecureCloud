@@ -39,7 +39,9 @@
             </Label>
          </HBox>
          <StackPane BorderPane.alignment="CENTER">
-            <TextArea fx:id="textArea" prefHeight="350.0" prefWidth="200.0" />
+<!--            <TextArea fx:id="textArea" prefHeight="350.0" prefWidth="200.0" />-->
+            <TreeView fx:id = "dragAndDropArea" prefHeight="350.0" prefWidth="200.0">
+            </TreeView>
          </StackPane>
       </VBox>
       <!--      <FileBrowserTable fx:id="fileTree" prefHeight="200.0" VBox.vgrow="ALWAYS"/>-->

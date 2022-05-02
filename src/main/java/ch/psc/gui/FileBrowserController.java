@@ -1,57 +1,35 @@
 package ch.psc.gui;
 
+import ch.psc.datasource.datastructure.Tree;
+import ch.psc.domain.file.PscFile;
 import ch.psc.domain.storage.service.LocalStorage;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.util.JavaFxUtils;
-import javafx.concurrent.Task;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTreeCell;
 import javafx.scene.input.Dragboard;
-import javafx.scene.layout.HBox;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.input.TransferMode;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
-
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
-import javafx.application.Application;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 import ch.psc.gui.components.fileBrowser.FilePathTreeItem;
-import static java.util.logging.Level.SEVERE;
 
 /**
  * Controller for the LoginView.
@@ -61,20 +39,16 @@ import static java.util.logging.Level.SEVERE;
  * @version 1.0
  */
 
-public class FileBrowserController extends ControlledScreen {
+public class FileBrowserController extends ControlledScreen{
 
     @FXML
     private BorderPane fileBrowser;
-
     @FXML
-    private TextArea textArea;
-
+    private TreeView dragAndDropArea;
     @FXML
     private TreeView treeView;
-
     @FXML
     private ProgressBar localStorageSpace;
-
     @FXML
     private ProgressBar encryption;
     @FXML
@@ -83,27 +57,86 @@ public class FileBrowserController extends ControlledScreen {
     private Label availableLocalSpaceText;
 
     private LocalStorage localStorage;
-
+    private Tree<PscFile> tree;
+    private TreeItem<String> rootNode;
 
 
     public FileBrowserController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
         super(primaryStage, screens);
         localStorage = new LocalStorage();
-
     }
+    EventHandler<MouseEvent> mouseEventHandle = (MouseEvent event) -> {
+        handleMouseClicked(event);
+    };
 
+    private void handleMouseClicked(MouseEvent event) {
+        Node node = event.getPickResult().getIntersectedNode();
+        node = node.getParent();
+        StringBuilder pahtBuilder = new StringBuilder();
+        System.out.println(node.getParent());
+        // Accept clicks only on node cells, and not on empty spaces of the TreeView
+//        if (node instanceof Text || (node instanceof TreeCell && ((TreeCell) node).getText() != null)) {
+//            String name = (String) ((TreeItem)treeView.getSelectionModel().getSelectedItem()).getValue();
+//            System.out.println("Node click: " + name);
+//        }
+    }
     public void initialize(){
-        Node node = textArea;
-        node.setOnDragOver(event -> {
+        MultipleSelectionModel<TreeItem<String>> tvSelModel = treeView.getSelectionModel();
+        // Use a change listener to respond to a selection within
+        // a tree view
+        tvSelModel.selectedItemProperty().addListener(new ChangeListener<TreeItem<String>>() {
+                    public void changed(ObservableValue<? extends TreeItem<String>> changed,
+                            TreeItem<String> oldVal,
+                            TreeItem<String> newVal) {
+                        // Display the selection and its complete path from the root.
+                        if (newVal != null) {
+
+                            // Construct the entire path to the selected item.
+                            String path = newVal.getValue();
+                            TreeItem<String> tmp = newVal.getParent();
+                            while (tmp != null) {
+                                path = tmp.getValue() + "/" + path;
+                                tmp = tmp.getParent();
+                            }
+                            String hostName = "computer";
+                            try {
+                                hostName = InetAddress.getLocalHost().getHostName();
+                            } catch (UnknownHostException x) {
+                            }
+                            path = path.replace(hostName,"C:");
+                            // Display the selection and the entire path.
+                            System.out.println("Selection is " +
+                                    newVal.getValue() + "\nComplete path is " + path);
+                            TreeItem c = tvSelModel.getSelectedItem();
+                            getSubtree(c,new File(path));
+
+
+                        }
+                    }
+                });
+
+        EventHandler<MouseEvent> mouseEventHandle = (MouseEvent event) -> {
+            handleMouseClicked(event);
+        };
+
+        treeView.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEventHandle);
+
+        Node dragAndDropAreaNode = dragAndDropArea;
+        dragAndDropAreaNode.setOnDragOver(event -> {
             event.acceptTransferModes(TransferMode.MOVE);
         });
 
-        node.setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            if(event.getDragboard().hasFiles()){
-                File fileToLoad = db.getFiles().get(0); //get files from dragboard
-                Task loadFiles = fileLoaderTask(fileToLoad);      //create asynch task to load files
-                loadFiles.run();                        //load file in
+        dragAndDropAreaNode.setOnDragDropped(event -> {
+           Dragboard db = event.getDragboard();
+           if(event.getDragboard().hasFiles()){
+               List<File> filesToLoad = db.getFiles();
+               TreeItem<String> rootNode = new TreeItem<>("Computer");
+               dragAndDropArea.setShowRoot(false);
+               for(File fileToLoad: filesToLoad){
+                   FilePathTreeItem treeNode = new FilePathTreeItem(fileToLoad.toPath());
+                   rootNode.getChildren().add(treeNode);
+               }
+               dragAndDropArea.setRoot(rootNode);
             }
         });
         File[] paths = File.listRoots();
@@ -119,55 +152,41 @@ public class FileBrowserController extends ControlledScreen {
             hostName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException x) {
         }
-        TreeItem<String> rootNode = new TreeItem<>(hostName,new ImageView(new Image(ClassLoader.getSystemResourceAsStream("images/fileBrowser/computer.png"))));
+        rootNode = new TreeItem<>(hostName,new ImageView(new Image(ClassLoader.getSystemResourceAsStream("images/fileBrowser/computer.png"))));
         Iterable<Path> rootDirectories = FileSystems.getDefault().getRootDirectories();
-        File fileInputDirectoryLocation = new File("C:\\ZHAW\\");
-        File fileList[] = fileInputDirectoryLocation.listFiles();
+        File fileInputDirectoryLocation = new File("C:\\");
+        File[] fileList = fileInputDirectoryLocation.listFiles();
         for(File file : fileList){
             Path name = file.toPath();
             FilePathTreeItem treeNode = new FilePathTreeItem(name);
             rootNode.getChildren().add(treeNode);
+
         }
+
+        //getSubtree(rootNode,fileInputDirectoryLocation);
+
 
         rootNode.setExpanded(true);
         treeView.setRoot(rootNode);
-
     }
 
-    public static void createTree(File file, CheckBoxTreeItem<String> parent) {
-        if (file.isDirectory()) {
-            CheckBoxTreeItem<String> treeItem = new CheckBoxTreeItem<>(file.getName());
-            parent.getChildren().add(treeItem);
-            for (File f : file.listFiles()) {
-                createTree(f, treeItem);
+    private void getSubtree(TreeItem parentNode, File parent){
+        File[] parentContent = parent.listFiles();
+        if(parentContent != null) {
+            if (parentContent.length != 0) {
+                for (File childFile : parentContent) {
+                    Path name = childFile.toPath();
+                    FilePathTreeItem treeNode = new FilePathTreeItem(name);
+                    if (childFile.isDirectory()) {
+                        treeNode.setExpanded(false);
+                        parentNode.getChildren().add(treeNode);
+                        getSubtree(treeNode, childFile);
+                    } else {
+                        parentNode.getChildren().add(treeNode);
+                    }
+                }
             }
-            parent.getChildren().add(new CheckBoxTreeItem<>(file.getName()));
         }
-    }
-
-    public void displayTreeView(String inputDirectoryLocation) {
-
-        //=====================================================
-
-//        // Creates the root item.
-//        CheckBoxTreeItem<String> rootItem = new CheckBoxTreeItem<>(inputDirectoryLocation);
-//
-//        // Hides the root item of the tree view.
-//        treeView.setShowRoot(false);
-//
-//        // Creates the cell factory.
-//        treeView.setCellFactory(CheckBoxTreeCell.<String>forTreeView());
-//
-//        // Get a list of files.
-//        File fileInputDirectoryLocation = new File(inputDirectoryLocation);
-//        File fileList[] = fileInputDirectoryLocation.listFiles();
-//
-//        // create tree
-//        for (File file : fileList) {
-//            createTree(file, rootItem);
-//        }
-//
-//        treeView.setRoot(rootItem);
     }
 
     @Override
@@ -186,51 +205,4 @@ public class FileBrowserController extends ControlledScreen {
         double progress = (availableStorage/maxStorage);
         return progress;
     }
-
-    private Task<String> fileLoaderTask(File fileToLoad){
-        //Create a task to load the file asynchronously
-        Task<String> loadFileTask = new Task<>() {
-            @Override
-            protected String call() throws Exception {
-                BufferedReader reader = new BufferedReader(new FileReader(fileToLoad));
-
-                //Use Files.lines() to calculate total lines - used for progress
-                long lineCount;
-                try (Stream<String> stream = Files.lines(fileToLoad.toPath())) {
-                    lineCount = stream.count();
-                }
-
-                //Load in all lines one by one into a StringBuilder separated by "\n" - compatible with TextArea
-                String line;
-                StringBuilder totalFile = new StringBuilder();
-                long linesLoaded = 0;
-                while((line = reader.readLine()) != null) {
-                    totalFile.append(line);
-                    totalFile.append("\n");
-                    updateProgress(++linesLoaded, lineCount);
-                }
-
-                return totalFile.toString();
-            }
-        };
-
-        //If successful, update the text area, display a success message and store the loaded file reference
-        loadFileTask.setOnSucceeded(workerStateEvent -> {
-            try {
-                textArea.setText(loadFileTask.get());
-//                loadedFileReference = fileToLoad;
-            } catch (InterruptedException | ExecutionException e) {
-                Logger.getLogger(getClass().getName()).log(SEVERE, null, e);
-                textArea.setText("Could not load file from:\n " + fileToLoad.getAbsolutePath());
-            }
-        });
-
-        //If unsuccessful, set text area with error message and status message to failed
-        loadFileTask.setOnFailed(workerStateEvent -> {
-            textArea.setText("Could not load file from:\n " + fileToLoad.getAbsolutePath());
-        });
-
-        return loadFileTask;
-    }
-
 }
