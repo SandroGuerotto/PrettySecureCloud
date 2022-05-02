@@ -99,7 +99,7 @@ public class LoginController extends ControlledScreen {
         enterMailTextfield.resetValidation();
 
         try {
-            switchScreen(JavaFxUtils.RegisteredScreen.FILEBROWSERPAGE);
+            switchScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE);
         } catch (ScreenSwitchException e) {
             e.printStackTrace(); //TODO: Fehlermeldung an GUI mitgeben
         }
