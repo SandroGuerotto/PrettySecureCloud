@@ -67,40 +67,6 @@ public class FileBrowserController extends ControlledScreen{
 
 
     public void initialize(){
-        MultipleSelectionModel<TreeItem<String>> tvSelModel = treeView.getSelectionModel();
-        // Use a change listener to respond to a selection within
-        // a tree view
-        tvSelModel.selectedItemProperty().addListener(new ChangeListener<TreeItem<String>>() {
-                    public void changed(ObservableValue<? extends TreeItem<String>> changed,
-                            TreeItem<String> oldVal,
-                            TreeItem<String> newVal) {
-                        // Display the selection and its complete path from the root.
-                        if (newVal != null) {
-
-                            // Construct the entire path to the selected item.
-                            String path = newVal.getValue();
-                            TreeItem<String> tmp = newVal.getParent();
-                            while (tmp != null) {
-                                path = tmp.getValue() + "/" + path;
-                                tmp = tmp.getParent();
-                            }
-                            String hostName = "computer";
-                            try {
-                                hostName = InetAddress.getLocalHost().getHostName();
-                            } catch (UnknownHostException x) {
-                            }
-                            path = path.replace(hostName,"C:");
-                            // Display the selection and the entire path.
-                            System.out.println("Selection is " +
-                                    newVal.getValue() + "\nComplete path is " + path);
-                            TreeItem c = tvSelModel.getSelectedItem();
-                            getSubtree(c,new File(path));
-
-
-                        }
-                    }
-                });
-
         File[] paths = File.listRoots();
         String path = paths[0].toString();
         //displayTreeView("C:\\Something");
@@ -108,6 +74,7 @@ public class FileBrowserController extends ControlledScreen{
         availableLocalSpaceText.setText(String.format("%.2f GB",localStorage.getAvailableStorageSpace()));
         localStorageSpace.setProgress(getPercentageOfAvailableStorageSpace());
 
+        addEventListener();
         generateDragAndDropArea();
 
         String hostName = "computer";
@@ -131,6 +98,42 @@ public class FileBrowserController extends ControlledScreen{
 
         rootNode.setExpanded(true);
         treeView.setRoot(rootNode);
+    }
+
+    private void addEventListener(){
+        MultipleSelectionModel<TreeItem<String>> tvSelModel = treeView.getSelectionModel();
+        // Use a change listener to respond to a selection within
+        // a tree view
+        tvSelModel.selectedItemProperty().addListener(new ChangeListener<TreeItem<String>>() {
+            public void changed(ObservableValue<? extends TreeItem<String>> changed,
+                                TreeItem<String> oldVal,
+                                TreeItem<String> newVal) {
+                // Display the selection and its complete path from the root.
+                if (newVal != null) {
+
+                    // Construct the entire path to the selected item.
+                    String path = newVal.getValue();
+                    TreeItem<String> tmp = newVal.getParent();
+                    while (tmp != null) {
+                        path = tmp.getValue() + "/" + path;
+                        tmp = tmp.getParent();
+                    }
+                    String hostName = "computer";
+                    try {
+                        hostName = InetAddress.getLocalHost().getHostName();
+                    } catch (UnknownHostException x) {
+                    }
+                    path = path.replace(hostName,"C:");
+                    // Display the selection and the entire path.
+                    System.out.println("Selection is " +
+                            newVal.getValue() + "\nComplete path is " + path);
+                    TreeItem c = tvSelModel.getSelectedItem();
+                    getSubtree(c,new File(path));
+
+
+                }
+            }
+        });
     }
 
     private void getSubtree(TreeItem parentNode, File parent){
