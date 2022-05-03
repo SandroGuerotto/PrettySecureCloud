@@ -1,26 +1,11 @@
 package ch.psc.domain.cipher;
 
-import ch.psc.domain.error.FatalImplementationException;
+import ch.psc.exceptions.FatalImplementationException;
+
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.io.FileOutputStream;
-import java.security.SecureRandom;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 /**
@@ -47,7 +32,7 @@ import java.util.stream.Collectors;
 public class KeyGenerator {
 
 
-    public Map<String, Key> generateKey(int keyBits, String algorithm) throws FatalImplementationException{
+    public Map<String, Key> generateKey(int keyBits, String algorithm) throws FatalImplementationException {
 
         Map<String, Key> keyChain = new HashMap();
 

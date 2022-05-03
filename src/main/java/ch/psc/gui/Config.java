@@ -1,4 +1,4 @@
-package ch.psc.presentation;
+package ch.psc.gui;
 
 import java.time.LocalDate;
 import java.util.ResourceBundle;

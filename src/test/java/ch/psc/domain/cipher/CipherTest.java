@@ -1,15 +1,14 @@
 package ch.psc.domain.cipher;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import javax.crypto.SecretKey;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import ch.psc.domain.file.PscFile;
 import ch.psc.exceptions.FatalImplementationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CipherTest {
   
@@ -71,7 +70,7 @@ class CipherTest {
   }
   
   @Test
-  public void generateKeyTestAES128() throws ch.psc.domain.error.FatalImplementationException {
+  public void generateKeyTestAES128() throws FatalImplementationException {
     Map<String, Key> generated = aesCipher.generateKey();
 
     assertEquals("AES", generated.get("AES").getType());

@@ -9,7 +9,7 @@ public enum SecurityLevel {
   
   private final int level;
   
-  private SecurityLevel(int level) {
+  SecurityLevel(int level) {
     this.level = level;
   }
   
