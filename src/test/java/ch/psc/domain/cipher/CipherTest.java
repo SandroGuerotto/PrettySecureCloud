@@ -3,7 +3,8 @@ package ch.psc.domain.cipher;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import javax.crypto.SecretKey;
+
+import ch.psc.domain.file.EncryptionState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ch.psc.domain.file.PscFile;

@@ -1,7 +1,5 @@
 package ch.psc.domain.file;
 
-import ch.psc.domain.cipher.EncryptionState;
-
 public class PscFile {
   
   private String name;
@@ -58,4 +56,5 @@ public class PscFile {
   public void setEncryptionState(EncryptionState encryptionState) {
     this.encryptionState = encryptionState;
   }
+
 }

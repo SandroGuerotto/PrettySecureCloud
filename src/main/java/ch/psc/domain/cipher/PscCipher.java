@@ -13,6 +13,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import javax.crypto.*;
 
+import ch.psc.domain.file.EncryptionState;
 import ch.psc.domain.file.PscFile;
 import ch.psc.exceptions.FatalImplementationException;
 

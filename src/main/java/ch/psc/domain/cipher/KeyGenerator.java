@@ -28,7 +28,6 @@ import ch.psc.domain.error.FatalImplementationException;
  *          - To add to the complexity of a cipher, Initialization Vectors are used. Brauchen wir auch, vllt als Option?
  *          - to consider: https://alex-labs.com/reasonably-secure-way-store-secret-java/
  */
-
 public class KeyGenerator {
 
   public static final String PUBLIC_KEY_POSTFIX = ".pub";

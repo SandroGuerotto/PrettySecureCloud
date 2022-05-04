@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import javax.crypto.spec.SecretKeySpec;
+
+import ch.psc.domain.file.EncryptionState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ch.psc.domain.error.FatalImplementationException;
