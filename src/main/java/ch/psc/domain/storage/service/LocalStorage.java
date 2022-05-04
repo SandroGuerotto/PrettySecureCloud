@@ -75,7 +75,9 @@ public class LocalStorage implements FileStorage {
   }
 
   /**
+   * Method returns PscFile list with all files and directories in a given path.
    *
+   * @return List with all files in path
    */
 
   @Override
@@ -83,13 +85,14 @@ public class LocalStorage implements FileStorage {
     List<PscFile> fileList = new LinkedList<>();
     File directory = new File(path);
     File[] directoryContent = directory.listFiles();
-    assert directoryContent != null;
-    if (directoryContent.length!=0){
+    if (directoryContent!=null){
       for (File childFile : directoryContent){
         PscFile child = new PscFile(childFile.getPath(), childFile.getName(), childFile.isDirectory());
         System.out.println(childFile.getPath()+" "+childFile.getName()+ " "+childFile.isDirectory());
         fileList.add(child);
       }
+    } else {
+      return null;
     }
     return fileList;
   }
