@@ -1,11 +1,12 @@
 package ch.psc.datasource;
 
+import org.hildan.fxgson.FxGson;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.hildan.fxgson.FxGson;
 
 /**
  * Class to read or write json files
@@ -26,10 +27,9 @@ public class JSONWriterReader {
      */
     public boolean writeToJson(String filePath, Object object) {
 
-        try (FileWriter writer = new FileWriter(filePath)) {
+        try(FileWriter writer = new FileWriter(filePath))  {
             String json = FxGson.coreBuilder()
                     .setPrettyPrinting()
-                    .registerTypeAdapterFactory(new KeyTypeAdapterFactory())
                     .create().toJson(object);
 
             writer.write(json);
@@ -39,7 +39,23 @@ public class JSONWriterReader {
             return false;
         }
     }
-
+    /**
+     * Writes object as a json object. Support Lists and simple Objects.
+     * Supports {@link javafx.beans.property.Property}.
+     *
+     * @param object   what to save
+     * @return true if save was possible
+     */
+    public String toJson( Object object) {
+        try  {
+            return FxGson.coreBuilder()
+                    .setPrettyPrinting()
+                    .create().toJson(object);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     /**
      * Reads a valid json file and parses it to the given class type.
      *
@@ -51,8 +67,6 @@ public class JSONWriterReader {
      */
     public <T> T readFromJson(String path, Class<T> clazz) throws IOException {
         Reader reader = Files.newBufferedReader(Paths.get(path));
-        return FxGson.coreBuilder()
-                .registerTypeAdapterFactory(new KeyTypeAdapterFactory())
-                .create().fromJson(reader, clazz);
+        return FxGson.create().fromJson(reader, clazz);
     }
 }

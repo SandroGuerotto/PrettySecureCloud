@@ -10,8 +10,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import javax.crypto.*;
-
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 import ch.psc.domain.file.PscFile;
 import ch.psc.exceptions.FatalImplementationException;
 
@@ -117,7 +119,6 @@ public abstract class PscCipher {
    * @return A new {@link PscFile} with identical metadata but encrypted data.
    * @throws InvalidKeyException If the given key is inappropriate for initializing this cipher.
    * @throws FatalImplementationException If this Cipher is fundamentally wrong implemented (e.g. non-existing Transformation).
-   * @throws InvalidAlgorithmParameterException If the given algorithm parameters are inappropriate for this cipher. Check the Method {@link #getAlgorithmSpecification()}!
    */
   protected PscFile encrypt(PscFile file, java.security.Key key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
     javax.crypto.Cipher cipher = getCipher();
@@ -195,7 +196,7 @@ public abstract class PscCipher {
    *
    * @return {@link Key} which can be used with {@link javax.crypto.Cipher}s.
    */
-  public Map<String, Key> generateKey() throws ch.psc.domain.error.FatalImplementationException {
+  public Map<String, Key> generateKey() throws FatalImplementationException {
     KeyGenerator keyGenerator = new KeyGenerator();
     return keyGenerator.generateKey(getKeyBits(), getAlgorithm());
   }

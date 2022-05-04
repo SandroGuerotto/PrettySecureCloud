@@ -54,4 +54,5 @@ public class StorageManager {
     public User getUser() {
         return user;
     }
+
 }

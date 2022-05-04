@@ -1,14 +1,11 @@
 package ch.psc.gui.components.signUp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 import ch.psc.domain.cipher.CipherAlgorithms;
 import ch.psc.domain.cipher.CipherFactory;
+import ch.psc.domain.cipher.Key;
 import ch.psc.domain.cipher.PscCipher;
 import ch.psc.exceptions.FatalImplementationException;
-import ch.psc.presentation.Config;
+import ch.psc.gui.Config;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -16,6 +13,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Handles all user data to customize his encryption.
@@ -25,7 +28,7 @@ import javafx.scene.layout.VBox;
  */
 public class ChooseEncryption extends VBox implements SignUpFlow {
 
-    private PscCipher pscCipher;
+    private final Map<String, Key> generatedKeys = new HashMap<>();
 
     /**
      * Creates encryption algorithm picker.
@@ -80,25 +83,29 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
      * @param cipherAlgorithms uses selected service
      */
     private void register(CipherAlgorithms cipherAlgorithms) {
+
         try {
-          this.pscCipher = CipherFactory.createCipher(cipherAlgorithms.name());
+            PscCipher pscCipher = CipherFactory.createCipher(cipherAlgorithms.name());
+            generatedKeys.putAll(pscCipher.generateKey());
+
         } catch (FatalImplementationException e) {
-          this.pscCipher = null;
-          e.printStackTrace(); //TODO sophisticated error logging
+            e.printStackTrace(); //TODO sophisticated error logging
         }
     }
 
     @Override
     public List<Object> getData() {
-        return Collections.singletonList(pscCipher);
+        return List.of(generatedKeys);
     }
 
     @Override
     public boolean isValid() {
-        return true;
+//        return !generatedKeys.isEmpty();
+        return true;//TODO remove after testing
     }
 
     @Override
     public void clear() {
+        generatedKeys.clear();
     }
 }
