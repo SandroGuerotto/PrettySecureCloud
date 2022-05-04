@@ -1,7 +1,5 @@
 package ch.psc.domain.file;
 
-import ch.psc.domain.cipher.EncryptionState;
-
 public class PscFile {
   
   private String name;
@@ -9,6 +7,8 @@ public class PscFile {
   private String path;
   
   private byte[] data;
+  
+  private byte[] nonce;
   
   private EncryptionState encryptionState;
   
@@ -40,6 +40,14 @@ public class PscFile {
   public void setData(byte[] data) {
     this.data = data;
   }
+
+  public byte[] getNonce() {
+    return nonce;
+  }
+  
+  public void setNonce(byte[] nonce) {
+    this.nonce = nonce;
+  }
   
   public EncryptionState getEncryptionState() {
     return encryptionState;
@@ -48,4 +56,5 @@ public class PscFile {
   public void setEncryptionState(EncryptionState encryptionState) {
     this.encryptionState = encryptionState;
   }
+
 }
