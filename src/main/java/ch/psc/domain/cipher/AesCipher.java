@@ -1,11 +1,11 @@
 package ch.psc.domain.cipher;
 
-import java.security.SecureRandom;
-import java.security.spec.AlgorithmParameterSpec;
-import javax.crypto.spec.GCMParameterSpec;
-
 import ch.psc.domain.file.EncryptionState;
 import ch.psc.domain.file.PscFile;
+
+import javax.crypto.spec.GCMParameterSpec;
+import java.security.SecureRandom;
+import java.security.spec.AlgorithmParameterSpec;
 
 /**
  * Implementation of the abstract base class {@link PscCipher}.<br />
@@ -42,16 +42,16 @@ public class AesCipher extends PscCipher {
         return TRANSFORMATION;
     }
 
-  /**
-   * This method is a specification for the AES algorithm which makes use of
-   * so called initialization vectors (IV). The relevant parameters (nonce) must be
-   * randomnized each time the is being encrypted.
-   *
-   * @param file {@link PscFile}
-   * @return AlgorithmParameterSpec - a new one if the file is currently decrypted,
-   * and the already existing one, if the file already encrypted (the used nonce is
-   * stored in the {@link PscFile} and can be obtained via {@link PscFile#getNonce()}
-   */
+    /**
+     * This method is a specification for the AES algorithm which makes use of
+     * so called initialization vectors (IV). The relevant parameters (nonce) must be
+     * randomnized each time the is being encrypted.
+     *
+     * @param file {@link PscFile}
+     * @return AlgorithmParameterSpec - a new one if the file is currently decrypted,
+     * and the already existing one, if the file already encrypted (the used nonce is
+     * stored in the {@link PscFile} and can be obtained via {@link PscFile#getNonce()}
+     */
     @Override
     public AlgorithmParameterSpec getAlgorithmSpecification(PscFile file) {
         byte[] nonce = new byte[GCM_NONCE_LENGTH];

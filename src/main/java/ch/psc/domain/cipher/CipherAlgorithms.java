@@ -26,7 +26,7 @@ public enum CipherAlgorithms {
     /**
      * Get the relevant Cipher class by calling {@link #getCipherClass()}
      */
-    public Class<? extends PscCipher> getCipherClass(){
+    public Class<? extends PscCipher> getCipherClass() {
         return cipherClass;
     }
 
