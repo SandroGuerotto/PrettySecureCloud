@@ -1,18 +1,17 @@
 package ch.psc.domain.cipher;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ch.psc.domain.file.PscFile;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 class AesCipherTest {
   
@@ -64,6 +63,15 @@ class AesCipherTest {
 
     assertNotNull(file1.getNonce()); //expected side effect: set nonce
     assertArrayEquals(file1.getNonce(), encrypted.getNonce()); //decryption is impossible, if nonce does not match
+  }
+  
+  @Test
+  public void randomResultTest() throws InterruptedException, ExecutionException {
+    List<Future<PscFile>> encList1 = cipher.encrypt(key, Arrays.asList(file1));
+    List<Future<PscFile>> encList2 = cipher.encrypt(key, Arrays.asList(file1));
+    
+    //The nonce should have prevented the same outcome to prevent brute force attacks.
+    assertNotEquals(encList1.get(0).get().getData(), encList2.get(0).get().getData());
   }
   
   @Test

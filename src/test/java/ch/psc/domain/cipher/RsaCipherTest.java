@@ -1,22 +1,20 @@
 package ch.psc.domain.cipher;
 
-import ch.psc.domain.error.FatalImplementationException;
-import ch.psc.domain.file.PscFile;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
-import static org.junit.jupiter.api.Assertions.*;
+import javax.crypto.spec.SecretKeySpec;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import ch.psc.domain.error.FatalImplementationException;
+import ch.psc.domain.file.PscFile;
 
 class RsaCipherTest {
   
@@ -75,8 +73,18 @@ class RsaCipherTest {
     List<Future<PscFile>> encList = cipher.encrypt(publicKey, Arrays.asList(file1));
     PscFile encrypted = encList.get(0).get();
 
-    assertNotNull(file1.getNonce()); //expected side effect: set nonce
-    assertArrayEquals(file1.getNonce(), encrypted.getNonce()); //decryption is impossible, if nonce does not match
+    assertNull(file1.getNonce()); //nonce is not needed for RSA encryption
+    assertArrayEquals(file1.getNonce(), encrypted.getNonce());
+  }
+  
+  @Test
+  public void randomResultTest() throws InterruptedException, ExecutionException {
+    List<Future<PscFile>> encList1 = cipher.encrypt(publicKey, Arrays.asList(file1));
+    List<Future<PscFile>> encList2 = cipher.encrypt(publicKey, Arrays.asList(file1));
+    
+    //Random padding should prevent the same data to be the same result (simmilar to IV/Nonce).
+    //This prevents attacks brute forcing encrypting data and comparing the results. 
+    assertNotEquals(encList1.get(0).get().getData(), encList2.get(0).get().getData());
   }
   
   @Test
