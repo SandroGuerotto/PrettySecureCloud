@@ -1,11 +1,14 @@
 package ch.psc.gui;
 
+import ch.psc.domain.common.context.UserContext;
+import ch.psc.domain.user.AuthenticationService;
+import ch.psc.domain.user.User;
+import ch.psc.exceptions.AuthenticationException;
 import ch.psc.exceptions.ScreenSwitchException;
 import ch.psc.gui.components.validator.EmailValidator;
 import ch.psc.gui.components.validator.PasswordValidator;
 import ch.psc.gui.components.validator.RequiredInputValidator;
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
@@ -25,6 +28,8 @@ import java.util.Map;
 
 public class LoginController extends ControlledScreen {
 
+    private final AuthenticationService authenticationService;
+
     @FXML
     private Label loginErrorLabel;
 
@@ -37,8 +42,10 @@ public class LoginController extends ControlledScreen {
     @FXML
     private HBox loginPane;
 
-    public LoginController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
+    public LoginController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthenticationService authenticationService) {
+
         super(primaryStage, screens);
+        this.authenticationService = authenticationService;
     }
 
     @Override
@@ -102,14 +109,20 @@ public class LoginController extends ControlledScreen {
      * Login data of user will be checked and if approved the filebrowser will be shown.
      */
     @FXML
-    private void login(){
-            if (enterMailTextfield.validate() && enterPasswordTextfield.validate()){
-                enterMailTextfield.getText();
-                enterPasswordTextfield.getText();
-                //Todo: Validation of login, if not valid -> errormessage
+    private void login() {
+        if (enterMailTextfield.validate() && enterPasswordTextfield.validate()) {
+            //Todo: Validation of login
+            try {
+                User user = authenticationService.authenticate(enterMailTextfield.getText(), enterPasswordTextfield.getText());
+                UserContext.setAuthorizedUser(user);
+                //switchScreen(Screens.FILE_BROWSER);
+//        example on how to use service
+//            FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
+//            dropbox.getFileTree();
+            } catch (AuthenticationException e) {
                 loginErrorLabel.setText("TODO: login / password is wrong resp. you have to sign up first");
             }
-
+        }
     }
 
 }

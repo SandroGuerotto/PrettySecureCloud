@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.SecretKey;
-import ch.psc.domain.error.FatalImplementationException;
+import ch.psc.exceptions.FatalImplementationException;
 
 
 /**

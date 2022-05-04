@@ -7,7 +7,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ch.psc.domain.error.FatalImplementationException;
+import ch.psc.exceptions.FatalImplementationException;
 
 class KeyGeneratorTest {
   

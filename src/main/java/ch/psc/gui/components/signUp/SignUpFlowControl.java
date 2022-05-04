@@ -37,23 +37,27 @@ public class SignUpFlowControl {
         ));
         currentPosition = new SimpleIntegerProperty(-1);
         isDone = new SimpleBooleanProperty(false);
-        isDone.bind(currentPosition.isEqualTo(flow.size()));
         isCanceled = new SimpleBooleanProperty(false);
-        isCanceled.bind(currentPosition.isEqualTo(-1));
     }
 
     /**
-     * Increases the current position by 1. Maximum size of {@link #flow}.
+     * Increases the current position by 1. Maximum size of {@link #flow} - 1.
      */
     public void next() {
-        currentPosition.set(Math.min(flow.size(), currentPosition.getValue() + 1));
+        int pos = Math.min(flow.size(), currentPosition.getValue() + 1);
+        isDone.set(pos == flow.size());
+        isCanceled.set(false);
+        currentPosition.set(Math.min(flow.size() - 1, pos));
     }
 
     /**
-     * Decreases the current position by 1. Minimum -1.
+     * Decreases the current position by 1. Minimum 0.
      */
     public void previous() {
-        currentPosition.set(Math.max(-1, currentPosition.getValue() - 1));
+        int pos = Math.max(-1, currentPosition.getValue() - 1);
+        isCanceled.set(pos == -1);
+        isDone.set(false);
+        currentPosition.set(Math.max(0, pos));
     }
 
     /**

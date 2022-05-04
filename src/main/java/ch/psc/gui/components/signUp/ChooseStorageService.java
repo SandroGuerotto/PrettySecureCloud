@@ -3,7 +3,7 @@ package ch.psc.gui.components.signUp;
 import ch.psc.domain.storage.service.DropBoxService;
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.presentation.Config;
+import ch.psc.gui.Config;
 import com.dropbox.core.DbxWebAuth;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -155,7 +155,8 @@ public class ChooseStorageService extends VBox implements SignUpFlow {
 
     @Override
     public boolean isValid() {
-        return true;
+//        return !chosenServices.isEmpty();
+        return true; //TODO remove after testing
     }
 
     @Override

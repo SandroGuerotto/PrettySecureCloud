@@ -134,7 +134,7 @@ public abstract class PscCipher {
    * @return A new {@link PscFile} with identical metadata but encrypted data.
    * @throws InvalidKeyException If the given key is inappropriate for initializing this cipher.
    * @throws FatalImplementationException If this Cipher is fundamentally wrong implemented (e.g. non-existing Transformation).
-   * @throws InvalidAlgorithmParameterException If the given algorithm parameters are inappropriate for this cipher. Check the Method {@link #getAlgorithmSpecification()}!
+   * @throws InvalidAlgorithmParameterException If the given algorithm parameters are inappropriate for this cipher. Check the Method {@link PscCipher#getAlgorithmSpecification(PscFile)}!
    */
   protected PscFile encrypt(PscFile file, java.security.Key key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
     javax.crypto.Cipher cipher = getCipher();
@@ -146,6 +146,7 @@ public abstract class PscCipher {
     encryptedFile.setNonce(file.getNonce());
     performCipher(unencryptedData, encryptedFile, cipher);
     encryptedFile.setEncryptionState(EncryptionState.ENCRYPTED);
+    
     return encryptedFile;
   }
   
@@ -211,7 +212,7 @@ public abstract class PscCipher {
    *
    * @return {@link Key} which can be used with {@link javax.crypto.Cipher}s.
    */
-  public Map<String, Key> generateKey() throws ch.psc.domain.error.FatalImplementationException {
+  public Map<String, Key> generateKey() throws FatalImplementationException {
     KeyGenerator keyGenerator = new KeyGenerator();
     return keyGenerator.generateKey(getKeyBits(), getAlgorithm());
   }

@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
  */
 public class DropBoxService extends CloudService {
 
-    private static final String DROPBOX_PSC_APP = "dropbox-psc.app";
+    private static final String DROPBOX_PSC_APP = "configs/dropbox-psc.app";
     public static final String PRETTY_SECURE_CLOUD = "Pretty-Secure-Cloud";
     private DbxClientV2 client;
 
@@ -46,6 +46,7 @@ public class DropBoxService extends CloudService {
     public List<Future<PscFile>> upload(List<PscFile> files) {
         try { // todo pro file: evtl besser nur immer ein file als import und loop ausserhalb
             client.files().upload(files.get(0).getPath());
+
         } catch (DbxException e) {
             e.printStackTrace(); // todo error handling
         }

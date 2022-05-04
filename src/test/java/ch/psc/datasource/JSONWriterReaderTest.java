@@ -1,20 +1,20 @@
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+package ch.psc.datasource;
+
+import ch.psc.domain.storage.service.StorageService;
+import ch.psc.domain.user.User;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.crypto.spec.SecretKeySpec;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import ch.psc.datasource.JSONWriterReader;
-import ch.psc.domain.cipher.Key;
-import ch.psc.domain.storage.service.StorageService;
-import ch.psc.domain.user.User;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class JSONWriterReaderTest {
@@ -28,9 +28,7 @@ public class JSONWriterReaderTest {
         cut = new JSONWriterReader();
         Map<StorageService, Map<String, String>> services = new HashMap<>();
         services.put(StorageService.DROPBOX, Collections.singletonMap("token", "abc"));
-        Map<String, Key> keyChain = new HashMap<>();
-        keyChain.put("TEST", new Key(new SecretKeySpec("fooBarBaz".getBytes(), "TestAlgo")));
-        userData = new User("testname", "mail", "password", services, keyChain);
+        userData = new User("testname", "mail", "password", services, Collections.emptyMap());
     }
 
     @AfterEach
@@ -57,7 +55,5 @@ public class JSONWriterReaderTest {
         assertEquals(Collections.singletonMap("path", "/path/test"),act.getStorageServiceConfig().get(StorageService.LOCAL));
         assertEquals(Collections.singletonMap("token", "abc"),act.getStorageServiceConfig().get(StorageService.DROPBOX));
 
-        assertEquals("TestAlgo", act.getKey("TEST").getType());
-        assertArrayEquals("fooBarBaz".getBytes(), act.getKey("TEST").getKey().getEncoded());
     }
 }

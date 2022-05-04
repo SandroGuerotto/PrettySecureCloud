@@ -1,7 +1,11 @@
 package ch.psc.domain.cipher;
 
-import javax.crypto.NullCipher;
 import ch.psc.exceptions.FatalImplementationException;
+
+import javax.crypto.Cipher;
+import javax.crypto.NullCipher;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <b>Do not use this for secure Data!</b>
@@ -32,14 +36,19 @@ public class PlainTextCipher extends PscCipher {
   }
 
   @Override
-  protected javax.crypto.Cipher getCipher() throws FatalImplementationException {
+  protected Cipher getCipher() throws FatalImplementationException {
     javax.crypto.Cipher cipher = new NullCipher();
     return cipher;
   }
-
+  
   @Override
   public int getKeyBits() {
     return 16;
+  }
+
+  @Override
+  public Map<String, Key> generateKey() throws FatalImplementationException {
+    return new HashMap<>();
   }
 
 }
