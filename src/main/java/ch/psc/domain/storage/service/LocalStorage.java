@@ -4,6 +4,7 @@ import ch.psc.domain.file.PscFile;
 import javafx.beans.property.DoubleProperty;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -73,12 +74,24 @@ public class LocalStorage implements FileStorage {
     return 100;
   }
 
+  /**
+   *
+   */
+
   @Override
   public List<PscFile> getFiles(String path) {
-
-
-    // TODO Auto-generated method stub
-    return null;
+    List<PscFile> fileList = new LinkedList<>();
+    File directory = new File(path);
+    File[] directoryContent = directory.listFiles();
+    assert directoryContent != null;
+    if (directoryContent.length!=0){
+      for (File childFile : directoryContent){
+        PscFile child = new PscFile(childFile.getPath(), childFile.getName(), childFile.isDirectory());
+        System.out.println(childFile.getPath()+" "+childFile.getName()+ " "+childFile.isDirectory());
+        fileList.add(child);
+      }
+    }
+    return fileList;
   }
 
   @Override
