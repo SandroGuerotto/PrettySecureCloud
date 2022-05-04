@@ -126,9 +126,7 @@ public abstract class PscCipher {
     cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
     
     byte[] unencryptedData = file.getData();
-    PscFile encryptedFile = new PscFile();
-    encryptedFile.setName(file.getName());
-    encryptedFile.setPath(file.getPath());
+    PscFile encryptedFile = new PscFile(file.getPath(),file.getName(),false);
     performCipher(unencryptedData, encryptedFile, cipher);
     encryptedFile.setEncryptionState(EncryptionState.ENCRYPTED);
     
@@ -150,9 +148,7 @@ public abstract class PscCipher {
     cipher.init(javax.crypto.Cipher.DECRYPT_MODE, key);
     
     byte[] encryptedData = file.getData();
-    PscFile decryptedFile = new PscFile();
-    decryptedFile.setName(file.getName());
-    decryptedFile.setPath(file.getPath());
+    PscFile decryptedFile = new PscFile(file.getPath(),file.getName(),false);
     performCipher(encryptedData, decryptedFile, cipher);
     decryptedFile.setEncryptionState(EncryptionState.DECRYPTED);
     

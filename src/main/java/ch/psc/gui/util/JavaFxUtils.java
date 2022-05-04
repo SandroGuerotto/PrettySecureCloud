@@ -53,7 +53,7 @@ public class JavaFxUtils {
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
         LOGIN_PAGE("login.fxml", "login.title"),
         SIGNUP_PAGE("signUp.fxml", "signup.title"),
-        FILEBROWSERPAGE("fileBrowser.fxml", "fileBrowser.titel");
+        FILE_BROWSER_PAGE("fileBrowser.fxml", "fileBrowser.titel");
 
 //        CLOUDSERVICESPAGE("", ""),
 

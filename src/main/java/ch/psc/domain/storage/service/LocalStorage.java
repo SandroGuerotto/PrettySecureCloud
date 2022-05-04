@@ -1,7 +1,7 @@
 package ch.psc.domain.storage.service;
 
-import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
+import javafx.beans.property.DoubleProperty;
 
 import java.io.File;
 import java.util.List;
@@ -19,6 +19,7 @@ import java.util.concurrent.Future;
 public class LocalStorage implements FileStorage {
   
   private String path;
+  private String name;
   private double maxStorage;
 
 
@@ -66,14 +67,36 @@ public class LocalStorage implements FileStorage {
     executorService.shutdown();
     return size;
   }
-  
+
   @Override
-  public Tree<PscFile> getFileTree() {
+  public double getTotalStorageSpace() {
+    return 100;
+  }
+
+  @Override
+  public List<PscFile> getFiles(String path) {
+
+
     // TODO Auto-generated method stub
     return null;
   }
 
-  public String getPath() {
+  @Override
+  public String getName() {
+    return null;
+  }
+
+  @Override
+  public DoubleProperty getUsedStorageSpaceProperty() {
+    return null;
+  }
+
+    @Override
+    public String getRoot() {
+        return null;
+    }
+
+    public String getPath() {
     return path;
   }
 

@@ -33,7 +33,7 @@ public class Tree<T> {
     return Objects.equals(root, other.root);
   }
 
-  public class Node<V> {
+  public static class Node<V> {
     
     private V value;
     private Node<V> parent;
@@ -77,7 +77,7 @@ public class Tree<T> {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + getEnclosingInstance().hashCode();
+//      result = prime * result + getEnclosingInstance().hashCode();
       result = prime * result + Objects.hash(children, parent, value);
       return result;
     }
@@ -91,15 +91,12 @@ public class Tree<T> {
       if (getClass() != obj.getClass())
         return false;
       Node<?> other = (Node<?>) obj;
-      if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
-        return false;
+//      if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+//        return false;
       return Objects.equals(children, other.children) && Objects.equals(parent, other.parent)
           && Objects.equals(value, other.value);
     }
 
-    private Tree<T> getEnclosingInstance() {
-      return Tree.this;
-    }
     
   }
 }

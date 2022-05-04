@@ -57,7 +57,17 @@ public class StorageServiceFactory {
      */
     private static FileStorage createDropBoxService(Map<String, String> accountData) {
         DbxRequestConfig config = new DropBoxService().getDbxRequestConfig();
+//        try {
+
+//            DbxRefreshResult refresh_token = new DbxClientV2(config, accountData.get("refresh_token")).refreshAccessToken();
+//        DbxClientV2 dbxClientV2 = new DbxClientV2(config, new DbxCredential(accountData.get("access_token"), null, accountData.get("refresh_token"), "kkpu5nrqq4fj98x"));
+//        dbxClientV2.refreshAccessToken();
+//            String accessToken = refresh_token.getAccessToken();
         return new DropBoxService(new DbxClientV2(config, accountData.get("access_token")));
+//        } catch (DbxException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
     }
 
     /**

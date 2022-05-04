@@ -58,6 +58,13 @@ public class LoginController extends ControlledScreen {
         return JavaFxUtils.RegisteredScreen.LOGIN_PAGE;
     }
 
+    @Override
+    protected boolean init(JavaFxUtils.RegisteredScreen previousScreen, Object... params) {
+        primaryStage.setMinHeight(Config.MIN_HEIGHT);
+        primaryStage.setMinWidth(Config.MIN_WIDTH);
+        return super.init(previousScreen, params);
+    }
+
     /**
      * Initializes validation for login data fields.
      *
@@ -86,6 +93,8 @@ public class LoginController extends ControlledScreen {
         enterPasswordTextfield.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.equals(oldValue)) enterPasswordTextfield.validate();
         });
+        enterMailTextfield.setText("a@a.com");
+        enterPasswordTextfield.setText("test1234");
     }
 
     /**
@@ -115,12 +124,14 @@ public class LoginController extends ControlledScreen {
             try {
                 User user = authenticationService.authenticate(enterMailTextfield.getText(), enterPasswordTextfield.getText());
                 UserContext.setAuthorizedUser(user);
-                //switchScreen(Screens.FILE_BROWSER);
+                switchScreen(JavaFxUtils.RegisteredScreen.FILE_BROWSER_PAGE);
 //        example on how to use service
 //            FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
 //            dropbox.getFileTree();
             } catch (AuthenticationException e) {
                 loginErrorLabel.setText("TODO: login / password is wrong resp. you have to sign up first");
+            } catch (ScreenSwitchException e) {
+                e.printStackTrace();
             }
         }
     }

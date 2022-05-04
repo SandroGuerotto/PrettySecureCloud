@@ -2,8 +2,8 @@ package ch.psc.gui.components.signUp;
 
 import ch.psc.domain.storage.service.DropBoxService;
 import ch.psc.domain.storage.service.StorageService;
-import ch.psc.gui.util.JavaFxUtils;
 import ch.psc.gui.Config;
+import ch.psc.gui.util.JavaFxUtils;
 import com.dropbox.core.DbxWebAuth;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

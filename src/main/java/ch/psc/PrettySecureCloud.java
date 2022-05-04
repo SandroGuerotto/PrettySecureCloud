@@ -75,7 +75,7 @@ public class PrettySecureCloud extends Application {
     private void loadAllControlledScreens() {
         loadScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE, new LoginController(primaryStage, screens, AuthenticationContext.getAuthService()));
         loadScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE, new SignUpController(primaryStage, screens, AuthenticationContext.getAuthService()));
-        loadScreen(JavaFxUtils.RegisteredScreen.FILEBROWSERPAGE, new FileBrowserController(primaryStage, screens));
+        loadScreen(JavaFxUtils.RegisteredScreen.FILE_BROWSER_PAGE, new FileBrowserController(primaryStage, screens));
         // add other screens here
     }
 

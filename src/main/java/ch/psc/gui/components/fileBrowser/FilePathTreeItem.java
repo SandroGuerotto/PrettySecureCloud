@@ -1,5 +1,11 @@
 package ch.psc.gui.components.fileBrowser;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -7,12 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.control.TreeItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public class FilePathTreeItem extends TreeItem<String> {
     public static Image folderCollapseImage = new Image(ClassLoader.getSystemResourceAsStream("images/fileBrowser/folder.png"));

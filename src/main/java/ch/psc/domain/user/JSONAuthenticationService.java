@@ -51,7 +51,7 @@ public class JSONAuthenticationService implements AuthenticationService {
      * @return path to file
      */
     private String buildPath(String hash) {
-        return String.format(DEFAULT_FILE_PATH, hash);
+        return String.format(DEFAULT_FILE_PATH, hash.replace("/",""));
     }
 
     @Override

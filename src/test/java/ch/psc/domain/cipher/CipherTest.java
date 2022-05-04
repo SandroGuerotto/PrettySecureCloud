@@ -61,12 +61,9 @@ class CipherTest {
       }
     };
     
-    file = new PscFile();
+    file = new PscFile("/lorem/ipsum/dolor.file","Lorem Ipsum");
     file.setData("Hello World!".getBytes());
     file.setEncryptionState(EncryptionState.DECRYPTED);
-    file.setName("Lorem Ipsum");
-    file.setPath("/lorem/ipsum/dolor.file");
-    
   }
   
   @Test

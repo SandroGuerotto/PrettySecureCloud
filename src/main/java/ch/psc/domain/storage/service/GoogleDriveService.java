@@ -1,15 +1,17 @@
 package ch.psc.domain.storage.service;
 
-import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
+import javafx.beans.property.DoubleProperty;
 
 import java.util.List;
 import java.util.concurrent.Future;
 
-public class GoogleDriveService extends CloudService {
+public class GoogleDriveService implements FileStorage {
+
+  private final String name;
 
   public GoogleDriveService() {
-    super("Google Drive");
+    this.name = "Google Drive";
     // TODO Auto-generated constructor stub
   }
 
@@ -32,9 +34,29 @@ public class GoogleDriveService extends CloudService {
   }
 
   @Override
-  public Tree<PscFile> getFileTree() {
+  public double getTotalStorageSpace() {
+    return 0;
+  }
+
+  @Override
+  public List<PscFile> getFiles(String path) {
     // TODO Auto-generated method stub
     return null;
   }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public DoubleProperty getUsedStorageSpaceProperty() {
+    return null;
+  }
+
+    @Override
+    public String getRoot() {
+        return null;
+    }
 
 }

@@ -1,15 +1,19 @@
 package ch.psc.domain.storage.service;
 
-import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
 import com.dropbox.core.*;
 import com.dropbox.core.json.JsonReader;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 import com.dropbox.core.v2.users.SpaceUsage;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -19,19 +23,24 @@ import java.util.concurrent.Future;
  *
  * @author SandroGuerotto
  */
-public class DropBoxService extends CloudService {
+public class DropBoxService implements FileStorage {
 
     private static final String DROPBOX_PSC_APP = "configs/dropbox-psc.app";
     public static final String PRETTY_SECURE_CLOUD = "Pretty-Secure-Cloud";
     private DbxClientV2 client;
+    private final String name;
+    private final StringProperty currentPathProperty = new SimpleStringProperty(ROOT_DIR);
+    private final SimpleDoubleProperty usedStorageSpaceProperty = new SimpleDoubleProperty();
+    private static final String ROOT_DIR = "";
 
     /**
      * Create a new instance for Dropbox all communication.
+     *
      * @param client Dropbox client with valid access token
      */
     public DropBoxService(DbxClientV2 client) {
-        this();
         this.client = client;
+        this.name = "Dropbox";
     }
 
     /**
@@ -39,17 +48,19 @@ public class DropBoxService extends CloudService {
      * Only used for getting an access token.
      */
     public DropBoxService() {
-        super("Dropbox");
+        this.name = "Dropbox";
     }
 
     @Override
     public List<Future<PscFile>> upload(List<PscFile> files) {
-        try { // todo pro file: evtl besser nur immer ein file als import und loop ausserhalb
-            client.files().upload(files.get(0).getPath());
-
-        } catch (DbxException e) {
-            e.printStackTrace(); // todo error handling
-        }
+        System.out.println("upload in:" + currentPathProperty.get());
+        files.forEach(System.out::println);
+//        try { // todo pro file: evtl besser nur immer ein file als import und loop ausserhalb
+//            client.files().upload(files.get(0).getPath());
+//
+//        } catch (DbxException e) {
+//            e.printStackTrace(); // todo error handling
+//        }
         return null;
     }
 
@@ -67,7 +78,9 @@ public class DropBoxService extends CloudService {
     public double getAvailableStorageSpace() {
         try {
             SpaceUsage spaceUsage = client.users().getSpaceUsage();
-            return spaceUsage.getAllocation().getIndividualValue().getAllocated() - spaceUsage.getUsed();
+            long spaceInBytes = spaceUsage.getAllocation().getIndividualValue().getAllocated() - spaceUsage.getUsed();
+            usedStorageSpaceProperty.set(spaceUsage.getUsed());
+            return spaceInBytes / 1024.0 / 1024.0 / 1024.0;
         } catch (DbxException e) {
             e.printStackTrace();
         }
@@ -75,12 +88,25 @@ public class DropBoxService extends CloudService {
     }
 
     @Override
-    public Tree<PscFile> getFileTree() {
+    public double getTotalStorageSpace() {
         try {
-            ListFolderResult result = client.files().listFolder("");
+            SpaceUsage spaceUsage = client.users().getSpaceUsage();
+            return spaceUsage.getAllocation().getIndividualValue().getAllocated() / 1024.0 / 1024.0 / 1024.0;
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public List<PscFile> getFiles(String path) {
+        currentPathProperty.set(path);
+        ArrayList<PscFile> list = new ArrayList<>();
+        try {
+            ListFolderResult result = client.files().listFolder(currentPathProperty.get());
             while (true) {
                 for (Metadata metadata : result.getEntries()) {
-                    System.out.println(metadata.getPathLower());
+                    list.add(new PscFile(metadata.getName(), metadata.getPathLower(), metadata instanceof FolderMetadata));
                 }
 
                 if (!result.getHasMore()) {
@@ -92,8 +118,22 @@ public class DropBoxService extends CloudService {
         } catch (DbxException e) {
             e.printStackTrace();
         }
+        return list;
+    }
 
-        return null;
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public DoubleProperty getUsedStorageSpaceProperty() {
+        return usedStorageSpaceProperty;
+    }
+
+    @Override
+    public String getRoot() {
+        return ROOT_DIR;
     }
 
     /**
@@ -116,10 +156,12 @@ public class DropBoxService extends CloudService {
 
     /**
      * Creates an authorization request to access the user's data without a redirect URL.
+     *
      * @return Dropbox authorization request
      */
     public DbxWebAuth.Request buildAuthRequest() {
-        return DbxWebAuth.newRequestBuilder().withNoRedirect().build();
+        return DbxWebAuth.newRequestBuilder().withTokenAccessType(TokenAccessType.OFFLINE)
+                .withNoRedirect().build();
     }
 
     /**
@@ -142,7 +184,9 @@ public class DropBoxService extends CloudService {
     public Map<String, String> finishFromCode(DbxWebAuth auth, final String userCode) throws Exception {
         try {
             DbxAuthFinish authFinish = auth.finishFromCode(userCode.trim());
-            return Collections.singletonMap("access_token", authFinish.getAccessToken());
+
+            return Map.of("access_token", authFinish.getAccessToken(),
+                    "refresh_token", authFinish.getRefreshToken());
         } catch (DbxException e) {
             e.printStackTrace(); // TODO error handling
             throw new Exception("Wrong code");
