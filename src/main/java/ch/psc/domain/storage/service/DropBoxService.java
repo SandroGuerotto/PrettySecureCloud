@@ -80,7 +80,7 @@ public class DropBoxService implements FileStorage {
             SpaceUsage spaceUsage = client.users().getSpaceUsage();
             long spaceInBytes = spaceUsage.getAllocation().getIndividualValue().getAllocated() - spaceUsage.getUsed();
             usedStorageSpaceProperty.set(spaceUsage.getUsed());
-            return spaceInBytes / 1024.0 / 1024.0 / 1024.0;
+            return spaceInBytes / 1000.0 / 1000.0 / 1000.0;
         } catch (DbxException e) {
             e.printStackTrace();
         }
@@ -91,7 +91,7 @@ public class DropBoxService implements FileStorage {
     public double getTotalStorageSpace() {
         try {
             SpaceUsage spaceUsage = client.users().getSpaceUsage();
-            return spaceUsage.getAllocation().getIndividualValue().getAllocated() / 1024.0 / 1024.0 / 1024.0;
+            return spaceUsage.getAllocation().getIndividualValue().getAllocated() / 1000.0 / 1000.0 / 1000.0;
         } catch (DbxException e) {
             e.printStackTrace();
         }

@@ -94,7 +94,7 @@ public class DropBoxServiceTest {
                 .thenReturn(DbxUserUsersRequestsMock);
 
         when(DbxUserUsersRequestsMock.getSpaceUsage())
-                .thenReturn(new SpaceUsage(1000L, SpaceAllocation.individual(new IndividualSpaceAllocation(5000L))));
+                .thenReturn(new SpaceUsage(1_000_000_000_000L, SpaceAllocation.individual(new IndividualSpaceAllocation(5_000_000_000_000L))));
 
         double act = cut.getAvailableStorageSpace();
 
