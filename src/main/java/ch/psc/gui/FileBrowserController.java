@@ -110,7 +110,7 @@ public class FileBrowserController extends ControlledScreen {
     private FileBrowserTreeTableView buildTreeView(FileStorage fileStorage) {
         FileBrowserTreeTableView tree = new FileBrowserTreeTableView();
 
-        TreeItem<FileRow> root = new TreeItem<>(new FileRow(new PscFile(fileStorage.getRoot(), fileStorage.getRoot())));
+        TreeItem<FileRow> root = new TreeItem<>(new FileRow(new PscFile()));
         tree.setRoot(root);
 
         storageManager.loadManagedFiles(fileStorage, fileStorage.getRoot(), fileTree -> buildTree(fileTree, root));
@@ -162,7 +162,7 @@ public class FileBrowserController extends ControlledScreen {
 
     private void updateCurrentDirectory(String path, FileStorage fileStorage, FileBrowserTreeTableView tree) {
         Platform.runLater(() -> {
-            tree.setRoot(new TreeItem<>(new FileRow(new PscFile(path, path))));
+            tree.setRoot(new TreeItem<>(new FileRow(new PscFile())));
             storageManager.loadManagedFiles(fileStorage, path, fileTree -> buildTree(fileTree, tree.getRoot()));
             tree.refresh();
         });

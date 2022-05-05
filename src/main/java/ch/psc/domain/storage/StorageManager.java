@@ -28,7 +28,7 @@ public class StorageManager {
         executorService.submit(()->{
             try {
                 // todo encrypt
-                storage.upload(new PscFile(file.getPath(), file.getName(), false), new FileInputStream(file) );
+                storage.upload(new PscFile(file.getPath(), file.getName(), file.length(), null, false), new FileInputStream(file) );
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }

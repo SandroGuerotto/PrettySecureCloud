@@ -4,6 +4,7 @@ import ch.psc.domain.file.PscFile;
 import com.dropbox.core.*;
 import com.dropbox.core.json.JsonReader;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
@@ -55,7 +56,7 @@ public class DropBoxService implements FileStorage {
     @Override
     public boolean upload(PscFile file, InputStream inputStream) {
         try {
-            client.files().upload("/"+file.getPath()).uploadAndFinish(inputStream);
+            client.files().upload("/" + file.getPath()).uploadAndFinish(inputStream);
             return true;
         } catch (IOException | DbxException e) {
             e.printStackTrace();
@@ -105,7 +106,15 @@ public class DropBoxService implements FileStorage {
             ListFolderResult result = client.files().listFolder(currentPathProperty.get());
             while (true) {
                 for (Metadata metadata : result.getEntries()) {
-                    list.add(new PscFile(metadata.getName(), metadata.getPathLower(), metadata instanceof FolderMetadata));
+                    PscFile file;
+
+                    if (metadata instanceof FileMetadata fileMetadata) {
+                        file = new PscFile(metadata.getName(), metadata.getPathLower(), fileMetadata.getSize(), fileMetadata.getClientModified(), false);
+                    } else {
+                        FolderMetadata fileMetadata = (FolderMetadata) metadata;
+                        file = new PscFile(metadata.getName(), metadata.getPathLower(), 0, null, true);
+                    }
+                    list.add(file);
                 }
 
                 if (!result.getHasMore()) {

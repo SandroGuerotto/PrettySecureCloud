@@ -32,7 +32,7 @@ public class FileBrowserTreeTableView extends JFXTreeTableView<FileRow> {
         sizeCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) -> param.getValue().getValue().sizeProperty());
 
         JFXTreeTableColumn<FileRow, String> lastChange = new JFXTreeTableColumn<>("last changed on");
-        lastChange.setPrefWidth(150);
+        lastChange.setPrefWidth(160);
         lastChange.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) -> param.getValue().getValue().lastChangedProperty());
 
 
