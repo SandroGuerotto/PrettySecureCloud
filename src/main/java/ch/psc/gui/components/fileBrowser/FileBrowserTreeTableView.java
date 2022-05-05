@@ -5,7 +5,6 @@ import com.jfoenix.controls.JFXTreeTableView;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TreeTableColumn;
 
 public class FileBrowserTreeTableView extends JFXTreeTableView<FileRow> {
@@ -38,11 +37,11 @@ public class FileBrowserTreeTableView extends JFXTreeTableView<FileRow> {
 
 
         this.setShowRoot(false);
-        this.getColumns().setAll(iconCol, nameCol, sizeCol, lastChange);
-
-        nameCol.setSortType(TreeTableColumn.SortType.ASCENDING);
+        nameCol.setSortType(TreeTableColumn.SortType.DESCENDING);
         this.getSortOrder().add(nameCol);
         this.sort();
+        this.getColumns().setAll(iconCol, nameCol, sizeCol, lastChange);
+        this.getStyleClass().add("file-browser-view");
     }
 
 }

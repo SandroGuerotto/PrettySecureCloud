@@ -2,16 +2,15 @@ package ch.psc.domain.storage.service;
 
 import ch.psc.domain.file.PscFile;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.StringProperty;
 
+import java.io.InputStream;
 import java.util.List;
-import java.util.concurrent.Future;
 
 public interface FileStorage {
   
-  List<Future<PscFile>> upload(List<PscFile> files);
-  
-  List<Future<PscFile>> download(List<PscFile> files);
+  boolean upload(PscFile file, InputStream inputStream);
+
+  InputStream download(PscFile file);
   
   double getAvailableStorageSpace();
 

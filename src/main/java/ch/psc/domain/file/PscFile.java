@@ -10,7 +10,7 @@ public class PscFile {
   private final boolean isDirectory;
   private EncryptionState encryptionState;
   public PscFile(String name, String path) {
-    this(path,name,false);
+    this(name,path,false);
   }
   public PscFile(String name, String path, boolean isDirectory) {
     this.path = path;

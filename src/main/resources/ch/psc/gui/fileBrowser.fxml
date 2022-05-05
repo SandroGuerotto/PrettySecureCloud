@@ -21,12 +21,12 @@
          <right>
             <HBox spacing="20.0" BorderPane.alignment="CENTER">
                <children>
-                  <JFXButton fx:id="btn_settings" alignment="CENTER" contentDisplay="CENTER" onAction="#openSettings">
+                  <JFXButton fx:id="btn_settings" styleClass="file-browser-control" alignment="CENTER" contentDisplay="CENTER" onAction="#openSettings">
                      <graphic>
                         <FontAwesomeIconView glyphName="COG" size="26" />
                      </graphic>
                   </JFXButton>
-                  <JFXButton fx:id="btn_logut" alignment="CENTER" contentDisplay="CENTER" onAction="#logout">
+                  <JFXButton fx:id="btn_logut" styleClass="file-browser-control" alignment="CENTER" contentDisplay="CENTER" onAction="#logout">
                      <graphic>
                         <FontAwesomeIconView glyphName="SIGN_OUT" size="26" />
                      </graphic>
@@ -46,14 +46,14 @@
                <FlowPane fx:id="nav_pane" hgap="7.0" vgap="5.0" />
             </center>
             <right>
-               <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="20.0" BorderPane.alignment="CENTER">
+               <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="25.0" BorderPane.alignment="CENTER">
                   <children>
-                     <JFXButton onAction="#download">
+                     <JFXButton styleClass="file-browser-control" onAction="#download">
                         <graphic>
                            <FontAwesomeIconView glyphName="DOWNLOAD" size="20" />
                         </graphic>
                      </JFXButton>
-                     <JFXButton onAction="#upload">
+                     <JFXButton styleClass="file-browser-control" onAction="#upload">
                         <graphic>
                            <FontAwesomeIconView glyphName="UPLOAD" size="20" />
                         </graphic>

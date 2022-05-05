@@ -13,10 +13,11 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 /**
  * Wrapper for Dropbox requests. Handles all communication with Dropbox server.
@@ -52,22 +53,20 @@ public class DropBoxService implements FileStorage {
     }
 
     @Override
-    public List<Future<PscFile>> upload(List<PscFile> files) {
-        System.out.println("upload in:" + currentPathProperty.get());
-        files.forEach(System.out::println);
-//        try { // todo pro file: evtl besser nur immer ein file als import und loop ausserhalb
-//            client.files().upload(files.get(0).getPath());
-//
-//        } catch (DbxException e) {
-//            e.printStackTrace(); // todo error handling
-//        }
-        return null;
+    public boolean upload(PscFile file, InputStream inputStream) {
+        try {
+            client.files().upload("/"+file.getPath()).uploadAndFinish(inputStream);
+            return true;
+        } catch (IOException | DbxException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override
-    public List<Future<PscFile>> download(List<PscFile> files) {
+    public InputStream download(PscFile file) {
         try {
-            client.files().download(files.get(0).getPath());
+            return client.files().download(file.getPath()).getInputStream();
         } catch (DbxException e) {
             e.printStackTrace(); // todo error handling
         }

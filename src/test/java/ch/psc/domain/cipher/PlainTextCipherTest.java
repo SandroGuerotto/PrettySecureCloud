@@ -24,13 +24,13 @@ class PlainTextCipherTest {
   private void beforeEach() {
     cipher = new PlainTextCipher();
     key = new Key(new SecretKeySpec("FooBarBaz".getBytes(), "PlainText"));
-    file1 = new PscFile("test/file1","file1");
+    file1 = new PscFile("file1","test/file1");
     file1.setData("Hello World!".getBytes());
     file1.setEncryptionState(EncryptionState.DECRYPTED);
-    file2 = new PscFile("dvelop.ch/file2","file2");
+    file2 = new PscFile("file2","dvelop.ch/file2");
     file2.setData("���!�$�?+\"*�%&/()=<>^~".getBytes());
     file2.setEncryptionState(EncryptionState.DECRYPTED);
-    file3 = new PscFile("/./path/to/the/file/file3","file3");
+    file3 = new PscFile("file3","/./path/to/the/file/file3");
     file3.setData("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Purus gravida quis blandit turpis. Leo integer malesuada nunc vel risus commodo viverra maecenas. Neque egestas congue quisque egestas diam in arcu. Non blandit massa enim nec. Commodo odio aenean sed adipiscing. Tortor id aliquet lectus proin. Vulputate dignissim suspendisse in est ante. Viverra adipiscing at in tellus. Quis eleifend quam adipiscing vitae. Diam sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Diam maecenas ultricies mi eget mauris pharetra et ultrices.".getBytes());
     file3.setEncryptionState(EncryptionState.DECRYPTED);
   }

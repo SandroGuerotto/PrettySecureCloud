@@ -4,6 +4,7 @@ import ch.psc.domain.file.PscFile;
 import javafx.beans.property.DoubleProperty;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -27,13 +28,13 @@ public class LocalStorage implements FileStorage {
     setMaxStorage();
   }
   @Override
-  public List<Future<PscFile>> upload(List<PscFile> files) {
+  public boolean upload(PscFile file, InputStream inputStream) {
     // TODO Auto-generated method stub
-    return null;
+    return false;
   }
 
   @Override
-  public List<Future<PscFile>> download(List<PscFile> files) {
+  public InputStream download(PscFile file) {
     // TODO Auto-generated method stub
     return null;
   }
