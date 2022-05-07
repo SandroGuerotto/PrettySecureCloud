@@ -1,9 +1,11 @@
 package ch.psc.domain.storage.service;
 
-import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
+import javafx.beans.property.DoubleProperty;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -19,18 +21,37 @@ import java.util.concurrent.Future;
 public class LocalStorage implements FileStorage {
   
   private String path;
-  private int maxStorage;
+  private String name;
+  private double maxStorage;
 
-  @Override
-  public List<Future<PscFile>> upload(List<PscFile> files) {
-    // TODO Auto-generated method stub
-    return null;
+
+  public LocalStorage(){
+    setMaxStorage();
   }
 
   @Override
-  public List<Future<PscFile>> download(List<PscFile> files) {
+  public boolean upload(PscFile file, InputStream inputStream) {
     // TODO Auto-generated method stub
-    return null;
+    return false;
+  }
+
+  /**
+   * This method will download a given file
+   *
+   * @param file to download
+   * @return InputStream of the file to be downloaded
+   */
+  @Override
+  public InputStream download(PscFile file) {
+    FileInputStream fileInputStream = null;
+    try{
+      FileInputStream fin = new FileInputStream(file.getPath());
+      fileInputStream = fin;
+      fin.close();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+    return fileInputStream;
   }
 
   /**
@@ -62,14 +83,36 @@ public class LocalStorage implements FileStorage {
     executorService.shutdown();
     return size;
   }
-  
+
   @Override
-  public Tree<PscFile> getFileTree() {
+  public double getTotalStorageSpace() {
+    return 100;
+  }
+
+  @Override
+  public List<PscFile> getFiles(String path) {
+
+
     // TODO Auto-generated method stub
     return null;
   }
 
-  public String getPath() {
+  @Override
+  public String getName() {
+    return null;
+  }
+
+  @Override
+  public DoubleProperty getUsedStorageSpaceProperty() {
+    return null;
+  }
+
+    @Override
+    public String getRoot() {
+        return null;
+    }
+
+    public String getPath() {
     return path;
   }
 
@@ -77,12 +120,15 @@ public class LocalStorage implements FileStorage {
     this.path = path;
   }
 
-  public int getMaxStorage() {
+  public double getMaxStorage() {
     return maxStorage;
   }
 
-  public void setMaxStorage(int maxStorage) {
-    this.maxStorage = maxStorage;
+  private void setMaxStorage() {
+    File[] paths = File.listRoots();
+    for(File path: paths){
+      this.maxStorage += new File(path.toString()).getTotalSpace() / (1024.0 * 1024 * 1024);
+    }
   }
   
 }
