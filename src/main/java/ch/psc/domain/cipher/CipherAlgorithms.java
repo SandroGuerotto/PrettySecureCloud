@@ -1,8 +1,7 @@
 package ch.psc.domain.cipher;
 
 /**
- * Contains all available cipher algorithms.
- * Check if a algorithm is supported by calling {@link #isSupported}.
+ * Contains all available cipher algorithms used by PSC.
  */
 public enum CipherAlgorithms {
     PLAIN_TEXT(true, PlainTextCipher.class),
@@ -17,11 +16,17 @@ public enum CipherAlgorithms {
         this.cipherClass = cipherClass;
     }
 
+    /**
+     * Check if a algorithm is supported by calling {@link #isSupported}.
+     */
     public boolean isSupported() {
         return isSupported;
     }
 
-    public Class<? extends PscCipher> getCipherClass(){
+    /**
+     * Get the relevant Cipher class by calling {@link #getCipherClass()}
+     */
+    public Class<? extends PscCipher> getCipherClass() {
         return cipherClass;
     }
 

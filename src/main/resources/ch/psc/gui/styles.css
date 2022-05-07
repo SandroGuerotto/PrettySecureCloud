@@ -70,7 +70,6 @@
     -fx-fill: -fx-error;
     -fx-font-family: "Roboto";
     -fx-font-size: 10;
-
 }
 
 
@@ -95,8 +94,6 @@
 .jfx-button-login:focused {
     -fx-background-color: rgba(0, 0, 0, 0);
     -fx-font-size: 15;
-    /*-fx-border-width: 1 2 2 1;*/
-    /*-fx-border-color: -fx-main;*/
 }
 
 .jfx-button-login:hover, .jfx-button-login:hover .glyph-icon {
