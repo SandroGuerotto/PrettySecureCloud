@@ -4,7 +4,10 @@ import ch.psc.domain.file.PscFile;
 import javafx.beans.property.DoubleProperty;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,8 +34,29 @@ public class LocalStorage implements FileStorage {
   }
   @Override
   public boolean upload(PscFile file, InputStream inputStream) {
-    // TODO Auto-generated method stub
-    return false;
+    try {
+      File myObj = new File(file.getPath());
+      if (myObj.createNewFile()) {
+        System.out.println("File created: " + myObj.getName());
+      } else {
+        System.out.println("File already exists.");
+      }
+      try {
+        java.nio.file.Files.copy(
+                inputStream,
+                myObj.toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+      } catch (IOException e) {
+        System.out.println("An error occurred.");
+        e.printStackTrace();
+        return false;
+      }
+    } catch (IOException e) {
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+      return false;
+    }
+    return true;
   }
 
   @Override
