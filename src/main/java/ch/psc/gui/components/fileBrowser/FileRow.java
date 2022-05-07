@@ -1,16 +1,15 @@
 package ch.psc.gui.components.fileBrowser;
 
 import ch.psc.domain.file.PscFile;
+import ch.psc.gui.util.JavaFxUtils;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-import java.text.CharacterIterator;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.text.StringCharacterIterator;
 
 public class FileRow extends RecursiveTreeObject<FileRow> {
 
@@ -26,23 +25,11 @@ public class FileRow extends RecursiveTreeObject<FileRow> {
         this.file = file;
         this.name = new SimpleStringProperty(file.getName());
         lastChanged = new SimpleStringProperty(formatDate(file));
-        size = new SimpleStringProperty(formatSize(file));
+        size = new SimpleStringProperty(JavaFxUtils.formatSize(file.getFileSize()));
         isDirectory = new SimpleBooleanProperty(file.isDirectory());
     }
 
-    private String formatSize(PscFile file) {
-        long bytes = file.getFileSize();
-        if (bytes == 0) return "";
-        if (-1000 < bytes && bytes < 1000) {
-            return bytes + " B";
-        }
-        CharacterIterator ci = new StringCharacterIterator("kMGTPE");
-        while (bytes <= -999_950 || bytes >= 999_950) {
-            bytes /= 1000;
-            ci.next();
-        }
-        return String.format("%.1f %cB", bytes / 1000.0, ci.current());
-    }
+
 
 
     private String formatDate(PscFile file) {

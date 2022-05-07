@@ -1,5 +1,6 @@
 package ch.psc.domain.cipher;
 
+import ch.psc.domain.file.EncryptionState;
 import ch.psc.domain.file.PscFile;
 import ch.psc.exceptions.FatalImplementationException;
 
@@ -10,6 +11,7 @@ import javax.crypto.SecretKey;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.AlgorithmParameterSpec;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +74,21 @@ public abstract class PscCipher {
     public abstract String getTransformation();
 
     /**
+     * Creates the {@link AlgorithmParameterSpec} required for this encryption method.
+     * Default implementation returns <code>null</code>, which is handled as if no
+     * {@link AlgorithmParameterSpec} are needed. This means every Algorithm, which needs for example
+     * a nonce/initializationVector needs to overwrite this method!
+     *
+     * @param file <b>WARNING:</b> This method may have side effects on this parameter! If a new
+     *             nonce/initializationVector is generated for this file, the method is expected to set the
+     *             new value.
+     * @return Specifications implementing the {@link AlgorithmParameterSpec} interface.
+     */
+    public AlgorithmParameterSpec getAlgorithmSpecification(PscFile file) {
+        return null;
+    }
+
+    /**
      * Encrypts a list of {@link PscFile}s. The encryption is done asynchronously and the method returns as soon as all threads are started.
      *
      * @param key   The {@link Key} to use for this encryption.
@@ -79,7 +96,7 @@ public abstract class PscCipher {
      * @return A List of {@link Future}s. Each {@link PscFile} is encrypted asynchronous, the result may be requested through the Future.
      */
     public List<Future<PscFile>> encrypt(Key key, List<PscFile> files) {
-        SecretKey secretKey = key.getKey();
+        java.security.Key secretKey = key.getKey();
         List<Future<PscFile>> encryptedFutures = new LinkedList<>();
 
         files.forEach(file -> {
@@ -99,7 +116,7 @@ public abstract class PscCipher {
      * @return A List of {@link Future}s. Each {@link PscFile} is decrypted asynchronous, the result may be requested through the Future.
      */
     public List<Future<PscFile>> decrypt(Key key, List<PscFile> files) {
-        SecretKey secretKey = key.getKey();
+        java.security.Key secretKey = key.getKey();
         List<Future<PscFile>> decryptedFiles = new LinkedList<>();
 
         files.forEach(file -> {
@@ -117,15 +134,16 @@ public abstract class PscCipher {
      * @param file The {@link PscFile} to encrypt.
      * @param key  The {@link Key} to use for encrypting.
      * @return A new {@link PscFile} with identical metadata but encrypted data.
-     * @throws InvalidKeyException          If the given key is inappropriate for initializing this cipher.
-     * @throws FatalImplementationException If this Cipher is fundamentally wrong implemented (e.g. non-existing Transformation).
+     * @throws InvalidKeyException                If the given key is inappropriate for initializing this cipher.
+     * @throws FatalImplementationException       If this Cipher is fundamentally wrong implemented (e.g. non-existing Transformation).
+     * @throws InvalidAlgorithmParameterException If the given algorithm parameters are inappropriate for this cipher. Check the Method {@link PscCipher#getAlgorithmSpecification(PscFile)}!
      */
-    protected PscFile encrypt(PscFile file, SecretKey key) throws InvalidKeyException, FatalImplementationException {
+    protected PscFile encrypt(PscFile file, java.security.Key key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
         javax.crypto.Cipher cipher = getCipher();
-        cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
-
+        cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, key, getAlgorithmSpecification(file));
         byte[] unencryptedData = file.getData();
-        PscFile encryptedFile = new PscFile(file.getName(), file.getPath(), 0, null, false);
+        PscFile encryptedFile = new PscFile(file.getName(),file.getPath());
+        encryptedFile.setNonce(file.getNonce());
         performCipher(unencryptedData, encryptedFile, cipher);
         encryptedFile.setEncryptionState(EncryptionState.ENCRYPTED);
 
@@ -142,12 +160,12 @@ public abstract class PscCipher {
      * @throws FatalImplementationException       If this Cipher is fundamentally wrong implemented (e.g. non-existing Transformation).
      * @throws InvalidAlgorithmParameterException
      */
-    protected PscFile decrypt(PscFile file, SecretKey key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
+    protected PscFile decrypt(PscFile file, java.security.Key key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
         javax.crypto.Cipher cipher = getCipher();
-        cipher.init(javax.crypto.Cipher.DECRYPT_MODE, key);
+        cipher.init(javax.crypto.Cipher.DECRYPT_MODE, key, getAlgorithmSpecification(file));
 
         byte[] encryptedData = file.getData();
-        PscFile decryptedFile = new PscFile(file.getName(), file.getPath(), 0, null, false);
+        PscFile decryptedFile = new PscFile(file.getName(),file.getPath());
         performCipher(encryptedData, decryptedFile, cipher);
         decryptedFile.setEncryptionState(EncryptionState.DECRYPTED);
 

@@ -93,6 +93,8 @@ public class LoginController extends ControlledScreen {
         enterPasswordTextfield.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.equals(oldValue)) enterPasswordTextfield.validate();
         });
+        enterMailTextfield.setText("a@a.com");
+        enterPasswordTextfield.setText("test1234");
     }
 
     /**

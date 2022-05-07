@@ -1,7 +1,5 @@
 package ch.psc.domain.file;
 
-import ch.psc.domain.cipher.EncryptionState;
-
 import java.util.Date;
 
 public class PscFile {
@@ -13,6 +11,7 @@ public class PscFile {
     private EncryptionState encryptionState;
     private final long size;
     private final Date lastModified;
+    private byte[] nonce;
 
     public PscFile(String name, String path) {
         this(name, path, 0, null, false);
@@ -64,5 +63,13 @@ public class PscFile {
 
     public Date getLastModified() {
         return lastModified;
+    }
+
+    public byte[] getNonce() {
+        return nonce;
+    }
+
+    public void setNonce(byte[] nonce) {
+        this.nonce = nonce;
     }
 }

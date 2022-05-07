@@ -1,25 +1,24 @@
 package ch.psc.domain.user;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import javax.crypto.spec.SecretKeySpec;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import ch.psc.datasource.JSONWriterReader;
 import ch.psc.domain.cipher.Key;
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.exceptions.AuthenticationException;
 import ch.psc.exceptions.UpdateUserException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link JSONAuthenticationService}.
@@ -41,7 +40,7 @@ class JSONAuthenticationServiceTest {
 
         expUser = new User("test", "mail", "pwd",
                 Collections.singletonMap(StorageService.DROPBOX, Collections.singletonMap("token", "abc")),
-                Collections.singletonMap("Test", new Key(new SecretKeySpec("fooBarBaz".getBytes(), "TestAlgo"))));
+                Collections.singletonMap("Test", new Key(new SecretKeySpec("fooBarBaz".getBytes(), "TestAlgo"))), "path");
     }
 
     @Test
@@ -81,8 +80,8 @@ class JSONAuthenticationServiceTest {
             when(jsonWriterReaderMock.readFromJson(anyString(), any())).thenReturn(
                     new JSONAuthenticationService.JSONUser("test", "mail", "pwd",
                             Collections.singletonMap(StorageService.DROPBOX, Collections.singletonMap("token", "abc")),
-                            Collections.singletonMap("Test", Map.of("secret", "fooBarBaz", "algorithm", "TestAlgo"))
-                    ));
+                            Collections.singletonMap("Test", Map.of("secret", "fooBarBaz", "algorithm", "TestAlgo")),
+                            "path"));
         } catch (IOException e) {
             fail(e);
         }
@@ -128,8 +127,8 @@ class JSONAuthenticationServiceTest {
     private void assertKeyChain(Map<String, Key> expChain, Map<String, Key> actChain) {
         actChain.forEach(
                 (s, key) -> {
-                    SecretKey exp = expChain.get(s).getKey();
-                    SecretKey act = key.getKey();
+                    java.security.Key exp = expChain.get(s).getKey();
+                    java.security.Key act = key.getKey();
                     assertEquals(exp.getAlgorithm(), act.getAlgorithm());
                     assertEquals(new String(exp.getEncoded()), new String(act.getEncoded()));
                 }

@@ -117,7 +117,8 @@ public class SignUpController extends ControlledScreen {
     private User createUser(List<Object> data) {
         Map<StorageService, Map<String, String>> services = (Map<StorageService, Map<String, String>>) data.get(4);
         Map<String, Key> keyChain = (Map<String, Key>) data.get(3);
-        return new User((String) data.get(0), (String) data.get(1), (String) data.get(2), services, keyChain);
+        return new User((String) data.get(0), (String) data.get(1), (String) data.get(2), services, keyChain,
+                System.getProperty("user.home")+"\\Downloads\\");
     }
 
     /**

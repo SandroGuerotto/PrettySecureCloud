@@ -2,7 +2,6 @@ package ch.psc.domain.storage.service;
 
 import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.DbxException;
-import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.DbxWebAuth;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.users.DbxUserUsersRequests;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,13 +78,6 @@ public class DropBoxServiceTest {
     }
 
     @Test
-    void getDbxRequestConfig() {
-        DbxRequestConfig act = cut.getDbxRequestConfig();
-        assertEquals(DropBoxService.PRETTY_SECURE_CLOUD, act.getClientIdentifier());
-        assertEquals("de-CH", act.getUserLocale());
-    }
-
-    @Test
     void getAvailableStorageSpace() throws DbxException {
         cut = new DropBoxService(dbxClientV2Mock);
 
@@ -96,9 +89,9 @@ public class DropBoxServiceTest {
         when(DbxUserUsersRequestsMock.getSpaceUsage())
                 .thenReturn(new SpaceUsage(1_000_000_000_000L, SpaceAllocation.individual(new IndividualSpaceAllocation(5_000_000_000_000L))));
 
-        double act = cut.getAvailableStorageSpace();
+        BigDecimal usedStorageSpace = cut.getUsedStorageSpace();
 
-        assertEquals(4000, act);
+        assertEquals(1_000_000_000_000L, usedStorageSpace.longValue());
 
     }
 }

@@ -1,8 +1,5 @@
 package ch.psc.domain.storage.service;
 
-import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.v2.DbxClientV2;
-
 import java.util.Map;
 
 /**
@@ -52,22 +49,11 @@ public class StorageServiceFactory {
     /**
      * Creates a Dropbox service.
      *
-     * @param accountData uses access_token in the map
+     * @param accountData uses accountData to connect and update expired token
      * @return Dropbox service
      */
     private static FileStorage createDropBoxService(Map<String, String> accountData) {
-        DbxRequestConfig config = new DropBoxService().getDbxRequestConfig();
-//        try {
-
-//            DbxRefreshResult refresh_token = new DbxClientV2(config, accountData.get("refresh_token")).refreshAccessToken();
-//        DbxClientV2 dbxClientV2 = new DbxClientV2(config, new DbxCredential(accountData.get("access_token"), null, accountData.get("refresh_token"), "kkpu5nrqq4fj98x"));
-//        dbxClientV2.refreshAccessToken();
-//            String accessToken = refresh_token.getAccessToken();
-        return new DropBoxService(new DbxClientV2(config, accountData.get("access_token")));
-//        } catch (DbxException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
+        return DropBoxService.connect(accountData);
     }
 
     /**
@@ -77,7 +63,7 @@ public class StorageServiceFactory {
      * @return local storage service
      */
     private static FileStorage createLocalStorageService(Map<String, String> accountData) {
-        return null; // TODO
+        return new LocalStorage(accountData.get("root_path"));
     }
 
 }

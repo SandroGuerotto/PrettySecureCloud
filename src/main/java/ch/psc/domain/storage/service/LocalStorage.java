@@ -1,20 +1,13 @@
 package ch.psc.domain.storage.service;
 
 import ch.psc.domain.file.PscFile;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.StandardCopyOption;
+import java.io.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 
 /**
@@ -24,125 +17,93 @@ import java.util.concurrent.Future;
  */
 public class LocalStorage implements FileStorage {
 
-    private String path;
-    private String name;
+    private final String name;
+    private final String rootPath;
     private double maxStorage;
+    private String currentPath;
+    private final SimpleObjectProperty<BigDecimal> usedStorageSpaceProperty = new SimpleObjectProperty<>();
 
-
-    public LocalStorage() {
+    public LocalStorage(String rootPath) {
+        this.rootPath = rootPath;
+        String[] parts = rootPath.split("\\\\");
+        name = parts[parts.length - 1];
+        currentPath = rootPath;
         setMaxStorage();
     }
 
     @Override
     public boolean upload(PscFile file, InputStream inputStream) {
-        try {
-            File myObj = new File(file.getPath());
-            if (myObj.createNewFile()) {
-                System.out.println("File created: " + myObj.getName());
-            } else {
-                System.out.println("File already exists.");
-            }
-            try {
-                java.nio.file.Files.copy(
-                        inputStream,
-                        myObj.toPath(),
-                        StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-                return false;
-            }
+        try (FileOutputStream fileOutputStream = new FileOutputStream(currentPath + file.getName())) {
+            fileOutputStream.write(inputStream.readAllBytes());
+            return true;
         } catch (IOException e) {
-            System.out.println("An error occurred.");
             e.printStackTrace();
-            return false;
         }
-        return true;
+        return false;
     }
 
+    /**
+     * This method will download a given file
+     *
+     * @param file to download
+     * @return InputStream of the file to be downloaded
+     */
     @Override
     public InputStream download(PscFile file) {
-        // TODO Auto-generated method stub
+        try (FileInputStream fileInputStream = new FileInputStream(file.getPath())) {
+            return fileInputStream;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     /**
-     * Returns a double value with the free memory in GB
+     * Returns a double value with the free memory in bytes
      *
-     * @return Amount of free space in the system in GB
+     * @return Amount of free space in the system in bytes
      */
     @Override
-    public double getAvailableStorageSpace() {
-        double size = 0;
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        long startTime = System.currentTimeMillis();
-        Future<Double> future = executorService.submit(() -> {
-            double result = 0;
-            File[] paths = File.listRoots();
-            for (File path : paths) {
-                result += new File(path.toString()).getFreeSpace() / (1024.0 * 1024 * 1024);
-            }
-            return result;
-        });
-        while (!future.isDone()) {
-            double elapsedTimeInMillis = System.currentTimeMillis() - startTime;
-        }
-        try {
-            size = future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        executorService.shutdown();
-        return size;
+    public BigDecimal getUsedStorageSpace() {
+        File root = new File(rootPath);
+        long freeSpace = root.getFreeSpace();
+        usedStorageSpaceProperty.set(new BigDecimal(freeSpace));
+        return usedStorageSpaceProperty.get();
     }
 
     @Override
-    public double getTotalStorageSpace() {
-        return 100;
+    public BigDecimal getTotalStorageSpace() {
+        return new BigDecimal(maxStorage);
     }
 
     @Override
     public List<PscFile> getFiles(String path) {
-        List<PscFile> fileList = new ArrayList<>();
-        for (File child : Objects.requireNonNull(new File(path).listFiles())) {
-            fileList.add(
-                    new PscFile(child.getName(), child.getPath(), child.length(), new Date(child.lastModified()), child.isDirectory()));
-        }
+        currentPath = path;
 
-        return fileList;
+        // TODO Auto-generated method stub
+        return new ArrayList<>();
     }
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     @Override
-    public DoubleProperty getUsedStorageSpaceProperty() {
-        return null;
+    public ObjectProperty<BigDecimal> getUsedStorageSpaceProperty() {
+        return usedStorageSpaceProperty;
     }
 
     @Override
     public String getRoot() {
-        return null;
+        return rootPath;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public double getMaxStorage() {
-        return maxStorage;
-    }
 
     private void setMaxStorage() {
         File[] paths = File.listRoots();
         for (File path : paths) {
-            this.maxStorage += new File(path.toString()).getTotalSpace() / (1024.0 * 1024 * 1024);
+            maxStorage += new File(path.toString()).getTotalSpace();
         }
     }
 
