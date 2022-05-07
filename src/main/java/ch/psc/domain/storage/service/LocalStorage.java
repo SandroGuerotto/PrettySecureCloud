@@ -5,6 +5,8 @@ import javafx.beans.property.DoubleProperty;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -76,10 +78,19 @@ public class LocalStorage implements FileStorage {
 
   @Override
   public List<PscFile> getFiles(String path) {
-
-
-    // TODO Auto-generated method stub
-    return null;
+    List<PscFile> fileList = new ArrayList<>();
+    File directory = new File(path);
+    File[] directoryContent = directory.listFiles();
+    if (directoryContent!=null){
+      for (File childFile : directoryContent){
+        PscFile child = new PscFile(childFile.getName(), childFile.getPath(),childFile.length(),new Date(childFile.lastModified()), childFile.isDirectory());
+        System.out.println(childFile.getPath()+" "+childFile.getName()+ " "+childFile.isDirectory());
+        fileList.add(child);
+      }
+    } else {
+      return null;
+    }
+    return fileList;
   }
 
   @Override
