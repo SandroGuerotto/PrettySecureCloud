@@ -63,7 +63,7 @@ public class StorageServiceFactory {
      * @return local storage service
      */
     private static FileStorage createLocalStorageService(Map<String, String> accountData) {
-        return null; // TODO
+        return new LocalStorage(accountData.get("root_path"));
     }
 
 }

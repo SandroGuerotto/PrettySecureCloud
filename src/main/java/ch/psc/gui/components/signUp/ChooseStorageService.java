@@ -12,9 +12,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -91,7 +93,13 @@ public class ChooseStorageService extends VBox implements SignUpFlow {
                 registerDropBox();
             case GOOGLE_DRIVE:
             case LOCAL:
+                registerLocalStorage();
         }
+    }
+
+    private void registerLocalStorage() {
+        File file = new DirectoryChooser().showDialog(new Stage());
+        chosenServices.put(StorageService.LOCAL, Map.of("root_path", file.getAbsolutePath()));
     }
 
     /**

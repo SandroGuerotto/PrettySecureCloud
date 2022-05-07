@@ -84,10 +84,10 @@ public class FileBrowserController extends ControlledScreen {
         service_tab.requestFocus();
 
         storageManager.loadStorageServices();
-        service_tab.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
+        service_tab.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) return;
-            activeStorageService = storageManager.getStorageOptions().get(newValue.getSelectedIndex());
-            activeFileBrowserTreeTableView = (FileBrowserTreeTableView) newValue.getSelectedItem().getContent();
+            activeStorageService = storageManager.getStorageOptions().get(service_tab.getTabs().indexOf(newValue));
+            activeFileBrowserTreeTableView = (FileBrowserTreeTableView) newValue.getContent();
             currentPath.set(activeStorageService.getRoot());
         });
 
@@ -225,7 +225,7 @@ public class FileBrowserController extends ControlledScreen {
                 fade.setOnFinished(event -> statusPane.getChildren().remove(label));
                 fade.play();
             }
-            if (label.getId()==null) {
+            if (label.getId() == null) {
                 label.setId("u-" + file.getName());
                 statusPane.getChildren().add(label);
             }
@@ -252,7 +252,7 @@ public class FileBrowserController extends ControlledScreen {
                 fade.setOnFinished(event -> statusPane.getChildren().remove(label));
                 fade.play();
             }
-            if (label.getId()==null) {
+            if (label.getId() == null) {
                 label.setId("d-" + file.getName());
                 statusPane.getChildren().add(label);
             }

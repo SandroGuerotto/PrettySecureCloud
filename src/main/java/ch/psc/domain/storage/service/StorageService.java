@@ -6,7 +6,7 @@ package ch.psc.domain.storage.service;
  */
 public enum StorageService {
     DROPBOX(true,"images/dropbox/icon.png"),
-    LOCAL(false,"path"),
+    LOCAL(true,"images/local/icon.png"),
     GOOGLE_DRIVE(false,"path");
 
     private final boolean isSupported;

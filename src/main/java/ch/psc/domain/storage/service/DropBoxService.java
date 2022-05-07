@@ -32,7 +32,7 @@ public class DropBoxService implements FileStorage {
     private DbxClientV2 client;
     private final String name;
     private String currentPath = ROOT_DIR;
-    private final SimpleObjectProperty<BigDecimal> usedStorageSpaceProperty = new SimpleObjectProperty();
+    private final SimpleObjectProperty<BigDecimal> usedStorageSpaceProperty = new SimpleObjectProperty<>();
     private static final String ROOT_DIR = "";
 
     /**
@@ -71,7 +71,6 @@ public class DropBoxService implements FileStorage {
     @Override
     public boolean upload(PscFile file, InputStream inputStream) {
         try {
-            System.out.println(currentPath + "/" + file.getPath());
             client.files().upload(currentPath + "/" + file.getPath()).uploadAndFinish(inputStream);
             return true;
         } catch (IOException | DbxException e) {
