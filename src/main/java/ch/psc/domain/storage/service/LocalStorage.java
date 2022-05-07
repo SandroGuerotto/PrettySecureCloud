@@ -4,12 +4,13 @@ import ch.psc.domain.file.PscFile;
 import javafx.beans.property.DoubleProperty;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 
 /**
@@ -29,8 +30,26 @@ public class LocalStorage implements FileStorage {
   }
   @Override
   public List<Future<PscFile>> upload(List<PscFile> files) {
-    // TODO Auto-generated method stub
-    return null;
+    List<Future<PscFile>> uploadedFiles = new ArrayList<>();
+
+    for (PscFile pscFile : files){
+      try {
+        File myObj = new File(pscFile.getPath());
+        if (myObj.createNewFile()) {
+          System.out.println("File created: " + myObj.getName());
+        } else {
+          System.out.println("File already exists.");
+        }
+        try (FileOutputStream fos = new FileOutputStream(pscFile.getPath())) {
+          fos.write(pscFile.getData());
+          uploadedFiles.add((Future<PscFile>) pscFile);
+        }
+      } catch (IOException e) {
+        System.out.println("An error occurred.");
+        e.printStackTrace();
+      }
+    }
+    return uploadedFiles;
   }
 
   @Override
