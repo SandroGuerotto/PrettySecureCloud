@@ -1,5 +1,6 @@
 package ch.psc.domain.cipher;
 
+import ch.psc.domain.file.EncryptionState;
 import ch.psc.domain.file.PscFile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
