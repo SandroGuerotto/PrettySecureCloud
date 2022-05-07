@@ -5,9 +5,6 @@ import ch.psc.domain.file.PscFile;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 
@@ -41,25 +38,10 @@ public class LocalStorage implements FileStorage {
   @Override
   public double getAvailableStorageSpace(){
     double size = 0;
-    ExecutorService executorService = Executors.newSingleThreadExecutor();
-    long startTime = System.currentTimeMillis();
-    Future<Double> future = executorService.submit(() -> {
-      double result = 0;
       File[] paths = File.listRoots();
       for(File path: paths){
-        result += new File(path.toString()).getFreeSpace() / (1024.0 * 1024 * 1024);
+        size += new File(path.toString()).getFreeSpace() / (1024.0 * 1024 * 1024);
       }
-      return result;
-    });
-    while(!future.isDone()){
-      double elapsedTimeInMillis = System.currentTimeMillis() - startTime;
-    }
-    try {
-      size = future.get();
-    }catch (InterruptedException | ExecutionException  e) {
-      e.printStackTrace();
-    }
-    executorService.shutdown();
     return size;
   }
   
