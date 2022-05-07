@@ -4,6 +4,7 @@ import ch.psc.domain.file.PscFile;
 import javafx.beans.property.DoubleProperty;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -33,10 +34,23 @@ public class LocalStorage implements FileStorage {
     return false;
   }
 
+  /**
+   * This method will download a given file
+   *
+   * @param file to download
+   * @return InputStream of the file to be downloaded
+   */
   @Override
   public InputStream download(PscFile file) {
-    // TODO Auto-generated method stub
-    return null;
+    FileInputStream fileInputStream = null;
+    try{
+      FileInputStream fin = new FileInputStream(file.getPath());
+      fileInputStream = fin;
+      fin.close();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+    return fileInputStream;
   }
 
   /**
