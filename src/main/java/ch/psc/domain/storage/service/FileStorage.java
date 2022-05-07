@@ -1,18 +1,28 @@
 package ch.psc.domain.storage.service;
 
-import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
+import javafx.beans.property.ObjectProperty;
 
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.concurrent.Future;
 
 public interface FileStorage {
   
-  List<Future<PscFile>> upload(List<PscFile> files);
+  boolean upload(PscFile file, InputStream inputStream);
+
+  InputStream download(PscFile file);
+
+  BigDecimal getUsedStorageSpace();
+
+  BigDecimal getTotalStorageSpace();
   
-  List<Future<PscFile>> download(List<PscFile> files);
-  
-  double getAvailableStorageSpace();
-  
-  Tree<PscFile> getFileTree();
+  List<PscFile> getFiles(String path);
+
+  String getName();
+
+  ObjectProperty<BigDecimal> getUsedStorageSpaceProperty();
+
+  String getRoot();
+
 }

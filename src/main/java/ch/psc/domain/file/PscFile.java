@@ -1,60 +1,75 @@
 package ch.psc.domain.file;
 
+import java.util.Date;
+
 public class PscFile {
-  
-  private String name;
 
-  private String path;
-  
-  private byte[] data;
-  
-  private byte[] nonce;
-  
-  private EncryptionState encryptionState;
-  
-  public int getFileSize() {
-    //TODO
-    return -1;
-  }
+    private final String name;
+    private final String path;
+    private byte[] data;
+    private final boolean isDirectory;
+    private EncryptionState encryptionState;
+    private final long size;
+    private final Date lastModified;
+    private byte[] nonce;
 
-  public String getName() {
-    return name;
-  }
+    public PscFile(String name, String path) {
+        this(name, path, 0, null, false);
+    }
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    public PscFile(String name, String path, long size, Date lastModified, boolean isDirectory) {
+        this.path = path;
+        this.name = name;
+        this.isDirectory = isDirectory;
+        this.size = size;
+        this.lastModified = lastModified;
+    }
 
-  public String getPath() {
-    return path;
-  }
+    public PscFile() {
+        this("", "", 0, null, false);
+    }
 
-  public void setPath(String path) {
-    this.path = path;
-  }
+    public long getFileSize() {
+        return size;
+    }
 
-  public byte[] getData() {
-    return data;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public void setData(byte[] data) {
-    this.data = data;
-  }
+    public String getPath() {
+        return path;
+    }
 
-  public byte[] getNonce() {
-    return nonce;
-  }
-  
-  public void setNonce(byte[] nonce) {
-    this.nonce = nonce;
-  }
-  
-  public EncryptionState getEncryptionState() {
-    return encryptionState;
-  }
-  
-  public void setEncryptionState(EncryptionState encryptionState) {
-    this.encryptionState = encryptionState;
-  }
+    public byte[] getData() {
+        return data;
+    }
 
+    public EncryptionState getEncryptionState() {
+        return encryptionState;
+    }
+
+    public void setEncryptionState(EncryptionState encryptionState) {
+        this.encryptionState = encryptionState;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    public boolean isDirectory() {
+        return isDirectory;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public byte[] getNonce() {
+        return nonce;
+    }
+
+    public void setNonce(byte[] nonce) {
+        this.nonce = nonce;
+    }
 }

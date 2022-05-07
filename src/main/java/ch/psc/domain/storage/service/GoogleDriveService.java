@@ -1,40 +1,63 @@
 package ch.psc.domain.storage.service;
 
-import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
+import javafx.beans.property.ObjectProperty;
 
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.concurrent.Future;
 
-public class GoogleDriveService extends CloudService {
+public class GoogleDriveService implements FileStorage {
+
+  private final String name;
 
   public GoogleDriveService() {
-    super("Google Drive");
+    this.name = "Google Drive";
     // TODO Auto-generated constructor stub
   }
 
   @Override
-  public List<Future<PscFile>> upload(List<PscFile> files) {
+  public boolean upload(PscFile file, InputStream inputStream) {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
+  public InputStream download(PscFile file) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public List<Future<PscFile>> download(List<PscFile> files) {
+  public BigDecimal getUsedStorageSpace() {
+    // TODO Auto-generated method stub
+    return new BigDecimal(0);
+  }
+
+  @Override
+  public BigDecimal getTotalStorageSpace() {
+    return new BigDecimal(0);
+  }
+
+  @Override
+  public List<PscFile> getFiles(String path) {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public double getAvailableStorageSpace() {
-    // TODO Auto-generated method stub
-    return 0;
+  public String getName() {
+    return name;
   }
 
   @Override
-  public Tree<PscFile> getFileTree() {
-    // TODO Auto-generated method stub
+  public ObjectProperty<BigDecimal> getUsedStorageSpaceProperty() {
     return null;
   }
+
+    @Override
+    public String getRoot() {
+        return null;
+    }
 
 }

@@ -17,13 +17,15 @@ public class User {
     private final String password;
     private final Map<StorageService, Map<String, String>> storageServiceConfig;
     private final Map<String, Key> keyChain;
+    private final String downloadPath;
 
-    public User(String username, String mail, String password, Map<StorageService, Map<String, String>> storageServiceConfig, Map<String, Key> keyChain) {
+    public User(String username, String mail, String password, Map<StorageService, Map<String, String>> storageServiceConfig, Map<String, Key> keyChain, String downloadPath) {
         this.username = username;
         this.mail = mail;
         this.password = password;
         this.storageServiceConfig = storageServiceConfig;
         this.keyChain = keyChain;
+        this.downloadPath = downloadPath;
     }
 
     public String getUsername() {
@@ -48,5 +50,9 @@ public class User {
 
     public Map<String, Key> getKeyChain() {
         return keyChain;
+    }
+
+    public String getDownloadPath() {
+        return downloadPath;
     }
 }

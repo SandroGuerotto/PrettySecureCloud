@@ -11,6 +11,8 @@ import javafx.scene.layout.Region;
 
 import java.awt.*;
 import java.net.URI;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 
 /**
  * Contains help methods for JavaFx
@@ -47,15 +49,32 @@ public class JavaFxUtils {
     }
 
     /**
+     *
+     * @param size file size in bytes
+     * @return human-readable size
+     */
+    public static String formatSize(long size) {
+        if (size == 0) return "";
+        if (-1000 < size && size < 1000) {
+            return size + " B";
+        }
+        CharacterIterator ci = new StringCharacterIterator("kMGTPE");
+        while (size <= -999_950 || size >= 999_950) {
+            size /= 1000;
+            ci.next();
+        }
+        return String.format("%.1f %cB", size / 1000.0, ci.current());
+    }
+
+    /**
      * Enum with the information about the controlled screens
      */
     public enum RegisteredScreen {
         //TODo sevimrid , bananasprout, SandroGuerotto, ChrisWals
         LOGIN_PAGE("login.fxml", "login.title"),
-        SIGNUP_PAGE("signUp.fxml", "signup.title");
+        SIGNUP_PAGE("signUp.fxml", "signup.title"),
+        FILE_BROWSER_PAGE("fileBrowser.fxml", "fileBrowser.titel");
 
-//        CLOUDSERVICESPAGE("", ""),
-//        FILEBROWSERPAGE("", "");
 
         private final String fxmlFileName;
         private final String title;

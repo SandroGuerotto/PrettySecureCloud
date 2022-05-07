@@ -77,6 +77,9 @@ public class SignUpController extends ControlledScreen {
             if (newValue) cancel();
         });
         flowControl.next();
+
+        primaryStage.setMinHeight(Config.MIN_HEIGHT);
+        primaryStage.setMinWidth(Config.MIN_WIDTH);
     }
 
     /**
@@ -101,10 +104,12 @@ public class SignUpController extends ControlledScreen {
             List<Object> data = flowControl.getData();
             User user = createUser(data);
             UserContext.setAuthorizedUser(authenticationService.signup(user));
+            switchScreen(JavaFxUtils.RegisteredScreen.FILE_BROWSER_PAGE);
         } catch (AuthenticationException e) {
             e.printStackTrace(); // todo show error
+        } catch (ScreenSwitchException e) {
+            e.printStackTrace();
         }
-        //switchScreen(Screens.FILE_BROWSER);
 //        example on how to use service
     }
 
@@ -112,7 +117,8 @@ public class SignUpController extends ControlledScreen {
     private User createUser(List<Object> data) {
         Map<StorageService, Map<String, String>> services = (Map<StorageService, Map<String, String>>) data.get(4);
         Map<String, Key> keyChain = (Map<String, Key>) data.get(3);
-        return new User((String) data.get(0), (String) data.get(1), (String) data.get(2), services, keyChain);
+        return new User((String) data.get(0), (String) data.get(1), (String) data.get(2), services, keyChain,
+                System.getProperty("user.home")+"\\Downloads\\");
     }
 
     /**
@@ -164,18 +170,19 @@ public class SignUpController extends ControlledScreen {
         );
     }
 
-    private void easterEgg(JFXButton button){
-        button.setOnMouseClicked(event -> { if(!flowControl.isValid() && event.getClickCount()==3){
-            Circle circle = new Circle(200);
-            circle.setCenterX(button.getLayoutX()-375);
-            circle.setCenterY(button.getLayoutY()-1);
-            PathTransition transition = new PathTransition();
-            transition.setNode(button);
-            transition.setDuration(Duration.seconds(3));
-            transition.setPath(circle);
-            transition.setCycleCount(1);
-            transition.play();
-        }
+    private void easterEgg(JFXButton button) {
+        button.setOnMouseClicked(event -> {
+            if (!flowControl.isValid() && event.getClickCount() == 3) {
+                Circle circle = new Circle(200);
+                circle.setCenterX(button.getLayoutX() - 375);
+                circle.setCenterY(button.getLayoutY() - 1);
+                PathTransition transition = new PathTransition();
+                transition.setNode(button);
+                transition.setDuration(Duration.seconds(3));
+                transition.setPath(circle);
+                transition.setCycleCount(1);
+                transition.play();
+            }
         });
     }
 

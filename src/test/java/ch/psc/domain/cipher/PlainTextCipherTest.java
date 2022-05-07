@@ -1,19 +1,17 @@
 package ch.psc.domain.cipher;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import ch.psc.domain.file.EncryptionState;
+import ch.psc.domain.file.PscFile;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import javax.crypto.spec.SecretKeySpec;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import ch.psc.domain.file.EncryptionState;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import ch.psc.domain.file.PscFile;
-
-import javax.crypto.spec.SecretKeySpec;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PlainTextCipherTest {
   
@@ -27,21 +25,15 @@ class PlainTextCipherTest {
   private void beforeEach() {
     cipher = new PlainTextCipher();
     key = new Key(new SecretKeySpec("FooBarBaz".getBytes(), "PlainText"));
-    file1 = new PscFile();
+    file1 = new PscFile("file1","test/file1");
     file1.setData("Hello World!".getBytes());
     file1.setEncryptionState(EncryptionState.DECRYPTED);
-    file1.setName("file1");
-    file1.setPath("test/file1");
-    file2 = new PscFile();
+    file2 = new PscFile("file2","dvelop.ch/file2");
     file2.setData("���!�$�?+\"*�%&/()=<>^~".getBytes());
     file2.setEncryptionState(EncryptionState.DECRYPTED);
-    file2.setName("file2");
-    file2.setPath("dvelop.ch/file2");
-    file3 = new PscFile();
+    file3 = new PscFile("file3","/./path/to/the/file/file3");
     file3.setData("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Purus gravida quis blandit turpis. Leo integer malesuada nunc vel risus commodo viverra maecenas. Neque egestas congue quisque egestas diam in arcu. Non blandit massa enim nec. Commodo odio aenean sed adipiscing. Tortor id aliquet lectus proin. Vulputate dignissim suspendisse in est ante. Viverra adipiscing at in tellus. Quis eleifend quam adipiscing vitae. Diam sollicitudin tempor id eu nisl nunc mi ipsum faucibus. Diam maecenas ultricies mi eget mauris pharetra et ultrices.".getBytes());
     file3.setEncryptionState(EncryptionState.DECRYPTED);
-    file3.setName("file3");
-    file3.setPath("/./path/to/the/file/file3");
   }
   
   @Test

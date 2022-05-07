@@ -2,8 +2,8 @@ package ch.psc.gui.components.signUp;
 
 import ch.psc.domain.storage.service.DropBoxService;
 import ch.psc.domain.storage.service.StorageService;
-import ch.psc.gui.util.JavaFxUtils;
 import ch.psc.gui.Config;
+import ch.psc.gui.util.JavaFxUtils;
 import com.dropbox.core.DbxWebAuth;
 import com.jfoenix.controls.JFXButton;
 import javafx.geometry.Insets;
@@ -13,9 +13,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,7 +70,6 @@ public class ChooseStorageService extends VBox implements SignUpFlow {
     private JFXButton createStorageButton(StorageService storageService) {
         JFXButton button = new JFXButton();
 
-//        button.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.DROPBOX,"75"));
         ImageView icon = new ImageView(storageService.getImagePath());
         icon.setPreserveRatio(true);
         icon.setFitWidth(70);
@@ -93,7 +94,13 @@ public class ChooseStorageService extends VBox implements SignUpFlow {
                 registerDropBox();
             case GOOGLE_DRIVE:
             case LOCAL:
+                registerLocalStorage();
         }
+    }
+
+    private void registerLocalStorage() {
+        File file = new DirectoryChooser().showDialog(new Stage());
+        chosenServices.put(StorageService.LOCAL, Map.of("root_path", file.getAbsolutePath()));
     }
 
     /**

@@ -3,11 +3,8 @@ package ch.psc;
 import ch.psc.datasource.JSONWriterReader;
 import ch.psc.domain.common.context.AuthenticationContext;
 import ch.psc.domain.user.JSONAuthenticationService;
-import ch.psc.gui.ControlledScreen;
-import ch.psc.gui.LoginController;
-import ch.psc.gui.SignUpController;
+import ch.psc.gui.*;
 import ch.psc.gui.util.JavaFxUtils;
-import ch.psc.gui.Config;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -78,6 +75,7 @@ public class PrettySecureCloud extends Application {
     private void loadAllControlledScreens() {
         loadScreen(JavaFxUtils.RegisteredScreen.LOGIN_PAGE, new LoginController(primaryStage, screens, AuthenticationContext.getAuthService()));
         loadScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE, new SignUpController(primaryStage, screens, AuthenticationContext.getAuthService()));
+        loadScreen(JavaFxUtils.RegisteredScreen.FILE_BROWSER_PAGE, new FileBrowserController(primaryStage, screens));
         // add other screens here
     }
 

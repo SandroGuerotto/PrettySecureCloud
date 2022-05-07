@@ -1,22 +1,20 @@
 package ch.psc.domain.cipher;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import ch.psc.domain.file.EncryptionState;
+import ch.psc.domain.file.PscFile;
+import ch.psc.exceptions.FatalImplementationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import javax.crypto.spec.SecretKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import javax.crypto.spec.SecretKeySpec;
 
-import ch.psc.domain.file.EncryptionState;
-import ch.psc.exceptions.FatalImplementationException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import ch.psc.domain.file.PscFile;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RsaCipherTest {
   
@@ -43,10 +41,8 @@ class RsaCipherTest {
         this.privateKey = keyChain.get(s);
       }
     }
-    file1 = new PscFile();
+    file1 = new PscFile("file1","foo/bar/baz/hello.txt");
     file1.setData(data.getBytes());
-    file1.setName("file1");
-    file1.setPath("foo/bar/baz/hello.txt");
     file1.setEncryptionState(EncryptionState.DECRYPTED);
   }
   

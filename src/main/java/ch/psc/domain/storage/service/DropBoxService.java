@@ -1,37 +1,48 @@
 package ch.psc.domain.storage.service;
 
-import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
 import com.dropbox.core.*;
 import com.dropbox.core.json.JsonReader;
+import com.dropbox.core.oauth.DbxCredential;
+import com.dropbox.core.oauth.DbxRefreshResult;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 import com.dropbox.core.v2.users.SpaceUsage;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
-import java.util.Collections;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 /**
  * Wrapper for Dropbox requests. Handles all communication with Dropbox server.
  *
  * @author SandroGuerotto
  */
-public class DropBoxService extends CloudService {
+public class DropBoxService implements FileStorage {
 
     private static final String DROPBOX_PSC_APP = "configs/dropbox-psc.app";
     public static final String PRETTY_SECURE_CLOUD = "Pretty-Secure-Cloud";
     private DbxClientV2 client;
+    private final String name;
+    private String currentPath = ROOT_DIR;
+    private final SimpleObjectProperty<BigDecimal> usedStorageSpaceProperty = new SimpleObjectProperty<>();
+    private static final String ROOT_DIR = "";
 
     /**
      * Create a new instance for Dropbox all communication.
+     *
      * @param client Dropbox client with valid access token
      */
     public DropBoxService(DbxClientV2 client) {
-        this();
         this.client = client;
+        this.name = "Dropbox";
     }
 
     /**
@@ -39,48 +50,84 @@ public class DropBoxService extends CloudService {
      * Only used for getting an access token.
      */
     public DropBoxService() {
-        super("Dropbox");
+        this.name = "Dropbox";
     }
 
-    @Override
-    public List<Future<PscFile>> upload(List<PscFile> files) {
-        try { // todo pro file: evtl besser nur immer ein file als import und loop ausserhalb
-            client.files().upload(files.get(0).getPath());
-
-        } catch (DbxException e) {
-            e.printStackTrace(); // todo error handling
-        }
-        return null;
-    }
-
-    @Override
-    public List<Future<PscFile>> download(List<PscFile> files) {
+    public static DropBoxService connect(Map<String, String> accountData) {
+        DbxRequestConfig config = getDbxRequestConfig();
+        DbxAppInfo dbxAppInfo = getDbxAppInfo();
+        DbxCredential dbxCredential = new DbxCredential(
+                accountData.get("access_token"), Long.decode(accountData.get("expires_at")), accountData.get("refresh_token"), dbxAppInfo.getKey(), dbxAppInfo.getSecret());
         try {
-            client.files().download(files.get(0).getPath());
-        } catch (DbxException e) {
-            e.printStackTrace(); // todo error handling
-        }
-        return null;
-    }
-
-    @Override
-    public double getAvailableStorageSpace() {
-        try {
-            SpaceUsage spaceUsage = client.users().getSpaceUsage();
-            return spaceUsage.getAllocation().getIndividualValue().getAllocated() - spaceUsage.getUsed();
+            DbxRefreshResult refresh = dbxCredential.refresh(config);
+            accountData.put("access_token", refresh.getAccessToken());
+            accountData.put("expires_at", refresh.getExpiresAt().toString());
         } catch (DbxException e) {
             e.printStackTrace();
         }
-        return 0;
+        return new DropBoxService(new DbxClientV2(config, accountData.get("access_token")));
     }
 
     @Override
-    public Tree<PscFile> getFileTree() {
+    public boolean upload(PscFile file, InputStream inputStream) {
         try {
-            ListFolderResult result = client.files().listFolder("");
+            client.files().upload(currentPath + "/" + file.getPath()).uploadAndFinish(inputStream);
+            return true;
+        } catch (IOException | DbxException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public InputStream download(PscFile file) {
+        try {
+            return client.files().download(file.getPath()).getInputStream();
+        } catch (DbxException e) {
+            e.printStackTrace(); // todo error handling
+        }
+        return null;
+    }
+
+    @Override
+    public BigDecimal getUsedStorageSpace() {
+        try {
+            SpaceUsage spaceUsage = client.users().getSpaceUsage();
+            usedStorageSpaceProperty.set(new BigDecimal(spaceUsage.getUsed()));
+            return new BigDecimal(spaceUsage.getUsed());
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
+        return new BigDecimal(0);
+    }
+
+    @Override
+    public BigDecimal getTotalStorageSpace() {
+        try {
+            SpaceUsage spaceUsage = client.users().getSpaceUsage();
+            return new BigDecimal(spaceUsage.getAllocation().getIndividualValue().getAllocated());
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
+        return new BigDecimal(0);
+    }
+
+    @Override
+    public List<PscFile> getFiles(final String path) {
+        currentPath = path;
+        ArrayList<PscFile> list = new ArrayList<>();
+        try {
+            ListFolderResult result = client.files().listFolder(currentPath);
             while (true) {
                 for (Metadata metadata : result.getEntries()) {
-                    System.out.println(metadata.getPathLower());
+                    PscFile file;
+
+                    if (metadata instanceof FileMetadata fileMetadata) {
+                        file = new PscFile(metadata.getName(), metadata.getPathLower(), fileMetadata.getSize(), fileMetadata.getClientModified(), false);
+                    } else {
+                        file = new PscFile(metadata.getName(), metadata.getPathLower(), 0, null, true);
+                    }
+                    list.add(file);
                 }
 
                 if (!result.getHasMore()) {
@@ -92,8 +139,22 @@ public class DropBoxService extends CloudService {
         } catch (DbxException e) {
             e.printStackTrace();
         }
+        return list;
+    }
 
-        return null;
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public ObjectProperty<BigDecimal> getUsedStorageSpaceProperty() {
+        return usedStorageSpaceProperty;
+    }
+
+    @Override
+    public String getRoot() {
+        return ROOT_DIR;
     }
 
     /**
@@ -102,11 +163,11 @@ public class DropBoxService extends CloudService {
      *
      * @return new DbxRequestConfig instance
      */
-    public DbxRequestConfig getDbxRequestConfig() {
+    private static DbxRequestConfig getDbxRequestConfig() {
         return DbxRequestConfig.newBuilder(PRETTY_SECURE_CLOUD).withUserLocale("de_CH").build();
     }
 
-    private DbxAppInfo getDbxAppInfo() {
+    private static DbxAppInfo getDbxAppInfo() {
         try {
             return DbxAppInfo.Reader.readFromFile(DROPBOX_PSC_APP);
         } catch (JsonReader.FileLoadException e) {
@@ -116,10 +177,12 @@ public class DropBoxService extends CloudService {
 
     /**
      * Creates an authorization request to access the user's data without a redirect URL.
+     *
      * @return Dropbox authorization request
      */
     public DbxWebAuth.Request buildAuthRequest() {
-        return DbxWebAuth.newRequestBuilder().withNoRedirect().build();
+        return DbxWebAuth.newRequestBuilder().withTokenAccessType(TokenAccessType.OFFLINE)
+                .withNoRedirect().build();
     }
 
     /**
@@ -142,9 +205,10 @@ public class DropBoxService extends CloudService {
     public Map<String, String> finishFromCode(DbxWebAuth auth, final String userCode) throws Exception {
         try {
             DbxAuthFinish authFinish = auth.finishFromCode(userCode.trim());
-            return Collections.singletonMap("access_token", authFinish.getAccessToken());
+            return Map.of("access_token", authFinish.getAccessToken(),
+                    "refresh_token", authFinish.getRefreshToken(),
+                    "expires_at", authFinish.getExpiresAt().toString());
         } catch (DbxException e) {
-            e.printStackTrace(); // TODO error handling
             throw new Exception("Wrong code");
         }
 

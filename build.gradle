@@ -28,7 +28,6 @@ dependencies {
     implementation 'com.jfoenix:jfoenix:9.0.1'
     implementation 'commons-validator:commons-validator:1.7'
 
-
     //implementation 'com.google.oauth-client:google-oauth-client-jetty:1.33.1'
 
 }
@@ -45,4 +44,15 @@ application {
 javafx {
     version = '17.0.2'
     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.web' ]
+}
+
+run {
+    jvmArgs = [
+            "--add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED",
+            "--add-exports=javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED",
+            "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+            "--add-exports=javafx.base/com.sun.javafx.binding=ALL-UNNAMED",
+            "--add-exports=javafx.graphics/com.sun.javafx.stage=ALL-UNNAMED",
+            "--add-exports=javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED"
+    ]
 }
