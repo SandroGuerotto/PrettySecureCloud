@@ -4,13 +4,12 @@ import ch.psc.domain.file.PscFile;
 import javafx.beans.property.DoubleProperty;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.io.InputStream;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 
 /**
@@ -29,31 +28,13 @@ public class LocalStorage implements FileStorage {
     setMaxStorage();
   }
   @Override
-  public List<Future<PscFile>> upload(List<PscFile> files) {
-    List<Future<PscFile>> uploadedFiles = new ArrayList<>();
-
-    for (PscFile pscFile : files){
-      try {
-        File myObj = new File(pscFile.getPath());
-        if (myObj.createNewFile()) {
-          System.out.println("File created: " + myObj.getName());
-        } else {
-          System.out.println("File already exists.");
-        }
-        try (FileOutputStream fos = new FileOutputStream(pscFile.getPath())) {
-          fos.write(pscFile.getData());
-          uploadedFiles.add((Future<PscFile>) pscFile);
-        }
-      } catch (IOException e) {
-        System.out.println("An error occurred.");
-        e.printStackTrace();
-      }
-    }
-    return uploadedFiles;
+  public boolean upload(PscFile file, InputStream inputStream) {
+    // TODO Auto-generated method stub
+    return false;
   }
 
   @Override
-  public List<Future<PscFile>> download(List<PscFile> files) {
+  public InputStream download(PscFile file) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -93,27 +74,12 @@ public class LocalStorage implements FileStorage {
     return 100;
   }
 
-  /**
-   * Method returns PscFile list with all files and directories in a given path.
-   *
-   * @return List with all files in path
-   */
-
   @Override
   public List<PscFile> getFiles(String path) {
-    List<PscFile> fileList = new LinkedList<>();
-    File directory = new File(path);
-    File[] directoryContent = directory.listFiles();
-    if (directoryContent!=null){
-      for (File childFile : directoryContent){
-        PscFile child = new PscFile(childFile.getPath(), childFile.getName(), childFile.isDirectory());
-        System.out.println(childFile.getPath()+" "+childFile.getName()+ " "+childFile.isDirectory());
-        fileList.add(child);
-      }
-    } else {
-      return null;
-    }
-    return fileList;
+
+
+    // TODO Auto-generated method stub
+    return null;
   }
 
   @Override

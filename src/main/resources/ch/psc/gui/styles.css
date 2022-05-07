@@ -8,6 +8,7 @@
     -fx-main: #4A4A4A;
     -fx-main2: #717171;
     -fx-accent1: #71A5DE;
+    -fx-accent3: #E1ECF7;
     -fx-error: #EE4035;
     -fx-warn: #F37736;
     -fx-warn2: #FDF498;
@@ -126,7 +127,7 @@
 
 .progress-bar .bar {
     -fx-background-insets: 0;
-    -fx-background-radius: 5;
+    -fx-background-radius: 3;
 }
 .progress-red .bar{
     -fx-background-color: -fx-error;
@@ -142,15 +143,71 @@
     -fx-background-color: -fx-warn2;
 }
 .progress-bar {
-    -fx-background-radius: 5;
+    -fx-background-radius: 3;
+}
+/****************************************************************************************************************/
+/* FILE BROWSER */
+.file-browser-view{
+    -fx-background-color: transparent;
+}
+.file-browser-view .column-header .label{
+    -fx-background-insets: 0;
+    -fx-text-fill: -fx-main;
+    -fx-padding: 5;
 }
 
-.column-header {
-    -fx-alignment: CENTER;
-    -fx-padding: 10;
-}
-
-.table-column {
+.file-browser-view .table-column {
     -fx-alignment: CENTER-LEFT;
-    -fx-padding: 15;
+    -fx-padding: 15 15 8 15;
+}
+
+.file-browser-view .table-cell{
+    -fx-padding: 2 0 2 10px;
+}
+
+.file-browser-view .tree-table-row-cell:odd{
+    -fx-background-color: white;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.file-browser-view .tree-table-row-cell:even{
+    -fx-background-color: -fx-accent3;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+.file-browser-view:focused .tree-table-row-cell:selected {
+    -fx-background-color: -fx-accent1;
+    -fx-table-cell-border-color: -fx-tree-table-color;
+    -fx-text-fill: -fx-main;
+}
+
+.file-browser-view .glyph-icon {
+    -fx-text-fill: -fx-main2;
+    -fx-fill: -fx-main2;
+}
+.file-browser-view .virtual-flow .scroll-bar:vertical,
+.file-browser-view .virtual-flow .scroll-bar:vertical .track,
+.file-browser-view .virtual-flow .scroll-bar:vertical .track-background,
+.file-browser-view .virtual-flow .scroll-bar:horizontal,
+.file-browser-view .virtual-flow .scroll-bar:horizontal .track,
+.file-browser-view .virtual-flow .scroll-bar:horizontal .track-background {
+    -fx-background-color: transparent;
+}
+.file-browser-view .virtual-flow .scroll-bar .increment-button,
+.file-browser-view .virtual-flow .scroll-bar .decrement-button {
+    -fx-opacity: 0;
+    -fx-padding: 2;
+}
+.file-browser-view .virtual-flow .scroll-bar:vertical .thumb{
+    -fx-background-color:  -fx-accent1;
+}
+.file-browser-view .virtual-flow .scroll-bar:horizontal .thumb {
+    -fx-background-color:  -fx-accent1;
+}
+
+
+.file-browser-control .glyph-icon{
+    -fx-text-fill: -fx-main;
+    -fx-fill: -fx-main;
 }

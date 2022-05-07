@@ -11,6 +11,8 @@ import ch.psc.gui.util.JavaFxUtils;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTabPane;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,14 +21,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Dummy controller
@@ -49,6 +54,8 @@ public class FileBrowserController extends ControlledScreen {
     private StorageManager storageManager;
 
     private FileStorage activeStorageService;
+    private FileBrowserTreeTableView activeFileBrowserTreeTableView;
+    private final StringProperty currentPath = new SimpleStringProperty("root");
 
 
     public FileBrowserController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens) {
@@ -70,13 +77,26 @@ public class FileBrowserController extends ControlledScreen {
         service_tab.requestFocus();
 
         storageManager.loadStorageServices();
+        service_tab.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) return;
+            activeStorageService = storageManager.getStorageOptions().get(newValue.getSelectedIndex());
+            activeFileBrowserTreeTableView = (FileBrowserTreeTableView) newValue.getSelectedItem().getContent();
+            currentPath.set(activeStorageService.getRoot());
+        });
+
+        currentPath.addListener((observable, oldValue, newValue) -> {
+            updateNavBar(newValue, activeStorageService, activeFileBrowserTreeTableView);
+            updateCurrentDirectory(newValue, activeStorageService, activeFileBrowserTreeTableView);
+        });
+        activeStorageService = storageManager.getStorageOptions().get(0);
         storageManager.getStorageOptions().forEach(
                 fileStorage -> {
                     stat_pane.getChildren().add(buildStatPane(fileStorage));
                     service_tab.getTabs().add(buildServiceTab(fileStorage));
                 }
         );
-        activeStorageService = storageManager.getStorageOptions().get(0);
+        activeFileBrowserTreeTableView = (FileBrowserTreeTableView) service_tab.selectionModelProperty().get().getSelectedItem().getContent();
+        currentPath.set(activeStorageService.getRoot());
 
     }
 
@@ -88,65 +108,71 @@ public class FileBrowserController extends ControlledScreen {
     }
 
     private FileBrowserTreeTableView buildTreeView(FileStorage fileStorage) {
-
         FileBrowserTreeTableView tree = new FileBrowserTreeTableView();
-        tree.showRootProperty().set(false);
-        tree.setRoot(new TreeItem<>(new FileRow(new PscFile())));
-        nav_pane.getChildren().clear();
 
-        JFXButton root = new JFXButton(fileStorage.getName());
-        root.setOnAction(event -> {
-            storageManager.loadManagedFiles(fileStorage, fileStorage.getRoot(), fileTree -> buildTree(fileTree, tree.getRoot()));
-            nav_pane.getChildren().clear();
-            nav_pane.getChildren().add(root);
-        });
-        nav_pane.getChildren().add(root);
+        TreeItem<FileRow> root = new TreeItem<>(new FileRow(new PscFile()));
+        tree.setRoot(root);
 
-        storageManager.loadManagedFiles(fileStorage, "", fileTree -> buildTree(fileTree, tree.getRoot()));
+        storageManager.loadManagedFiles(fileStorage, fileStorage.getRoot(), fileTree -> buildTree(fileTree, root));
 
         tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            updateCurrentDirectory(newValue, fileStorage, tree);
+            if (newValue == null) return;
+            if (newValue.getValue().getFile().isDirectory())
+                currentPath.set(newValue.getValue().getFile().getPath());
+
         });
 
         tree.setOnDragOver(event -> event.acceptTransferModes(TransferMode.COPY));
-        tree.setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            if (event.getDragboard().hasFiles()) {
-                storageManager.uploadFiles(fileStorage,
-                        db.getFiles().stream()
-                                .map(file -> new PscFile(file.getPath(), file.getName(), false))
-                                .collect(Collectors.toList())
-                );
-            }
-            event.setDropCompleted(true);
-            event.consume();
-        });
+        tree.setOnDragDropped(event -> handleUploadDragDrop(fileStorage, event));
 
         return tree;
     }
 
-    private void updateCurrentDirectory(TreeItem<FileRow> selectedDirectory, FileStorage fileStorage, FileBrowserTreeTableView tree) {
-        Platform.runLater(() -> {
-            if (selectedDirectory == null || !selectedDirectory.getValue().getFile().isDirectory()) return;
-            PscFile folder = selectedDirectory.getValue().getFile();
-            System.out.println("path:" + folder.getPath());
-            JFXButton nav = new JFXButton(folder.getName());
-            nav.setOnAction(event ->
-                    storageManager.loadManagedFiles(fileStorage, folder.getPath(), fileTree -> buildTree(fileTree, selectedDirectory)));
+    private void handleUploadDragDrop(FileStorage fileStorage, DragEvent event) {
+        Dragboard db = event.getDragboard();
+        if (event.getDragboard().hasFiles()) {
+            db.getFiles().forEach(file -> storageManager.uploadFiles(fileStorage, file));
+        }
+        event.setDropCompleted(true);
+        event.consume();
+    }
 
-            nav_pane.getChildren().addAll(new Label("/"), nav);
-            storageManager.loadManagedFiles(fileStorage, folder.getPath(), fileTree -> buildTree(fileTree, selectedDirectory));
-            tree.setRoot(selectedDirectory);
-            tree.getSelectionModel().clearSelection();
+    private void updateNavBar(String path, FileStorage fileStorage, FileBrowserTreeTableView tree) {
+        nav_pane.getChildren().clear();
+
+        nav_pane.getChildren().add(createNavButton(fileStorage, fileStorage.getName(), fileStorage.getRoot(), tree));
+
+        StringBuilder pathBuilder = new StringBuilder("/");
+        Arrays.stream(path.split("/")).skip(1).forEach(part -> {
+            pathBuilder.append(part);
+            JFXButton navButton = createNavButton(fileStorage, part, pathBuilder.toString(), tree);
+            pathBuilder.append("/");
+            nav_pane.getChildren().addAll(new Label("/"), navButton);
+        });
+    }
+
+    private JFXButton createNavButton(FileStorage fileStorage, String name, final String path, FileBrowserTreeTableView tree) {
+        JFXButton root = new JFXButton(name);
+        root.setOnAction(event -> {
+            storageManager.loadManagedFiles(fileStorage, path, fileTree -> buildTree(fileTree, tree.getRoot()));
+            updateNavBar(path, fileStorage, tree);
+        });
+        return root;
+    }
+
+    private void updateCurrentDirectory(String path, FileStorage fileStorage, FileBrowserTreeTableView tree) {
+        Platform.runLater(() -> {
+            tree.setRoot(new TreeItem<>(new FileRow(new PscFile())));
+            storageManager.loadManagedFiles(fileStorage, path, fileTree -> buildTree(fileTree, tree.getRoot()));
             tree.refresh();
         });
     }
 
-    private void buildTree(List<PscFile> files, TreeItem<FileRow> tree) {
+    private void buildTree(List<PscFile> files, TreeItem<FileRow> root) {
         Platform.runLater(() -> {
-            tree.getChildren().clear();
+            root.getChildren().clear();
             files.forEach(file ->
-                    tree.getChildren().add(
+                    root.getChildren().add(
                             new TreeItem<>(new FileRow(file))
                     ));
         });
@@ -171,15 +197,16 @@ public class FileBrowserController extends ControlledScreen {
 
     @FXML
     private void upload() {
-        // filesToLoad do Encryption
-        //ToDO upload
+        File file = new FileChooser().showOpenDialog(primaryStage);
+        if (file != null) {
+            storageManager.uploadFiles(activeStorageService, file);
+        }
     }
 
     @FXML
     private void download() {
-//        storageManager.downloadFiles(activeStorageService);
-        // filesToLoad do Encryption
-        //ToDO upload
+        PscFile file = activeFileBrowserTreeTableView.getSelectionModel().getSelectedItem().getValue().getFile();
+        storageManager.downloadFiles(activeStorageService, file);
     }
 
     @Override

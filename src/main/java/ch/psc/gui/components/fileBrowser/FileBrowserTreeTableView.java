@@ -5,7 +5,6 @@ import com.jfoenix.controls.JFXTreeTableView;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TreeTableColumn;
 
 public class FileBrowserTreeTableView extends JFXTreeTableView<FileRow> {
@@ -33,16 +32,16 @@ public class FileBrowserTreeTableView extends JFXTreeTableView<FileRow> {
         sizeCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) -> param.getValue().getValue().sizeProperty());
 
         JFXTreeTableColumn<FileRow, String> lastChange = new JFXTreeTableColumn<>("last changed on");
-        lastChange.setPrefWidth(150);
+        lastChange.setPrefWidth(160);
         lastChange.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) -> param.getValue().getValue().lastChangedProperty());
 
 
         this.setShowRoot(false);
-        this.getColumns().setAll(iconCol, nameCol, sizeCol, lastChange);
-
-        nameCol.setSortType(TreeTableColumn.SortType.ASCENDING);
+        nameCol.setSortType(TreeTableColumn.SortType.DESCENDING);
         this.getSortOrder().add(nameCol);
         this.sort();
+        this.getColumns().setAll(iconCol, nameCol, sizeCol, lastChange);
+        this.getStyleClass().add("file-browser-view");
     }
 
 }

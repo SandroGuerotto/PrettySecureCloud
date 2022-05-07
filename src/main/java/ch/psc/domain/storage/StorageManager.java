@@ -1,15 +1,12 @@
 package ch.psc.domain.storage;
 
-import ch.psc.datasource.datastructure.Tree;
 import ch.psc.domain.file.PscFile;
 import ch.psc.domain.storage.service.FileStorage;
-import ch.psc.domain.storage.service.StorageService;
 import ch.psc.domain.storage.service.StorageServiceFactory;
 import ch.psc.domain.user.User;
 
-import java.lang.reflect.Method;
+import java.io.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -18,7 +15,6 @@ import java.util.stream.Collectors;
 
 public class StorageManager {
 
-    private Tree<PscFile> managedFiles;
     private List<FileStorage> storageOptions;
     private final User user;
     private final ExecutorService executorService;
@@ -28,13 +24,31 @@ public class StorageManager {
         executorService = Executors.newCachedThreadPool();
     }
 
-    public void uploadFiles(FileStorage storage,List<PscFile> files) {
-        storage.upload(files);
-        //TODO
+    public void uploadFiles(FileStorage storage, File file) {
+        executorService.submit(()->{
+            try {
+                // todo encrypt
+                storage.upload(new PscFile(file.getPath(), file.getName(), file.length(), null, false), new FileInputStream(file) );
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
-    public List<Future<PscFile>> downloadFiles(FileStorage storage,List<PscFile> files,Method callback) {
-        //TODO
+    public List<Future<PscFile>> downloadFiles(FileStorage storage,PscFile file) {
+        if (storage!=null){
+            executorService.submit(() -> {
+                InputStream inputStream = storage.download(file);
+                //TODO decrypt
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+
+                try (FileOutputStream fileOutputStream = new FileOutputStream(System.getProperty("user.home")+"\\Downloads\\"+file.getName())) {
+                    fileOutputStream.write(bufferedInputStream.readAllBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
         return null;
     }
 
@@ -43,18 +57,11 @@ public class StorageManager {
             executorService.submit(() -> {
                 callback.accept(storage.getFiles(path));
             });
-
         }
-//        return managedFiles;
     }
 
     public List<FileStorage> getStorageOptions() {
         return storageOptions;
-    }
-
-    public void addNewStorage(StorageService storageService, Map<String, String> config) {
-        user.getStorageServiceConfig()
-                .put(storageService, config);
     }
 
     public void loadStorageServices() {
