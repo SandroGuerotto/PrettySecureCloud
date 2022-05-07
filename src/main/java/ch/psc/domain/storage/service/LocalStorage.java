@@ -7,7 +7,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -50,8 +52,8 @@ public class LocalStorage implements FileStorage {
      */
     @Override
     public InputStream download(PscFile file) {
-        try (FileInputStream fileInputStream = new FileInputStream(file.getPath())) {
-            return fileInputStream;
+        try {
+            return new FileInputStream(file.getPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -79,9 +81,13 @@ public class LocalStorage implements FileStorage {
     @Override
     public List<PscFile> getFiles(String path) {
         currentPath = path;
+        List<PscFile> fileList = new ArrayList<>();
+        for (File child : Objects.requireNonNull(new File(path).listFiles())) {
+            fileList.add(
+                    new PscFile(child.getName(), child.getPath(), child.length(), new Date(child.lastModified()), child.isDirectory()));
+        }
 
-        // TODO Auto-generated method stub
-        return new ArrayList<>();
+        return fileList;
     }
 
     @Override

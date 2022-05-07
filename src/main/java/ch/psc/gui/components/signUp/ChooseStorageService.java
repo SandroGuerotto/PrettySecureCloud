@@ -92,9 +92,12 @@ public class ChooseStorageService extends VBox implements SignUpFlow {
         switch (storageService) {
             case DROPBOX:
                 registerDropBox();
+                break;
             case GOOGLE_DRIVE:
+                break;
             case LOCAL:
                 registerLocalStorage();
+                break;
         }
     }
 
