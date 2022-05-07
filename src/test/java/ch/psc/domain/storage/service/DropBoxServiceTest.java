@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -96,9 +97,9 @@ public class DropBoxServiceTest {
         when(DbxUserUsersRequestsMock.getSpaceUsage())
                 .thenReturn(new SpaceUsage(1_000_000_000_000L, SpaceAllocation.individual(new IndividualSpaceAllocation(5_000_000_000_000L))));
 
-        double act = cut.getAvailableStorageSpace();
+        BigDecimal usedStorageSpace = cut.getUsedStorageSpace();
 
-        assertEquals(4000, act);
+        assertEquals(4000, usedStorageSpace.longValue());
 
     }
 }

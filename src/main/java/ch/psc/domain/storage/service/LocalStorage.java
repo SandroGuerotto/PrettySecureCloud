@@ -1,11 +1,12 @@
 package ch.psc.domain.storage.service;
 
 import ch.psc.domain.file.PscFile;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -59,7 +60,7 @@ public class LocalStorage implements FileStorage {
    * @return Amount of free space in the system in GB
    */
   @Override
-  public double getAvailableStorageSpace(){
+  public BigDecimal getUsedStorageSpace(){
     double size = 0;
     ExecutorService executorService = Executors.newSingleThreadExecutor();
     long startTime = System.currentTimeMillis();
@@ -80,12 +81,12 @@ public class LocalStorage implements FileStorage {
       e.printStackTrace();
     }
     executorService.shutdown();
-    return size;
+    return new BigDecimal(size);
   }
 
   @Override
-  public double getTotalStorageSpace() {
-    return 100;
+  public BigDecimal getTotalStorageSpace() {
+    return new BigDecimal(0);
   }
 
   @Override
@@ -102,7 +103,7 @@ public class LocalStorage implements FileStorage {
   }
 
   @Override
-  public DoubleProperty getUsedStorageSpaceProperty() {
+  public ObjectProperty<BigDecimal> getUsedStorageSpaceProperty() {
     return null;
   }
 

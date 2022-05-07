@@ -1,5 +1,6 @@
 package ch.psc.domain.storage;
 
+import ch.psc.domain.common.context.AuthenticationContext;
 import ch.psc.domain.file.PscFile;
 import ch.psc.domain.storage.service.FileStorage;
 import ch.psc.domain.storage.service.StorageServiceFactory;
@@ -24,36 +25,48 @@ public class StorageManager {
         executorService = Executors.newCachedThreadPool();
     }
 
-    public void uploadFiles(FileStorage storage, File file) {
-        executorService.submit(()->{
+    public void uploadFiles(FileStorage storage, File file, Consumer<ProcessEvent> callback) {
+        executorService.submit(() -> {
             try {
+                callback.accept(ProcessEvent.ENCRYPTING);
                 // todo encrypt
-                storage.upload(new PscFile(file.getPath(), file.getName(), file.length(), null, false), new FileInputStream(file) );
+                callback.accept(ProcessEvent.ENCRYPTED);
+                callback.accept(ProcessEvent.UPLOADING);
+                storage.upload(new PscFile(file.getPath(), file.getName(), file.length(), null, false), new FileInputStream(file));
+                callback.accept(ProcessEvent.UPLOADED);
+                callback.accept(ProcessEvent.FINISHED);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         });
     }
 
-    public List<Future<PscFile>> downloadFiles(FileStorage storage,PscFile file) {
-        if (storage!=null){
+    public List<Future<PscFile>> downloadFiles(FileStorage storage, PscFile file, Consumer<ProcessEvent> callback) {
+        if (storage != null) {
             executorService.submit(() -> {
+                callback.accept(ProcessEvent.DOWNLOADING);
                 InputStream inputStream = storage.download(file);
-                //TODO decrypt
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
 
-                try (FileOutputStream fileOutputStream = new FileOutputStream(System.getProperty("user.home")+"\\Downloads\\"+file.getName())) {
+                try (FileOutputStream fileOutputStream = new FileOutputStream(System.getProperty("user.home") + "\\Downloads\\" + file.getName())) {
                     fileOutputStream.write(bufferedInputStream.readAllBytes());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                callback.accept(ProcessEvent.DOWNLOADED);
+
+                callback.accept(ProcessEvent.DECRYPTING);
+                //TODO decrypt
+                callback.accept(ProcessEvent.DECRYPTED);
+
+                callback.accept(ProcessEvent.FINISHED);
             });
         }
         return null;
     }
 
     public void loadManagedFiles(FileStorage storage, String path, Consumer<List<PscFile>> callback) {
-        if (storage!=null){
+        if (storage != null) {
             executorService.submit(() -> {
                 callback.accept(storage.getFiles(path));
             });
@@ -69,6 +82,11 @@ public class StorageManager {
                 .entrySet().stream()
                 .map(entry -> StorageServiceFactory.createService(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+        try {
+            AuthenticationContext.getAuthService().update(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public User getUser() {

@@ -5,17 +5,15 @@ import com.dropbox.core.*;
 import com.dropbox.core.json.JsonReader;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.FolderMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 import com.dropbox.core.v2.users.SpaceUsage;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +29,8 @@ public class DropBoxService implements FileStorage {
     public static final String PRETTY_SECURE_CLOUD = "Pretty-Secure-Cloud";
     private DbxClientV2 client;
     private final String name;
-    private final StringProperty currentPathProperty = new SimpleStringProperty(ROOT_DIR);
-    private final SimpleDoubleProperty usedStorageSpaceProperty = new SimpleDoubleProperty();
+    private String currentPath = ROOT_DIR;
+    private final SimpleObjectProperty<BigDecimal> usedStorageSpaceProperty = new SimpleObjectProperty();
     private static final String ROOT_DIR = "";
 
     /**
@@ -56,7 +54,8 @@ public class DropBoxService implements FileStorage {
     @Override
     public boolean upload(PscFile file, InputStream inputStream) {
         try {
-            client.files().upload("/" + file.getPath()).uploadAndFinish(inputStream);
+            System.out.println(currentPath + "/" + file.getPath());
+            client.files().upload(currentPath + "/" + file.getPath()).uploadAndFinish(inputStream);
             return true;
         } catch (IOException | DbxException e) {
             e.printStackTrace();
@@ -75,35 +74,34 @@ public class DropBoxService implements FileStorage {
     }
 
     @Override
-    public double getAvailableStorageSpace() {
+    public BigDecimal getUsedStorageSpace() {
         try {
             SpaceUsage spaceUsage = client.users().getSpaceUsage();
-            long spaceInBytes = spaceUsage.getAllocation().getIndividualValue().getAllocated() - spaceUsage.getUsed();
-            usedStorageSpaceProperty.set(spaceUsage.getUsed());
-            return spaceInBytes / 1000.0 / 1000.0 / 1000.0;
+            usedStorageSpaceProperty.set(new BigDecimal(spaceUsage.getUsed()));
+            return new BigDecimal(spaceUsage.getUsed());
         } catch (DbxException e) {
             e.printStackTrace();
         }
-        return 0;
+        return new BigDecimal(0);
     }
 
     @Override
-    public double getTotalStorageSpace() {
+    public BigDecimal getTotalStorageSpace() {
         try {
             SpaceUsage spaceUsage = client.users().getSpaceUsage();
-            return spaceUsage.getAllocation().getIndividualValue().getAllocated() / 1000.0 / 1000.0 / 1000.0;
+            return new BigDecimal(spaceUsage.getAllocation().getIndividualValue().getAllocated());
         } catch (DbxException e) {
             e.printStackTrace();
         }
-        return 0;
+        return new BigDecimal(0);
     }
 
     @Override
-    public List<PscFile> getFiles(String path) {
-        currentPathProperty.set(path);
+    public List<PscFile> getFiles(final String path) {
+        currentPath = path;
         ArrayList<PscFile> list = new ArrayList<>();
         try {
-            ListFolderResult result = client.files().listFolder(currentPathProperty.get());
+            ListFolderResult result = client.files().listFolder(currentPath);
             while (true) {
                 for (Metadata metadata : result.getEntries()) {
                     PscFile file;
@@ -111,7 +109,6 @@ public class DropBoxService implements FileStorage {
                     if (metadata instanceof FileMetadata fileMetadata) {
                         file = new PscFile(metadata.getName(), metadata.getPathLower(), fileMetadata.getSize(), fileMetadata.getClientModified(), false);
                     } else {
-                        FolderMetadata fileMetadata = (FolderMetadata) metadata;
                         file = new PscFile(metadata.getName(), metadata.getPathLower(), 0, null, true);
                     }
                     list.add(file);
@@ -135,7 +132,7 @@ public class DropBoxService implements FileStorage {
     }
 
     @Override
-    public DoubleProperty getUsedStorageSpaceProperty() {
+    public ObjectProperty<BigDecimal> getUsedStorageSpaceProperty() {
         return usedStorageSpaceProperty;
     }
 
@@ -154,7 +151,7 @@ public class DropBoxService implements FileStorage {
         return DbxRequestConfig.newBuilder(PRETTY_SECURE_CLOUD).withUserLocale("de_CH").build();
     }
 
-    private DbxAppInfo getDbxAppInfo() {
+    public DbxAppInfo getDbxAppInfo() {
         try {
             return DbxAppInfo.Reader.readFromFile(DROPBOX_PSC_APP);
         } catch (JsonReader.FileLoadException e) {
@@ -192,11 +189,10 @@ public class DropBoxService implements FileStorage {
     public Map<String, String> finishFromCode(DbxWebAuth auth, final String userCode) throws Exception {
         try {
             DbxAuthFinish authFinish = auth.finishFromCode(userCode.trim());
-
             return Map.of("access_token", authFinish.getAccessToken(),
-                    "refresh_token", authFinish.getRefreshToken());
+                    "refresh_token", authFinish.getRefreshToken(),
+                    "expires_at", authFinish.getExpiresAt().toString());
         } catch (DbxException e) {
-            e.printStackTrace(); // TODO error handling
             throw new Exception("Wrong code");
         }
 

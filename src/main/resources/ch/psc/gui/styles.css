@@ -133,12 +133,11 @@
     -fx-background-color: -fx-error;
 }
 .progress-orange .bar{
-    -fx-background-color: -fx-warn2;
+    -fx-background-color: -fx-warn;
 }
 .progress-green .bar{
     -fx-background-color: -fx-green;
 }
-
 .progress-yellow .bar{
     -fx-background-color: -fx-warn2;
 }
@@ -210,4 +209,11 @@
 .file-browser-control .glyph-icon{
     -fx-text-fill: -fx-main;
     -fx-fill: -fx-main;
+}
+
+
+#statusPane .label{
+    -fx-text-fill: -fx-main;
+    -fx-fill: -fx-main;
+    -fx-font-size: 13;
 }

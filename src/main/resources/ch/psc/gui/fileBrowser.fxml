@@ -9,66 +9,78 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="fileBrowser" prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <top>
-      <BorderPane HBox.hgrow="ALWAYS">
-         <center>
-            <FlowPane fx:id="stat_pane" hgap="20.0" vgap="20.0" BorderPane.alignment="CENTER_LEFT" />
-         </center>
-         <BorderPane.margin>
-            <Insets bottom="20.0" left="50.0" right="50.0" top="20.0" />
-         </BorderPane.margin>
-         <right>
-            <HBox spacing="20.0" BorderPane.alignment="CENTER">
-               <children>
-                  <JFXButton fx:id="btn_settings" styleClass="file-browser-control" alignment="CENTER" contentDisplay="CENTER" onAction="#openSettings">
-                     <graphic>
-                        <FontAwesomeIconView glyphName="COG" size="26" />
-                     </graphic>
-                  </JFXButton>
-                  <JFXButton fx:id="btn_logut" styleClass="file-browser-control" alignment="CENTER" contentDisplay="CENTER" onAction="#logout">
-                     <graphic>
-                        <FontAwesomeIconView glyphName="SIGN_OUT" size="26" />
-                     </graphic>
-                  </JFXButton>
-               </children>
-            </HBox>
-         </right>
-      </BorderPane>
-   </top>
-   <center>
-      <VBox spacing="10.0" VBox.vgrow="ALWAYS">
-         <BorderPane.margin>
-            <Insets bottom="10.0" />
-         </BorderPane.margin>
-         <BorderPane>
+<BorderPane fx:id="fileBrowser" prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/15.0.1"
+            xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <BorderPane HBox.hgrow="ALWAYS">
             <center>
-               <FlowPane fx:id="nav_pane" hgap="7.0" vgap="5.0" />
+                <FlowPane fx:id="stat_pane" hgap="20.0" vgap="20.0" BorderPane.alignment="CENTER_LEFT"/>
             </center>
+            <BorderPane.margin>
+                <Insets bottom="20.0" left="50.0" right="50.0" top="20.0"/>
+            </BorderPane.margin>
             <right>
-               <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="25.0" BorderPane.alignment="CENTER">
-                  <children>
-                     <JFXButton styleClass="file-browser-control" onAction="#download">
-                        <graphic>
-                           <FontAwesomeIconView glyphName="DOWNLOAD" size="20" />
-                        </graphic>
-                     </JFXButton>
-                     <JFXButton styleClass="file-browser-control" onAction="#upload">
-                        <graphic>
-                           <FontAwesomeIconView glyphName="UPLOAD" size="20" />
-                        </graphic>
-                     </JFXButton>
-                  </children>
-               </HBox>
+                <HBox spacing="20.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <JFXButton fx:id="btn_settings" styleClass="file-browser-control" alignment="CENTER"
+                                   contentDisplay="CENTER" onAction="#openSettings">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="COG" size="26"/>
+                            </graphic>
+                        </JFXButton>
+                        <JFXButton fx:id="btn_logut" styleClass="file-browser-control" alignment="CENTER"
+                                   contentDisplay="CENTER" onAction="#logout">
+                            <graphic>
+                                <FontAwesomeIconView glyphName="SIGN_OUT" size="26"/>
+                            </graphic>
+                        </JFXButton>
+                    </children>
+                </HBox>
             </right>
-         </BorderPane>
-         <JFXTabPane fx:id="service_tab" VBox.vgrow="ALWAYS" />
-         <VBox.margin>
-            <Insets bottom="10.0" left="20.0" right="20.0" top="20.0" />
-         </VBox.margin>
-         <padding>
-            <Insets bottom="50.0" left="50.0" right="50.0" top="10.0" />
-         </padding>
-      </VBox>
-   </center>
+        </BorderPane>
+    </top>
+    <center>
+        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+            <BorderPane.margin>
+                <Insets bottom="10.0"/>
+            </BorderPane.margin>
+            <BorderPane>
+                <center>
+                    <FlowPane fx:id="nav_pane" hgap="7.0" vgap="5.0"/>
+                </center>
+                <right>
+                    <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="25.0" BorderPane.alignment="CENTER">
+                        <children>
+                            <JFXButton styleClass="file-browser-control" onAction="#download">
+                                <graphic>
+                                    <FontAwesomeIconView glyphName="DOWNLOAD" size="20"/>
+                                </graphic>
+                            </JFXButton>
+                            <JFXButton styleClass="file-browser-control" onAction="#upload">
+                                <graphic>
+                                    <FontAwesomeIconView glyphName="UPLOAD" size="20"/>
+                                </graphic>
+                            </JFXButton>
+                        </children>
+                    </HBox>
+                </right>
+            </BorderPane>
+            <JFXTabPane fx:id="service_tab" VBox.vgrow="ALWAYS"/>
+            <VBox.margin>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="20.0"/>
+            </VBox.margin>
+            <padding>
+                <Insets bottom="10.0" left="50.0" right="50.0" top="10.0"/>
+            </padding>
+        </VBox>
+    </center>
+    <bottom>
+        <FlowPane fx:id="statusPane" hgap="20" vgap="10" BorderPane.alignment="CENTER_LEFT"
+                  alignment="CENTER_LEFT" prefHeight="50">
+            <padding>
+                <Insets bottom="10.0" left="50.0" right="50.0" top="5.0"/>
+            </padding>
+        </FlowPane>
+
+    </bottom>
 </BorderPane>

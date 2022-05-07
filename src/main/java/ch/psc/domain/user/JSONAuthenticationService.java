@@ -125,13 +125,15 @@ public class JSONAuthenticationService implements AuthenticationService {
         private final String password;
         private final Map<StorageService, Map<String, String>> storageServiceConfig;
         private final Map<String, Map<String, String>> keyChain;
+        private final String downloadPath;
 
-        JSONUser(String username, String mail, String password, Map<StorageService, Map<String, String>> storageServiceConfig, Map<String, Map<String, String>> keyChain) {
+        JSONUser(String username, String mail, String password, Map<StorageService, Map<String, String>> storageServiceConfig, Map<String, Map<String, String>> keyChain, String downloadPath) {
             this.username = username;
             this.mail = mail;
             this.password = password;
             this.storageServiceConfig = storageServiceConfig;
             this.keyChain = keyChain;
+            this.downloadPath = downloadPath;
         }
 
         /**
@@ -147,7 +149,8 @@ public class JSONAuthenticationService implements AuthenticationService {
                     user.getMail(),
                     user.getPassword(),
                     user.getStorageServiceConfig(),
-                    serializeKeyChain(user.getKeyChain()));
+                    serializeKeyChain(user.getKeyChain()),
+                    user.getDownloadPath());
         }
 
         /**
@@ -213,7 +216,8 @@ public class JSONAuthenticationService implements AuthenticationService {
                     jsonUser.mail,
                     jsonUser.password,
                     jsonUser.storageServiceConfig,
-                    deserializeKeyChain(jsonUser.keyChain));
+                    deserializeKeyChain(jsonUser.keyChain),
+                    jsonUser.downloadPath);
         }
     }
 

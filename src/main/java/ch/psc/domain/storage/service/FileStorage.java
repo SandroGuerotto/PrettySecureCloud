@@ -1,9 +1,10 @@
 package ch.psc.domain.storage.service;
 
 import ch.psc.domain.file.PscFile;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface FileStorage {
@@ -11,16 +12,16 @@ public interface FileStorage {
   boolean upload(PscFile file, InputStream inputStream);
 
   InputStream download(PscFile file);
-  
-  double getAvailableStorageSpace();
 
-  double getTotalStorageSpace();
+  BigDecimal getUsedStorageSpace();
+
+  BigDecimal getTotalStorageSpace();
   
   List<PscFile> getFiles(String path);
 
   String getName();
 
-  DoubleProperty getUsedStorageSpaceProperty();
+  ObjectProperty<BigDecimal> getUsedStorageSpaceProperty();
 
   String getRoot();
 

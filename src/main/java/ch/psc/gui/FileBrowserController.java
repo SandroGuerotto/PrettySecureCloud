@@ -2,6 +2,7 @@ package ch.psc.gui;
 
 import ch.psc.domain.common.context.UserContext;
 import ch.psc.domain.file.PscFile;
+import ch.psc.domain.storage.ProcessEvent;
 import ch.psc.domain.storage.StorageManager;
 import ch.psc.domain.storage.service.FileStorage;
 import ch.psc.exceptions.ScreenSwitchException;
@@ -10,6 +11,7 @@ import ch.psc.gui.components.fileBrowser.FileRow;
 import ch.psc.gui.util.JavaFxUtils;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTabPane;
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -27,8 +29,11 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +52,8 @@ public class FileBrowserController extends ControlledScreen {
     private FlowPane stat_pane;
     @FXML
     private FlowPane nav_pane;
+    @FXML
+    private FlowPane statusPane;
 
     @FXML
     private JFXTabPane service_tab;
@@ -131,7 +138,7 @@ public class FileBrowserController extends ControlledScreen {
     private void handleUploadDragDrop(FileStorage fileStorage, DragEvent event) {
         Dragboard db = event.getDragboard();
         if (event.getDragboard().hasFiles()) {
-            db.getFiles().forEach(file -> storageManager.uploadFiles(fileStorage, file));
+            db.getFiles().forEach(file -> storageManager.uploadFiles(fileStorage, file, progress -> uploadProgress(progress, activeStorageService, file)));
         }
         event.setDropCompleted(true);
         event.consume();
@@ -199,14 +206,57 @@ public class FileBrowserController extends ControlledScreen {
     private void upload() {
         File file = new FileChooser().showOpenDialog(primaryStage);
         if (file != null) {
-            storageManager.uploadFiles(activeStorageService, file);
+            storageManager.uploadFiles(activeStorageService, file, progress -> uploadProgress(progress, activeStorageService, file));
         }
+    }
+
+    private void uploadProgress(ProcessEvent progress, FileStorage activeStorageService, File file) {
+        Platform.runLater(() -> {
+            final Label label = (Label) statusPane.getChildren()
+                    .stream()
+                    .filter(node -> node.getId().equals("u-" + file.getName()))
+                    .findFirst()
+                    .orElse(new Label());
+
+            label.setText(progress.name() + " " + file.getName() + " ...");
+            if (progress.equals(ProcessEvent.FINISHED)) {
+                activeStorageService.getUsedStorageSpace();
+                FadeTransition fade = new FadeTransition(Duration.millis(2500), label);
+                fade.setOnFinished(event -> statusPane.getChildren().remove(label));
+                fade.play();
+            }
+            if (label.getId()==null) {
+                label.setId("u-" + file.getName());
+                statusPane.getChildren().add(label);
+            }
+        });
     }
 
     @FXML
     private void download() {
         PscFile file = activeFileBrowserTreeTableView.getSelectionModel().getSelectedItem().getValue().getFile();
-        storageManager.downloadFiles(activeStorageService, file);
+        storageManager.downloadFiles(activeStorageService, file, progress -> downloadProgress(progress, activeStorageService, file));
+    }
+
+    private void downloadProgress(ProcessEvent progress, FileStorage activeStorageService, PscFile file) {
+        Platform.runLater(() -> {
+            final Label label = (Label) statusPane.getChildren()
+                    .stream()
+                    .filter(node -> node.getId().equals("d-" + file.getName()))
+                    .findFirst()
+                    .orElse(new Label());
+
+            label.setText(progress.name() + " " + file.getName() + " ...");
+            if (progress.equals(ProcessEvent.FINISHED)) {
+                FadeTransition fade = new FadeTransition(Duration.millis(2500), label);
+                fade.setOnFinished(event -> statusPane.getChildren().remove(label));
+                fade.play();
+            }
+            if (label.getId()==null) {
+                label.setId("d-" + file.getName());
+                statusPane.getChildren().add(label);
+            }
+        });
     }
 
     @Override
@@ -225,21 +275,20 @@ public class FileBrowserController extends ControlledScreen {
         Label name = new Label(service.getName());
         StackPane stack = new StackPane();
         stack.setAlignment(Pos.CENTER_RIGHT);
-        double totalStorageSpace = service.getTotalStorageSpace();
-        double usedStorageSpace = totalStorageSpace - service.getAvailableStorageSpace();
+        BigDecimal totalStorageSpace = service.getTotalStorageSpace();
+        BigDecimal usedStorageSpace = service.getUsedStorageSpace();
 
-        ProgressBar availStorage = new ProgressBar(usedStorageSpace / totalStorageSpace);
-
-        applyStatCSS(availStorage, availStorage.getProgress());
+        ProgressBar availStorage = new ProgressBar();
         availStorage.setPrefSize(150, 20);
 
-        Label label = new Label(String.format("%.2f/%.2f GB", usedStorageSpace, totalStorageSpace));// TODO mit properties arbeiten
+        availStorage.progressProperty().addListener((observable, oldValue, newValue) -> applyStatCSS(availStorage, newValue.doubleValue()));
+        availStorage.setProgress(usedStorageSpace.divide(totalStorageSpace, 3, RoundingMode.HALF_EVEN).doubleValue());
+
+        Label label = new Label(storageAmountText(totalStorageSpace.longValue(), usedStorageSpace.longValue()));
 
         service.getUsedStorageSpaceProperty().addListener((observable, oldValue, newValue) -> {
-            double used = totalStorageSpace - newValue.doubleValue();
-            applyStatCSS(availStorage, used);
-            availStorage.setProgress(used);
-            label.setText(String.format("%.2f/%.2f GB", newValue.doubleValue(), totalStorageSpace));
+            availStorage.setProgress(newValue.divide(totalStorageSpace, 3, RoundingMode.HALF_EVEN).doubleValue());
+            label.setText(storageAmountText(totalStorageSpace.longValue(), newValue.longValue()));
         });
 
         label.setPadding(new Insets(0, 5, 0, 0));
@@ -250,6 +299,10 @@ public class FileBrowserController extends ControlledScreen {
 
         root.getChildren().addAll(name, stack);
         return root;
+    }
+
+    private String storageAmountText(long totalStorageSpace, long usedStorageSpace) {
+        return String.format("%s / %s", JavaFxUtils.formatSize(usedStorageSpace), JavaFxUtils.formatSize(totalStorageSpace));
     }
 
     private void applyStatCSS(ProgressBar availStorage, double used) {

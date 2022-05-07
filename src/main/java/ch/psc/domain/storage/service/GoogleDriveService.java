@@ -1,9 +1,10 @@
 package ch.psc.domain.storage.service;
 
 import ch.psc.domain.file.PscFile;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class GoogleDriveService implements FileStorage {
@@ -28,14 +29,14 @@ public class GoogleDriveService implements FileStorage {
   }
 
   @Override
-  public double getAvailableStorageSpace() {
+  public BigDecimal getUsedStorageSpace() {
     // TODO Auto-generated method stub
-    return 0;
+    return new BigDecimal(0);
   }
 
   @Override
-  public double getTotalStorageSpace() {
-    return 0;
+  public BigDecimal getTotalStorageSpace() {
+    return new BigDecimal(0);
   }
 
   @Override
@@ -50,7 +51,7 @@ public class GoogleDriveService implements FileStorage {
   }
 
   @Override
-  public DoubleProperty getUsedStorageSpaceProperty() {
+  public ObjectProperty<BigDecimal> getUsedStorageSpaceProperty() {
     return null;
   }
 

@@ -67,7 +67,6 @@ public class ChooseStorageService extends VBox implements SignUpFlow {
     private Button createStorageButton(StorageService storageService) {
         Button button = new Button();
 
-//        button.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.DROPBOX,"75"));
         ImageView icon = new ImageView(storageService.getImagePath());
         icon.setPreserveRatio(true);
         icon.setFitWidth(70);

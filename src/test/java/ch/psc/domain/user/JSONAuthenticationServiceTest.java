@@ -41,7 +41,7 @@ class JSONAuthenticationServiceTest {
 
         expUser = new User("test", "mail", "pwd",
                 Collections.singletonMap(StorageService.DROPBOX, Collections.singletonMap("token", "abc")),
-                Collections.singletonMap("Test", new Key(new SecretKeySpec("fooBarBaz".getBytes(), "TestAlgo"))));
+                Collections.singletonMap("Test", new Key(new SecretKeySpec("fooBarBaz".getBytes(), "TestAlgo"))), "path");
     }
 
     @Test
@@ -81,8 +81,8 @@ class JSONAuthenticationServiceTest {
             when(jsonWriterReaderMock.readFromJson(anyString(), any())).thenReturn(
                     new JSONAuthenticationService.JSONUser("test", "mail", "pwd",
                             Collections.singletonMap(StorageService.DROPBOX, Collections.singletonMap("token", "abc")),
-                            Collections.singletonMap("Test", Map.of("secret", "fooBarBaz", "algorithm", "TestAlgo"))
-                    ));
+                            Collections.singletonMap("Test", Map.of("secret", "fooBarBaz", "algorithm", "TestAlgo")),
+                            "path"));
         } catch (IOException e) {
             fail(e);
         }
