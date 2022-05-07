@@ -10,7 +10,6 @@ import java.io.*;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -41,28 +40,25 @@ public class StorageManager {
         });
     }
 
-    public List<Future<PscFile>> downloadFiles(FileStorage storage, PscFile file, Consumer<ProcessEvent> callback) {
-        if (storage != null) {
-            executorService.submit(() -> {
-                callback.accept(ProcessEvent.DOWNLOADING);
-                InputStream inputStream = storage.download(file);
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+    public void downloadFiles(FileStorage storage, PscFile file, Consumer<ProcessEvent> callback) {
+        executorService.submit(() -> {
+            callback.accept(ProcessEvent.DOWNLOADING);
+            InputStream inputStream = storage.download(file);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
 
-                try (FileOutputStream fileOutputStream = new FileOutputStream(System.getProperty("user.home") + "\\Downloads\\" + file.getName())) {
-                    fileOutputStream.write(bufferedInputStream.readAllBytes());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                callback.accept(ProcessEvent.DOWNLOADED);
+            try (FileOutputStream fileOutputStream = new FileOutputStream(System.getProperty("user.home") + "\\Downloads\\" + file.getName())) {
+                fileOutputStream.write(bufferedInputStream.readAllBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            callback.accept(ProcessEvent.DOWNLOADED);
 
-                callback.accept(ProcessEvent.DECRYPTING);
-                //TODO decrypt
-                callback.accept(ProcessEvent.DECRYPTED);
+            callback.accept(ProcessEvent.DECRYPTING);
+            //TODO decrypt
+            callback.accept(ProcessEvent.DECRYPTED);
 
-                callback.accept(ProcessEvent.FINISHED);
-            });
-        }
-        return null;
+            callback.accept(ProcessEvent.FINISHED);
+        });
     }
 
     public void loadManagedFiles(FileStorage storage, String path, Consumer<List<PscFile>> callback) {

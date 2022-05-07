@@ -2,7 +2,6 @@ package ch.psc.domain.storage.service;
 
 import com.dropbox.core.DbxAuthFinish;
 import com.dropbox.core.DbxException;
-import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.DbxWebAuth;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.users.DbxUserUsersRequests;
@@ -79,13 +78,6 @@ public class DropBoxServiceTest {
     }
 
     @Test
-    void getDbxRequestConfig() {
-        DbxRequestConfig act = cut.getDbxRequestConfig();
-        assertEquals(DropBoxService.PRETTY_SECURE_CLOUD, act.getClientIdentifier());
-        assertEquals("de-CH", act.getUserLocale());
-    }
-
-    @Test
     void getAvailableStorageSpace() throws DbxException {
         cut = new DropBoxService(dbxClientV2Mock);
 
@@ -99,7 +91,7 @@ public class DropBoxServiceTest {
 
         BigDecimal usedStorageSpace = cut.getUsedStorageSpace();
 
-        assertEquals(4000, usedStorageSpace.longValue());
+        assertEquals(1_000_000_000_000L, usedStorageSpace.longValue());
 
     }
 }

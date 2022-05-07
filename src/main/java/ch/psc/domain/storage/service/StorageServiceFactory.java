@@ -1,12 +1,5 @@
 package ch.psc.domain.storage.service;
 
-import com.dropbox.core.DbxAppInfo;
-import com.dropbox.core.DbxException;
-import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.oauth.DbxCredential;
-import com.dropbox.core.oauth.DbxRefreshResult;
-import com.dropbox.core.v2.DbxClientV2;
-
 import java.util.Map;
 
 /**
@@ -56,24 +49,11 @@ public class StorageServiceFactory {
     /**
      * Creates a Dropbox service.
      *
-     * @param accountData uses access_token in the map
+     * @param accountData uses accountData to connect and update expired token
      * @return Dropbox service
      */
     private static FileStorage createDropBoxService(Map<String, String> accountData) {
-        DropBoxService dropBoxService = new DropBoxService();
-        DbxRequestConfig config = dropBoxService.getDbxRequestConfig();
-        DbxAppInfo dbxAppInfo = dropBoxService.getDbxAppInfo();
-        DbxCredential dbxCredential = new DbxCredential(
-                accountData.get("access_token"), Long.decode(accountData.get("expires_at")), accountData.get("refresh_token"), dbxAppInfo.getKey(), dbxAppInfo.getSecret());
-        try {
-            DbxRefreshResult refresh = dbxCredential.refresh(config);
-            accountData.put("access_token", refresh.getAccessToken());
-            accountData.put("expires_at", refresh.getExpiresAt().toString());
-        } catch (DbxException e) {
-            e.printStackTrace();
-        }
-        return new DropBoxService(new DbxClientV2(config, accountData.get("access_token")));
-
+        return DropBoxService.connect(accountData);
     }
 
     /**

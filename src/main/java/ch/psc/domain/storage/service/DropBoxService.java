@@ -3,6 +3,8 @@ package ch.psc.domain.storage.service;
 import ch.psc.domain.file.PscFile;
 import com.dropbox.core.*;
 import com.dropbox.core.json.JsonReader;
+import com.dropbox.core.oauth.DbxCredential;
+import com.dropbox.core.oauth.DbxRefreshResult;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
@@ -49,6 +51,21 @@ public class DropBoxService implements FileStorage {
      */
     public DropBoxService() {
         this.name = "Dropbox";
+    }
+
+    public static DropBoxService connect(Map<String, String> accountData) {
+        DbxRequestConfig config = getDbxRequestConfig();
+        DbxAppInfo dbxAppInfo = getDbxAppInfo();
+        DbxCredential dbxCredential = new DbxCredential(
+                accountData.get("access_token"), Long.decode(accountData.get("expires_at")), accountData.get("refresh_token"), dbxAppInfo.getKey(), dbxAppInfo.getSecret());
+        try {
+            DbxRefreshResult refresh = dbxCredential.refresh(config);
+            accountData.put("access_token", refresh.getAccessToken());
+            accountData.put("expires_at", refresh.getExpiresAt().toString());
+        } catch (DbxException e) {
+            e.printStackTrace();
+        }
+        return new DropBoxService(new DbxClientV2(config, accountData.get("access_token")));
     }
 
     @Override
@@ -147,11 +164,11 @@ public class DropBoxService implements FileStorage {
      *
      * @return new DbxRequestConfig instance
      */
-    public DbxRequestConfig getDbxRequestConfig() {
+    private static DbxRequestConfig getDbxRequestConfig() {
         return DbxRequestConfig.newBuilder(PRETTY_SECURE_CLOUD).withUserLocale("de_CH").build();
     }
 
-    public DbxAppInfo getDbxAppInfo() {
+    private static DbxAppInfo getDbxAppInfo() {
         try {
             return DbxAppInfo.Reader.readFromFile(DROPBOX_PSC_APP);
         } catch (JsonReader.FileLoadException e) {
