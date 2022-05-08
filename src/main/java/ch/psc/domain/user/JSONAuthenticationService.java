@@ -12,10 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -180,10 +177,14 @@ public class JSONAuthenticationService implements AuthenticationService {
             Map<String, String> mapped = new HashMap<>();
             mapped.put(JSON_TOKEN_ALGORITHM, secretKey.getType());
             mapped.put(JSON_TOKEN_SECRET, new String(secretKey.getKey().getEncoded()));
+            System.out.print("serialized key = " + secretKey.getKey().getEncoded());
+            System.out.print("serialized key = " + Arrays.toString(secretKey.getKey().getEncoded()));
             return mapped;
         }
 
         private static Key deserializeToKey(Map<String, String> map) {
+            System.out.print("deserialized key = " + map.get(JSON_TOKEN_SECRET).getBytes(StandardCharsets.UTF_8));
+            System.out.print("deserialized key = " + Arrays.toString(map.get(JSON_TOKEN_SECRET).getBytes(StandardCharsets.UTF_8)));
             return new Key(new SecretKeySpec(map.get(JSON_TOKEN_SECRET).getBytes(StandardCharsets.UTF_8), map.get(JSON_TOKEN_ALGORITHM)));
         }
 

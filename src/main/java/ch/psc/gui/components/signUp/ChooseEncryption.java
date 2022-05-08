@@ -45,7 +45,7 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
         this.setSpacing(50);
         this.setPadding(new Insets(10, 20, 10, 20));
 
-        JFXComboBox<CipherAlgorithms> algorithms = createStorageDropDown(Arrays.stream(CipherAlgorithms.values())
+        JFXComboBox<CipherAlgorithms> algorithms = createCipherAlgoDropDown(Arrays.stream(CipherAlgorithms.values())
                 .filter(CipherAlgorithms::isSupported)
                 .collect(Collectors.toList()));
 
@@ -64,13 +64,14 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
      * @param cipherAlgorithms supported algorithms for ciphers
      * @return designed button
      */
-    private JFXComboBox<CipherAlgorithms> createStorageDropDown(List<CipherAlgorithms> cipherAlgorithms) {
+    private JFXComboBox<CipherAlgorithms> createCipherAlgoDropDown(List<CipherAlgorithms> cipherAlgorithms) {
         ObservableList<CipherAlgorithms> algorithms = FXCollections.observableArrayList();
         algorithms.addAll(cipherAlgorithms);
 
         JFXComboBox<CipherAlgorithms> cipherAlgorithmDropDown = new JFXComboBox<>();
         cipherAlgorithmDropDown.setItems(algorithms);
 
+        //TODO aktuell wird bei jeder auswahl ein neuer cipher hinzugefügt, müsste eig. erst gelockt werden, sobald man auf next drückt
         cipherAlgorithmDropDown.setOnAction(e -> register(cipherAlgorithmDropDown.getValue()));
         return cipherAlgorithmDropDown;
     }
@@ -87,6 +88,7 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
         try {
             PscCipher pscCipher = CipherFactory.createCipher(cipherAlgorithms.name());
             generatedKeys.putAll(pscCipher.generateKey());
+            System.out.println("algo selected = " + pscCipher);
 
         } catch (FatalImplementationException e) {
             e.printStackTrace(); //TODO sophisticated error logging
