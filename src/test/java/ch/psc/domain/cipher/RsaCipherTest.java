@@ -21,6 +21,7 @@ class RsaCipherTest {
   private static final String data = "Hello World!";
 
   private PscCipher cipher;
+  private Map<String, Key> keyChain;
   private Key publicKey;
   private Key privateKey;
 
@@ -31,7 +32,7 @@ class RsaCipherTest {
     cipher = new RsaCipher();
 
     ch.psc.domain.cipher.KeyGenerator keyGenerator = new KeyGenerator();
-    Map<String, Key> keyChain = keyGenerator.generateKey(cipher.getKeyBits(), cipher.getAlgorithm());
+    keyChain = keyGenerator.generateKey(cipher.getKeyBits(), cipher.getAlgorithm());
 
     for(String s : keyChain.keySet()){
 
