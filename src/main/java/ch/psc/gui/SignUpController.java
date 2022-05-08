@@ -106,11 +106,25 @@ public class SignUpController extends ControlledScreen {
             UserContext.setAuthorizedUser(authenticationService.signup(user));
             switchScreen(JavaFxUtils.RegisteredScreen.FILE_BROWSER_PAGE);
         } catch (AuthenticationException e) {
-            e.printStackTrace(); // todo show error
+            signupFormPane.getChildren().forEach(i -> {
+                if (i.getId() != null) {
+                    if (i.getId().equals("signUpErrorLabel")) {
+                        ((Label) i).setText(Config.getResourceText("signup.error.signUpFailed"));
+                    }
+                }
+            });
+
+            e.printStackTrace();
         } catch (ScreenSwitchException e) {
+            signupFormPane.getChildren().forEach(i -> {
+                if (i.getId() != null) {
+                    if (i.getId().equals("signUpErrorLabel")) {
+                        ((Label) i).setText(Config.getResourceText("signup.error.loadingScreenFailed"));
+                    }
+                }
+            });
             e.printStackTrace();
         }
-//        example on how to use service
     }
 
     @SuppressWarnings("unchecked")
@@ -126,7 +140,6 @@ public class SignUpController extends ControlledScreen {
      */
     private void buildControl() {
         signupFormPane.getChildren().clear();
-
 
         FlowPane pane = new FlowPane();
         pane.setPadding(new Insets(15, 0, 0, 0));
@@ -144,6 +157,7 @@ public class SignUpController extends ControlledScreen {
         Label signUpErrorLabel = new Label();
         signUpErrorLabel.setPadding(new Insets(15, 0, 0, 0));
         signUpErrorLabel.getStyleClass().add("error");
+        signUpErrorLabel.setId("signUpErrorLabel");
 
 
         prev.setOnAction(event -> flowControl.previous());
