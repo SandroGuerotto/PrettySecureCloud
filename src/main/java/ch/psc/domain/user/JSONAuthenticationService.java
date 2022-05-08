@@ -1,22 +1,28 @@
 package ch.psc.domain.user;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.spec.EncodedKeySpec;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import ch.psc.datasource.JSONWriterReader;
 import ch.psc.domain.cipher.Key;
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.exceptions.AuthenticationException;
+import ch.psc.exceptions.KeyDeSerializationException;
 import ch.psc.exceptions.UpdateUserException;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of a basic authentication service.
@@ -118,8 +124,10 @@ public class JSONAuthenticationService implements AuthenticationService {
      */
     protected static class JSONUser {
 
+        private static final Charset KEY_ENCODING = StandardCharsets.US_ASCII;
         private static final String JSON_TOKEN_SECRET = "secret";
         private static final String JSON_TOKEN_ALGORITHM = "algorithm";
+        private static final String JSON_TOKEN_IS_PUBLIC = "isPublic";
         private final String username;
         private final String mail;
         private final String password;
@@ -178,13 +186,32 @@ public class JSONAuthenticationService implements AuthenticationService {
         private static Map<String, String> serializeKey(Key secretKey) {
             assert secretKey != null;
             Map<String, String> mapped = new HashMap<>();
+            mapped.put(JSON_TOKEN_IS_PUBLIC, String.valueOf(secretKey.getKey() instanceof PublicKey));
             mapped.put(JSON_TOKEN_ALGORITHM, secretKey.getType());
-            mapped.put(JSON_TOKEN_SECRET, new String(secretKey.getKey().getEncoded()));
+            mapped.put(JSON_TOKEN_SECRET, new String(secretKey.getKey().getEncoded(), KEY_ENCODING));
             return mapped;
         }
 
-        private static Key deserializeToKey(Map<String, String> map) {
-            return new Key(new SecretKeySpec(map.get(JSON_TOKEN_SECRET).getBytes(StandardCharsets.UTF_8), map.get(JSON_TOKEN_ALGORITHM)));
+        private static Key deserializeToKey(Map<String, String> map) throws NoSuchAlgorithmException, InvalidKeySpecException {
+            boolean isPublic = Boolean.valueOf(map.get(JSON_TOKEN_IS_PUBLIC));
+            String algorythm = map.get(JSON_TOKEN_ALGORITHM);
+            java.security.Key secretKey = null;
+            
+            if(algorythm.contains("RSA")) {
+                KeyFactory factory = KeyFactory.getInstance(map.get(JSON_TOKEN_ALGORITHM));
+                EncodedKeySpec spec = new X509EncodedKeySpec(map.get(JSON_TOKEN_SECRET).getBytes(KEY_ENCODING));
+                if(isPublic) {
+                  secretKey = factory.generatePublic(spec);
+                }
+                else {
+                  secretKey = factory.generatePrivate(spec);
+                }
+            }
+            else {
+                secretKey = new SecretKeySpec(map.get(JSON_TOKEN_SECRET).getBytes(KEY_ENCODING), map.get(JSON_TOKEN_ALGORITHM));
+            }
+            
+            return new Key(secretKey);
         }
 
 
@@ -193,14 +220,19 @@ public class JSONAuthenticationService implements AuthenticationService {
          *
          * @param keyChain string-map of algorithm and secret
          * @return map of type and {@link Key}
+         * @throws KeyDeSerializationException If a Key cannot be deserialized, the cause is wrapped in this exception. 
          */
-        private static Map<String, Key> deserializeKeyChain(Map<String, Map<String, String>> keyChain) {
+        private static Map<String, Key> deserializeKeyChain(Map<String, Map<String, String>> keyChain) throws KeyDeSerializationException {
+            Map<String, Key> deserialized = new HashMap<>();
             if (keyChain != null)
-                return keyChain.entrySet()
-                        .stream()
-                        .collect(Collectors.toMap(Map.Entry::getKey, entry -> deserializeToKey(entry.getValue())
-                        ));
-            return Collections.emptyMap();
+                for(Entry<String, Map<String, String>> entry : keyChain.entrySet()) {
+                    try {
+                      deserialized.put(entry.getKey(), deserializeToKey(entry.getValue()));
+                    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                      throw new KeyDeSerializationException("Could not deserialize Key with name '" + entry.getKey() + "'", e);
+                    }
+                }
+            return deserialized;
         }
 
         /**
@@ -208,8 +240,9 @@ public class JSONAuthenticationService implements AuthenticationService {
          *
          * @param jsonUser serialized user
          * @return deserialize user
+         * @throws KeyDeSerializationException If a Key cannot be deserialized, it will be wrapped in this exception.
          */
-        public static User fromJson(JSONUser jsonUser) {
+        public static User fromJson(JSONUser jsonUser) throws KeyDeSerializationException {
             assert jsonUser != null;
             return new User(
                     jsonUser.username,
