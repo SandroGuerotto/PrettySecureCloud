@@ -93,8 +93,6 @@ public class LoginController extends ControlledScreen {
         enterPasswordTextfield.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.equals(oldValue)) enterPasswordTextfield.validate();
         });
-        enterMailTextfield.setText("a@a.com");
-        enterPasswordTextfield.setText("test1234");
     }
 
     /**
@@ -110,7 +108,8 @@ public class LoginController extends ControlledScreen {
         try {
             switchScreen(JavaFxUtils.RegisteredScreen.SIGNUP_PAGE);
         } catch (ScreenSwitchException e) {
-            e.printStackTrace(); //TODO: Fehlermeldung an GUI mitgeben
+            loginErrorLabel.setText(Config.getResourceText("login.error.loadingScreenFailed"));
+            e.printStackTrace();
         }
     }
 
@@ -120,20 +119,22 @@ public class LoginController extends ControlledScreen {
     @FXML
     private void login() {
         if (enterMailTextfield.validate() && enterPasswordTextfield.validate()) {
-            //Todo: Validation of login
             try {
                 User user = authenticationService.authenticate(enterMailTextfield.getText(), enterPasswordTextfield.getText());
                 UserContext.setAuthorizedUser(user);
                 switchScreen(JavaFxUtils.RegisteredScreen.FILE_BROWSER_PAGE);
-//        example on how to use service
-//            FileStorage dropbox = StorageServiceFactory.createService(StorageService.DROPBOX, user.getStorageServiceConfig().get(StorageService.DROPBOX));
-//            dropbox.getFileTree();
             } catch (AuthenticationException e) {
-                loginErrorLabel.setText("TODO: login / password is wrong resp. you have to sign up first");
+                setErrorText(Config.getResourceText("login.error.loginFailed"));
+                e.printStackTrace();
             } catch (ScreenSwitchException e) {
+                setErrorText(Config.getResourceText("login.error.loadingScreenFailed"));
                 e.printStackTrace();
             }
         }
+    }
+
+    private void setErrorText(String errorText){
+        loginErrorLabel.setText(errorText);
     }
 
 }

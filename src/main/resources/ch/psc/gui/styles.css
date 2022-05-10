@@ -62,7 +62,6 @@
 .error {
     -fx-text-fill: -fx-error;
     -fx-fill: -fx-error;
-    /*-fx-border-color: transparent transparent -fx-error transparent ; */
 }
 
 .error-label {
@@ -202,12 +201,19 @@
     -fx-background-color:  -fx-accent1;
 }
 
-
 .file-browser-control .glyph-icon{
     -fx-text-fill: -fx-main;
     -fx-fill: -fx-main;
 }
 
+.jfx-tab-pane .tab-header-background {
+    -fx-background-color: -fx-accent1;
+}
+
+/* Changes line color under selected tab */
+.jfx-tab-pane .tab-selected-line {
+    -fx-background-color:  -fx-accent3;
+}
 
 #statusPane .label{
     -fx-text-fill: -fx-main;

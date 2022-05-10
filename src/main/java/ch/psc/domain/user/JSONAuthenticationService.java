@@ -40,7 +40,6 @@ public class JSONAuthenticationService implements AuthenticationService {
         String hash = buildHash(email, password);
         User user = readUser(buildPath(hash));
         if (user.getMail().equals(email) && user.getPassword().equals(password)) return user;
-
         throw new AuthenticationException("Authorization failed");
     }
 
@@ -109,7 +108,7 @@ public class JSONAuthenticationService implements AuthenticationService {
         try {
             return JSONUser.fromJson(jsonWriterReader.readFromJson(path, JSONUser.class));
         } catch (IOException e) {
-            throw new AuthenticationException("Authorization failed");
+            throw new AuthenticationException("User does not exist");
         }
     }
 

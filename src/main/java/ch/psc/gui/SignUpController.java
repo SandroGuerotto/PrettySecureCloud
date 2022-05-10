@@ -47,6 +47,8 @@ public class SignUpController extends ControlledScreen {
     @FXML
     private VBox signupFormPane;
 
+    private Label signUpErrorLabel;
+
     public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthenticationService authenticationService) {
         super(primaryStage, screens);
         this.authenticationService = authenticationService;
@@ -106,11 +108,12 @@ public class SignUpController extends ControlledScreen {
             UserContext.setAuthorizedUser(authenticationService.signup(user));
             switchScreen(JavaFxUtils.RegisteredScreen.FILE_BROWSER_PAGE);
         } catch (AuthenticationException e) {
-            e.printStackTrace(); // todo show error
+            setErrorText(Config.getResourceText("signup.error.signup.error.signUpFailed"));
+            e.printStackTrace();
         } catch (ScreenSwitchException e) {
+            setErrorText(Config.getResourceText("signup.error.loadingScreenFailed"));
             e.printStackTrace();
         }
-//        example on how to use service
     }
 
     @SuppressWarnings("unchecked")
@@ -127,7 +130,6 @@ public class SignUpController extends ControlledScreen {
     private void buildControl() {
         signupFormPane.getChildren().clear();
 
-
         FlowPane pane = new FlowPane();
         pane.setPadding(new Insets(15, 0, 0, 0));
         pane.setAlignment(Pos.CENTER);
@@ -141,9 +143,10 @@ public class SignUpController extends ControlledScreen {
         next.setContentDisplay(ContentDisplay.RIGHT);
         next.getStyleClass().add("control-button");
 
-        Label signUpErrorLabel = new Label();
+        signUpErrorLabel = new Label();
         signUpErrorLabel.setPadding(new Insets(15, 0, 0, 0));
         signUpErrorLabel.getStyleClass().add("error");
+
 
 
         prev.setOnAction(event -> flowControl.previous());
@@ -184,6 +187,10 @@ public class SignUpController extends ControlledScreen {
                 transition.play();
             }
         });
+    }
+
+    private void setErrorText(String errorText){
+        signUpErrorLabel.setText(errorText);
     }
 
     @Override
