@@ -47,6 +47,8 @@ public class SignUpController extends ControlledScreen {
     @FXML
     private VBox signupFormPane;
 
+    private Label signUpErrorLabel;
+
     public SignUpController(Stage primaryStage, Map<JavaFxUtils.RegisteredScreen, ControlledScreen> screens, AuthenticationService authenticationService) {
         super(primaryStage, screens);
         this.authenticationService = authenticationService;
@@ -106,23 +108,10 @@ public class SignUpController extends ControlledScreen {
             UserContext.setAuthorizedUser(authenticationService.signup(user));
             switchScreen(JavaFxUtils.RegisteredScreen.FILE_BROWSER_PAGE);
         } catch (AuthenticationException e) {
-            signupFormPane.getChildren().forEach(i -> {
-                if (i.getId() != null) {
-                    if (i.getId().equals("signUpErrorLabel")) {
-                        ((Label) i).setText(Config.getResourceText("signup.error.signUpFailed"));
-                    }
-                }
-            });
-
+            setErrorText(Config.getResourceText("signup.error.signup.error.signUpFailed"));
             e.printStackTrace();
         } catch (ScreenSwitchException e) {
-            signupFormPane.getChildren().forEach(i -> {
-                if (i.getId() != null) {
-                    if (i.getId().equals("signUpErrorLabel")) {
-                        ((Label) i).setText(Config.getResourceText("signup.error.loadingScreenFailed"));
-                    }
-                }
-            });
+            setErrorText(Config.getResourceText("signup.error.loadingScreenFailed"));
             e.printStackTrace();
         }
     }
@@ -154,10 +143,10 @@ public class SignUpController extends ControlledScreen {
         next.setContentDisplay(ContentDisplay.RIGHT);
         next.getStyleClass().add("control-button");
 
-        Label signUpErrorLabel = new Label();
+        signUpErrorLabel = new Label();
         signUpErrorLabel.setPadding(new Insets(15, 0, 0, 0));
         signUpErrorLabel.getStyleClass().add("error");
-        signUpErrorLabel.setId("signUpErrorLabel");
+
 
 
         prev.setOnAction(event -> flowControl.previous());
@@ -198,6 +187,10 @@ public class SignUpController extends ControlledScreen {
                 transition.play();
             }
         });
+    }
+
+    private void setErrorText(String errorText){
+        signUpErrorLabel.setText(errorText);
     }
 
     @Override

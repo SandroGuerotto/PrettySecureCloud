@@ -124,13 +124,17 @@ public class LoginController extends ControlledScreen {
                 UserContext.setAuthorizedUser(user);
                 switchScreen(JavaFxUtils.RegisteredScreen.FILE_BROWSER_PAGE);
             } catch (AuthenticationException e) {
-                loginErrorLabel.setText(Config.getResourceText("login.error.loginFailed"));
+                setErrorText(Config.getResourceText("login.error.loginFailed"));
                 e.printStackTrace();
             } catch (ScreenSwitchException e) {
-                loginErrorLabel.setText(Config.getResourceText("login.error.loadingScreenFailed"));
+                setErrorText(Config.getResourceText("login.error.loadingScreenFailed"));
                 e.printStackTrace();
             }
         }
+    }
+
+    private void setErrorText(String errorText){
+        loginErrorLabel.setText(errorText);
     }
 
 }
