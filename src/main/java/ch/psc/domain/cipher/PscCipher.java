@@ -72,6 +72,13 @@ public abstract class PscCipher {
      * @return The specific transformation of this cryptographic algorithm.
      */
     public abstract String getTransformation();
+    
+    /**
+     * Returns the length of the used nonce/initialization vector.
+     * 
+     * @return 0 if no nonce is used
+     */
+    public abstract int getNonceLength();
 
     /**
      * Creates the {@link AlgorithmParameterSpec} required for this encryption method.
@@ -138,7 +145,8 @@ public abstract class PscCipher {
      * @throws FatalImplementationException       If this Cipher is fundamentally wrong implemented (e.g. non-existing Transformation).
      * @throws InvalidAlgorithmParameterException If the given algorithm parameters are inappropriate for this cipher. Check the Method {@link PscCipher#getAlgorithmSpecification(PscFile)}!
      */
-    protected PscFile encrypt(PscFile file, java.security.Key key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
+    protected PscFile encrypt(PscFile file, java.security.Key key)
+            throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
         javax.crypto.Cipher cipher = getCipher();
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, key, getAlgorithmSpecification(file));
         byte[] unencryptedData = file.getData();
@@ -160,7 +168,8 @@ public abstract class PscCipher {
      * @throws FatalImplementationException       If this Cipher is fundamentally wrong implemented (e.g. non-existing Transformation).
      * @throws InvalidAlgorithmParameterException
      */
-    protected PscFile decrypt(PscFile file, java.security.Key key) throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
+    protected PscFile decrypt(PscFile file, java.security.Key key)
+            throws InvalidKeyException, FatalImplementationException, InvalidAlgorithmParameterException {
         javax.crypto.Cipher cipher = getCipher();
         cipher.init(javax.crypto.Cipher.DECRYPT_MODE, key, getAlgorithmSpecification(file));
 
@@ -178,7 +187,8 @@ public abstract class PscCipher {
      * @return An uninitialized {@link PscCipher} instance.
      * @throws FatalImplementationException If the provided Transformation is null, empty, ill-formatted or no implementation is provided by the platform.
      */
-    protected javax.crypto.Cipher getCipher() throws FatalImplementationException {
+    protected javax.crypto.Cipher getCipher()
+            throws FatalImplementationException {
         javax.crypto.Cipher cipher;
         try {
             cipher = javax.crypto.Cipher.getInstance(getTransformation());
@@ -196,7 +206,8 @@ public abstract class PscCipher {
      * @param oldData Data to be transformed by the Cipher.
      * @throws FatalImplementationException Will be thrown if the implementation of this Class has fundamental flaws.
      */
-    protected void performCipher(byte[] oldData, PscFile newFile, javax.crypto.Cipher cipher) throws FatalImplementationException {
+    protected void performCipher(byte[] oldData, PscFile newFile, javax.crypto.Cipher cipher)
+            throws FatalImplementationException {
         try {
             newFile.setData(cipher.doFinal(oldData));
         } catch (IllegalBlockSizeException | BadPaddingException e) {

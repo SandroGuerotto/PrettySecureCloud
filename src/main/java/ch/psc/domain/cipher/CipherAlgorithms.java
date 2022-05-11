@@ -5,8 +5,8 @@ package ch.psc.domain.cipher;
  */
 public enum CipherAlgorithms {
     PLAIN_TEXT(true, PlainTextCipher.class),
-    AES(false, null),
-    RSA(false, null);
+    AES(true, AesCipher.class),
+    RSA(true, RsaCipher.class);
 
     private final boolean isSupported;
     private final Class<? extends PscCipher> cipherClass;
