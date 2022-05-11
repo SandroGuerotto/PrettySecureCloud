@@ -73,7 +73,7 @@ public class StorageManager {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             
             try {
-                Path outputPath = Paths.get(user.getDownloadPath() + file.getName());
+                Path outputPath = Paths.get(user.getDownloadPath() + file.getName().replace(PscFile.PSC_FILE_EXTENSION, ""));
                 try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile())) {
                   fileOutputStream.write(bufferedInputStream.readAllBytes());
                 }
@@ -119,7 +119,7 @@ public class StorageManager {
     }
     
     private PscFile encrypt(File unencrypted) throws FileNotFoundException, IOException, FatalImplementationException, InterruptedException, ExecutionException {
-      PscFile pscFile = new PscFile(unencrypted.getName(), unencrypted.getPath(),EncryptionState.DECRYPTED , unencrypted.length(), null, false);
+      PscFile pscFile = new PscFile(unencrypted.getName() + PscFile.PSC_FILE_EXTENSION, unencrypted.getPath(),EncryptionState.DECRYPTED , unencrypted.length(), null, false);
       try(FileInputStream is = new FileInputStream(unencrypted)) {
         pscFile.setData(is.readAllBytes());
       }
