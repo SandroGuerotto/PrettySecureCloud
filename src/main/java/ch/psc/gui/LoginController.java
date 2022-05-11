@@ -67,19 +67,18 @@ public class LoginController extends ControlledScreen {
 
     /**
      * Initializes validation for login data fields.
-     *
      */
     @FXML
-    public void initialize(){
+    public void initialize() {
 
         enterMailTextfield.setLabelFloat(true);
         enterMailTextfield.getValidators().addAll(
                 new RequiredInputValidator(Config.getResourceText("login.errorLabel.emailRequired")),
                 new EmailValidator(Config.getResourceText("login.errorLabel.emailNotValid"))
-                );
+        );
 
         enterMailTextfield.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.equals(oldValue)){
+            if (!newValue.equals(oldValue)) {
                 enterMailTextfield.validate();
             }
         });
@@ -132,7 +131,12 @@ public class LoginController extends ControlledScreen {
         }
     }
 
-    private void setErrorText(String errorText){
+    /**
+     * Sets a given message to error label
+     *
+     * @param errorText message
+     */
+    private void setErrorText(String errorText) {
         loginErrorLabel.setText(errorText);
     }
 

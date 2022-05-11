@@ -104,7 +104,7 @@ public class CreateAccount extends VBox implements SignUpFlow {
     }
 
     /**
-     * Clears register data and switches back to login screen.
+     * Clears register data and switches back to log in screen.
      */
     @Override
     public void clear() {

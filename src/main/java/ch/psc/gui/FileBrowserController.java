@@ -41,9 +41,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
- * Dummy controller
+ * Controller for file browser gui. Handles drag-n-drop for uploading files.
  *
- * @author Sandro, sevimrid
+ * @author SandroGuerotto, sevimrid
  */
 public class FileBrowserController extends ControlledScreen {
 
@@ -109,13 +109,22 @@ public class FileBrowserController extends ControlledScreen {
 
     }
 
+    /**
+     * Builds a tab for given storage service
+     *
+     * @param fileStorage current storage service
+     * @return tab for storage service
+     */
     private Tab buildServiceTab(FileStorage fileStorage) {
         Tab tab = new Tab(fileStorage.getName());
         tab.setContent(buildTreeView(fileStorage));
-
         return tab;
     }
 
+    /**
+     * @param fileStorage
+     * @return
+     */
     private FileBrowserTreeTableView buildTreeView(FileStorage fileStorage) {
         FileBrowserTreeTableView tree = new FileBrowserTreeTableView();
 
@@ -137,6 +146,13 @@ public class FileBrowserController extends ControlledScreen {
         return tree;
     }
 
+    /**
+     * Handles drag-n-drop over the UI.
+     * Retrieves all dragged item and uploads them via {@link StorageManager}.
+     *
+     * @param fileStorage active storage service
+     * @param event       drag event, contains dragged items
+     */
     private void handleUploadDragDrop(FileStorage fileStorage, DragEvent event) {
         Dragboard db = event.getDragboard();
         if (event.getDragboard().hasFiles()) {
@@ -146,6 +162,13 @@ public class FileBrowserController extends ControlledScreen {
         event.consume();
     }
 
+    /**
+     * Builds breadcrumb navigation.
+     *
+     * @param path        current path
+     * @param fileStorage current storage service
+     * @param tree        active file tree
+     */
     private void updateNavBar(String path, FileStorage fileStorage, FileBrowserTreeTableView tree) {
         nav_pane.getChildren().clear();
 
@@ -160,12 +183,30 @@ public class FileBrowserController extends ControlledScreen {
         });
     }
 
+    /**
+     * Splits path at the separator into a stream.
+     * First entry is skipped, because its root entry.
+     *
+     * @param path      current path
+     * @param root      root path
+     * @param separator path separator
+     * @return stream path
+     */
     private Stream<String> splitPath(String path, String root, String separator) {
         path = path.replace(root, "");
         System.out.println(path);
         return Arrays.stream(path.split(Pattern.quote(separator))).skip(1);
     }
 
+    /**
+     * Creates the button for bread crumb navigation.
+     *
+     * @param fileStorage current storage service
+     * @param name        name of bread crumb
+     * @param path        path to reload files
+     * @param tree        current file tree
+     * @return bread crumb button
+     */
     private JFXButton createNavButton(FileStorage fileStorage, String name, final String path, FileBrowserTreeTableView tree) {
         JFXButton root = new JFXButton(name);
         root.setOnAction(event -> {
@@ -175,6 +216,13 @@ public class FileBrowserController extends ControlledScreen {
         return root;
     }
 
+    /**
+     * On change of path (eg user selects a folder), the new directory gets loaded via {@link StorageManager} and gets displayed.
+     *
+     * @param path        new path
+     * @param fileStorage active file storage
+     * @param tree        active tree to update content
+     */
     private void updateCurrentDirectory(String path, FileStorage fileStorage, FileBrowserTreeTableView tree) {
         Platform.runLater(() -> {
             tree.setRoot(new TreeItem<>(new FileRow(new PscFile())));
@@ -183,6 +231,12 @@ public class FileBrowserController extends ControlledScreen {
         });
     }
 
+    /**
+     * Updates tree content and adds loaded files from storage service
+     *
+     * @param files loaded files
+     * @param root  selected directory
+     */
     private void buildTree(List<PscFile> files, TreeItem<FileRow> root) {
         Platform.runLater(() -> {
             root.getChildren().clear();
@@ -207,9 +261,16 @@ public class FileBrowserController extends ControlledScreen {
 
     @FXML
     public void openSettings() {
-
+        Label label = new Label(Config.getResourceText("fileBrowser.functionNotYetImplemented"));
+        FadeTransition fade = new FadeTransition(Duration.millis(2500), label);
+        fade.setOnFinished(event -> statusPane.getChildren().remove(label));
+        fade.play();
+        statusPane.getChildren().add(label);
     }
 
+    /**
+     * Handles upload action from upload button
+     */
     @FXML
     private void upload() {
         File file = new FileChooser().showOpenDialog(primaryStage);
@@ -218,6 +279,13 @@ public class FileBrowserController extends ControlledScreen {
         }
     }
 
+    /**
+     * Creates a progress label to display to upload state
+     *
+     * @param progress             current upload state
+     * @param activeStorageService storage to upload
+     * @param file                 file to upload
+     */
     private void uploadProgress(ProcessEvent progress, FileStorage activeStorageService, File file) {
         Platform.runLater(() -> {
             final Label label = getProgressLabel("u-" + file.getName());
@@ -232,13 +300,22 @@ public class FileBrowserController extends ControlledScreen {
         });
     }
 
+    /**
+     * Handles download action from upload button
+     */
     @FXML
     private void download() {
         PscFile file = activeFileBrowserTreeTableView.getSelectionModel().getSelectedItem().getValue().getFile();
-        storageManager.downloadFiles(activeStorageService, file, progress -> downloadProgress(progress, activeStorageService, file));
+        storageManager.downloadFiles(activeStorageService, file, progress -> downloadProgress(progress, file));
     }
 
-    private void downloadProgress(ProcessEvent progress, FileStorage activeStorageService, PscFile file) {
+    /**
+     * Creates a progress label to display to download state
+     *
+     * @param progress current download state
+     * @param file     file to download
+     */
+    private void downloadProgress(ProcessEvent progress, PscFile file) {
         Platform.runLater(() -> {
             final Label label = getProgressLabel("d-" + file.getName());
 
@@ -251,6 +328,13 @@ public class FileBrowserController extends ControlledScreen {
         });
     }
 
+    /**
+     * Seeks and retrieves the progress level with given id.
+     * if no label is found a new one gets added to {@link #statusPane}
+     *
+     * @param id label id
+     * @return progress label
+     */
     private Label getProgressLabel(String id) {
         return (Label) statusPane.getChildren()
                 .stream()
@@ -274,7 +358,13 @@ public class FileBrowserController extends ControlledScreen {
         return JavaFxUtils.RegisteredScreen.FILE_BROWSER_PAGE;
     }
 
-
+    /**
+     * Builds storage service statistic pane.
+     * Shows the amount of free and total space
+     *
+     * @param service storage service
+     * @return statistic pane
+     */
     private Region buildStatPane(FileStorage service) {
         HBox root = new HBox(10);
         Label name = new Label(service.getName());
@@ -306,12 +396,19 @@ public class FileBrowserController extends ControlledScreen {
         return root;
     }
 
+
     private String storageAmountText(long totalStorageSpace, long usedStorageSpace) {
         return String.format("%s / %s", JavaFxUtils.formatSize(usedStorageSpace), JavaFxUtils.formatSize(totalStorageSpace));
     }
 
-    private void applyStatCSS(ProgressBar availStorage, double used) {
-        availStorage.getStyleClass().removeAll(
+    /**
+     * Applies the css-class to the progress bar according to its progress (in %)
+     *
+     * @param progressBar progress bar to style
+     * @param used        progress bar of progress
+     */
+    private void applyStatCSS(ProgressBar progressBar, double used) {
+        progressBar.getStyleClass().removeAll(
                 "progress-red",
                 "progress-orange",
                 "progress-green",
@@ -319,13 +416,13 @@ public class FileBrowserController extends ControlledScreen {
         );
 
         if (used < 0.7) {
-            availStorage.getStyleClass().add("progress-green");
+            progressBar.getStyleClass().add("progress-green");
         } else if (used < 0.8) {
-            availStorage.getStyleClass().add("progress-yellow");
+            progressBar.getStyleClass().add("progress-yellow");
         } else if (used < 0.9) {
-            availStorage.getStyleClass().add("progress-orange");
+            progressBar.getStyleClass().add("progress-orange");
         } else {
-            availStorage.getStyleClass().add("progress-red");
+            progressBar.getStyleClass().add("progress-red");
         }
     }
 }
