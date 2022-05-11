@@ -1,7 +1,10 @@
 package ch.psc.domain.storage;
 
 /**
- * @author Sandro
+ * States of a download or upload process.
+ * Used to notify gui about the current state of process.
+ *
+ * @author SandroGuerotto
  */
 public enum ProcessEvent {
     DOWNLOADING, DOWNLOADED, ENCRYPTING, ENCRYPTED, FINISHED,

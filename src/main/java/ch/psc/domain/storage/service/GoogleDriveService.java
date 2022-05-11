@@ -60,4 +60,9 @@ public class GoogleDriveService implements FileStorage {
         return null;
     }
 
+  @Override
+  public String getSeparator() {
+    return null;
+  }
+
 }

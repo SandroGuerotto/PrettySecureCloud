@@ -73,7 +73,6 @@ public class LoginController extends ControlledScreen {
     public void initialize(){
 
         enterMailTextfield.setLabelFloat(true);
-        //inputMailValidator.setIcon(new FontAwesomeIconView(FontAwesomeIcon.WARNING));
         enterMailTextfield.getValidators().addAll(
                 new RequiredInputValidator(Config.getResourceText("login.errorLabel.emailRequired")),
                 new EmailValidator(Config.getResourceText("login.errorLabel.emailNotValid"))

@@ -40,23 +40,6 @@ public class JSONWriterReader {
         }
     }
     /**
-     * Writes object as a json object. Support Lists and simple Objects.
-     * Supports {@link javafx.beans.property.Property}.
-     *
-     * @param object   what to save
-     * @return true if save was possible
-     */
-    public String toJson( Object object) {
-        try  {
-            return FxGson.coreBuilder()
-                    .setPrettyPrinting()
-                    .create().toJson(object);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    /**
      * Reads a valid json file and parses it to the given class type.
      *
      * @param path  path to json file

@@ -28,9 +28,7 @@ public class FileRow extends RecursiveTreeObject<FileRow> {
         size = new SimpleStringProperty(JavaFxUtils.formatSize(file.getFileSize()));
         isDirectory = new SimpleBooleanProperty(file.isDirectory());
     }
-
-
-
+    
 
     private String formatDate(PscFile file) {
         if (file.getLastModified() == null) return "";

@@ -166,12 +166,11 @@ public class ChooseStorageService extends VBox implements SignUpFlow {
 
     @Override
     public boolean isValid() {
-//        return !chosenServices.isEmpty();
-        return true; //TODO remove after testing
+        return !chosenServices.isEmpty();
     }
 
     @Override
     public void clear() {
-
+        chosenServices.clear();
     }
 }

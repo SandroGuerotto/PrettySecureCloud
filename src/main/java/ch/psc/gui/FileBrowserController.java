@@ -37,6 +37,8 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * Dummy controller
@@ -149,13 +151,19 @@ public class FileBrowserController extends ControlledScreen {
 
         nav_pane.getChildren().add(createNavButton(fileStorage, fileStorage.getName(), fileStorage.getRoot(), tree));
 
-        StringBuilder pathBuilder = new StringBuilder("/");
-        Arrays.stream(path.split("/")).skip(1).forEach(part -> {
+        StringBuilder pathBuilder = new StringBuilder(fileStorage.getRoot() + fileStorage.getSeparator());
+        splitPath(path, fileStorage.getRoot(), fileStorage.getSeparator()).forEach(part -> {
             pathBuilder.append(part);
             JFXButton navButton = createNavButton(fileStorage, part, pathBuilder.toString(), tree);
-            pathBuilder.append("/");
+            pathBuilder.append(fileStorage.getSeparator());
             nav_pane.getChildren().addAll(new Label("/"), navButton);
         });
+    }
+
+    private Stream<String> splitPath(String path, String root, String separator) {
+        path = path.replace(root, "");
+        System.out.println(path);
+        return Arrays.stream(path.split(Pattern.quote(separator))).skip(1);
     }
 
     private JFXButton createNavButton(FileStorage fileStorage, String name, final String path, FileBrowserTreeTableView tree) {
@@ -212,11 +220,7 @@ public class FileBrowserController extends ControlledScreen {
 
     private void uploadProgress(ProcessEvent progress, FileStorage activeStorageService, File file) {
         Platform.runLater(() -> {
-            final Label label = (Label) statusPane.getChildren()
-                    .stream()
-                    .filter(node -> node.getId().equals("u-" + file.getName()))
-                    .findFirst()
-                    .orElse(new Label());
+            final Label label = getProgressLabel("u-" + file.getName());
 
             label.setText(progress.name() + " " + file.getName() + " ...");
             if (progress.equals(ProcessEvent.FINISHED)) {
@@ -224,10 +228,6 @@ public class FileBrowserController extends ControlledScreen {
                 FadeTransition fade = new FadeTransition(Duration.millis(2500), label);
                 fade.setOnFinished(event -> statusPane.getChildren().remove(label));
                 fade.play();
-            }
-            if (label.getId() == null) {
-                label.setId("u-" + file.getName());
-                statusPane.getChildren().add(label);
             }
         });
     }
@@ -240,11 +240,7 @@ public class FileBrowserController extends ControlledScreen {
 
     private void downloadProgress(ProcessEvent progress, FileStorage activeStorageService, PscFile file) {
         Platform.runLater(() -> {
-            final Label label = (Label) statusPane.getChildren()
-                    .stream()
-                    .filter(node -> node.getId().equals("d-" + file.getName()))
-                    .findFirst()
-                    .orElse(new Label());
+            final Label label = getProgressLabel("d-" + file.getName());
 
             label.setText(progress.name() + " " + file.getName() + " ...");
             if (progress.equals(ProcessEvent.FINISHED)) {
@@ -252,11 +248,20 @@ public class FileBrowserController extends ControlledScreen {
                 fade.setOnFinished(event -> statusPane.getChildren().remove(label));
                 fade.play();
             }
-            if (label.getId() == null) {
-                label.setId("d-" + file.getName());
-                statusPane.getChildren().add(label);
-            }
         });
+    }
+
+    private Label getProgressLabel(String id) {
+        return (Label) statusPane.getChildren()
+                .stream()
+                .filter(node -> node.getId().equals(id))
+                .findFirst()
+                .orElseGet(() -> {
+                    Label label = new Label();
+                    label.setId(id);
+                    statusPane.getChildren().add(label);
+                    return label;
+                });
     }
 
     @Override

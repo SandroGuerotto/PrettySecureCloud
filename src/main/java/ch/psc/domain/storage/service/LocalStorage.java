@@ -25,6 +25,8 @@ public class LocalStorage implements FileStorage {
     private String currentPath;
     private final SimpleObjectProperty<BigDecimal> usedStorageSpaceProperty = new SimpleObjectProperty<>();
 
+    private static final String FILE_SEPARATOR = System.getProperty("file.separator");
+
     public LocalStorage(String rootPath) {
         this.rootPath = rootPath;
         String[] parts = rootPath.split("\\\\");
@@ -103,6 +105,11 @@ public class LocalStorage implements FileStorage {
     @Override
     public String getRoot() {
         return rootPath;
+    }
+
+    @Override
+    public String getSeparator() {
+        return FILE_SEPARATOR;
     }
 
 

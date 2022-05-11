@@ -101,6 +101,7 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
     @Override
     public boolean isValid() {
 //        return !generatedKeys.isEmpty();
+
         return true;//TODO remove after testing
     }
 

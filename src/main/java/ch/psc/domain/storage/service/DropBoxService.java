@@ -9,6 +9,7 @@ import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
 import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
+import com.dropbox.core.v2.files.WriteMode;
 import com.dropbox.core.v2.users.SpaceUsage;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -29,6 +30,7 @@ public class DropBoxService implements FileStorage {
 
     private static final String DROPBOX_PSC_APP = "configs/dropbox-psc.app";
     public static final String PRETTY_SECURE_CLOUD = "Pretty-Secure-Cloud";
+    private static final String FILE_SEPARATOR = "/";
     private DbxClientV2 client;
     private final String name;
     private String currentPath = ROOT_DIR;
@@ -71,7 +73,9 @@ public class DropBoxService implements FileStorage {
     @Override
     public boolean upload(PscFile file, InputStream inputStream) {
         try {
-            client.files().upload(currentPath + "/" + file.getPath()).uploadAndFinish(inputStream);
+            client.files().uploadBuilder(currentPath + "/" + file.getPath())
+                    .withMode(WriteMode.OVERWRITE).withAutorename(true)
+                    .uploadAndFinish(inputStream);
             return true;
         } catch (IOException | DbxException e) {
             e.printStackTrace();
@@ -157,6 +161,11 @@ public class DropBoxService implements FileStorage {
         return ROOT_DIR;
     }
 
+    @Override
+    public String getSeparator() {
+        return FILE_SEPARATOR;
+    }
+
     /**
      * Creates a new Dropbox configuration.
      * Default parameter: clientID=Pretty-Secure-Cloud, Locale=de_CH
@@ -167,6 +176,12 @@ public class DropBoxService implements FileStorage {
         return DbxRequestConfig.newBuilder(PRETTY_SECURE_CLOUD).withUserLocale("de_CH").build();
     }
 
+    /**
+     * Reads the dropbox application configuration file.
+     * The credentials are need to identify the psc-application to use dropbox services
+     *
+     * @return Credentials about the psc-application
+     */
     private static DbxAppInfo getDbxAppInfo() {
         try {
             return DbxAppInfo.Reader.readFromFile(DROPBOX_PSC_APP);

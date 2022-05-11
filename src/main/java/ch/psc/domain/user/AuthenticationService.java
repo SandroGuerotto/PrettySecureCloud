@@ -28,5 +28,11 @@ public interface AuthenticationService {
      */
     User signup(User user) throws AuthenticationException;
 
-    User update(User user) throws Exception, UpdateUserException;
+    /**
+     * Updates current user.
+     * @param user updated user
+     * @return a new user with the updated data
+     * @throws UpdateUserException update failed
+     */
+    User update(User user) throws UpdateUserException;
 }

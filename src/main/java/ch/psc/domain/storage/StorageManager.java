@@ -13,6 +13,11 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * Handles all communication with the cipher implementation and storage service.
+ *
+ *
+ */
 public class StorageManager {
 
     private List<FileStorage> storageOptions;
@@ -24,6 +29,12 @@ public class StorageManager {
         executorService = Executors.newCachedThreadPool();
     }
 
+    /**
+     *
+     * @param storage
+     * @param file
+     * @param callback
+     */
     public void uploadFiles(FileStorage storage, File file, Consumer<ProcessEvent> callback) {
         executorService.submit(() -> {
             try {
@@ -40,6 +51,12 @@ public class StorageManager {
         });
     }
 
+    /***
+     *
+     * @param storage
+     * @param file
+     * @param callback
+     */
     public void downloadFiles(FileStorage storage, PscFile file, Consumer<ProcessEvent> callback) {
         executorService.submit(() -> {
             callback.accept(ProcessEvent.DOWNLOADING);

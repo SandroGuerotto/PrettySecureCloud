@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class PscFile {
 
+    public static final String PSC_FILE_EXTENSION = ".psc";
     private final String name;
     private final String path;
     private byte[] data;
@@ -23,6 +24,7 @@ public class PscFile {
         this.isDirectory = isDirectory;
         this.size = size;
         this.lastModified = lastModified;
+        this.encryptionState = name.contains(PSC_FILE_EXTENSION) ? EncryptionState.ENCRYPTED : EncryptionState.DECRYPTED;
     }
 
     public PscFile() {

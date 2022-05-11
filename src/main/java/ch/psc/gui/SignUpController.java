@@ -26,6 +26,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -116,12 +117,17 @@ public class SignUpController extends ControlledScreen {
         }
     }
 
+    /**
+     * Create a new user instance with all collected data from sign up form
+     * @param data user input data from sign up form
+     * @return new user
+     */
     @SuppressWarnings("unchecked")
     private User createUser(List<Object> data) {
         Map<StorageService, Map<String, String>> services = (Map<StorageService, Map<String, String>>) data.get(4);
         Map<String, Key> keyChain = (Map<String, Key>) data.get(3);
         return new User((String) data.get(0), (String) data.get(1), (String) data.get(2), services, keyChain,
-                System.getProperty("user.home")+"\\Downloads\\");
+                new File(System.getProperty("user.home")+"/Downloads/").getAbsolutePath());
     }
 
     /**
@@ -189,6 +195,10 @@ public class SignUpController extends ControlledScreen {
         });
     }
 
+    /**
+     * Sets a given message to error label
+     * @param errorText message
+     */
     private void setErrorText(String errorText){
         signUpErrorLabel.setText(errorText);
     }

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface FileStorage {
-  
+
   boolean upload(PscFile file, InputStream inputStream);
 
   InputStream download(PscFile file);
@@ -24,5 +24,7 @@ public interface FileStorage {
   ObjectProperty<BigDecimal> getUsedStorageSpaceProperty();
 
   String getRoot();
+
+  String getSeparator();
 
 }
