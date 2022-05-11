@@ -3,6 +3,7 @@ package ch.psc.domain.storage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,25 +47,17 @@ public class StorageManager {
         executorService.submit(() -> {
             try {
                 callback.accept(ProcessEvent.ENCRYPTING);
-                // encrypt
-                PscFile pscFile = new PscFile(file.getName(), file.getPath(),EncryptionState.DECRYPTED , file.length(), null, false);
-                try(FileInputStream is = new FileInputStream(file)) {
-                  pscFile.setData(is.readAllBytes());
-                }
-                PscCipher cipher = findFirstCipher();
-                List<Future<PscFile>> futureFiles = cipher.encrypt(cipher.findEncryptionKey(user.getKeyChain()), Arrays.asList(pscFile));
-                PscFile encrypted = futureFiles.get(0).get();
-                File temp = Files.createTempFile(pscFile.getName(), ".psc").toFile();
+                PscFile encrypted = encrypt(file);
+                File temp = Files.createTempFile(encrypted.getName(), ".psc").toFile();
                 try(FileOutputStream os = new FileOutputStream(temp)) {
                   if(encrypted.getNonce() != null) {
                     os.write(encrypted.getNonce());
                   }
                   os.write(encrypted.getData());
                 }
-                //encrypted
                 callback.accept(ProcessEvent.ENCRYPTED);
                 callback.accept(ProcessEvent.UPLOADING);
-                storage.upload(futureFiles.get(0).get(), new FileInputStream(temp));
+                storage.upload(encrypted, new FileInputStream(temp));
                 callback.accept(ProcessEvent.UPLOADED);
             } catch (IOException | FatalImplementationException | InterruptedException | ExecutionException e) {
                 e.printStackTrace();
@@ -143,6 +136,17 @@ public class StorageManager {
 
     public User getUser() {
         return user;
+    }
+    
+    private PscFile encrypt(File unencrypted) throws FileNotFoundException, IOException, FatalImplementationException, InterruptedException, ExecutionException {
+      PscFile pscFile = new PscFile(unencrypted.getName(), unencrypted.getPath(),EncryptionState.DECRYPTED , unencrypted.length(), null, false);
+      try(FileInputStream is = new FileInputStream(unencrypted)) {
+        pscFile.setData(is.readAllBytes());
+      }
+      PscCipher cipher = findFirstCipher();
+      List<Future<PscFile>> futureFiles = cipher.encrypt(cipher.findEncryptionKey(user.getKeyChain()), Arrays.asList(pscFile));
+      PscFile encrypted = futureFiles.get(0).get();
+      return encrypted;
     }
     
     private PscCipher findFirstCipher() throws FatalImplementationException {
