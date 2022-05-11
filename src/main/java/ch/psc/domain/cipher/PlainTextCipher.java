@@ -33,6 +33,11 @@ public class PlainTextCipher extends PscCipher {
     public String getTransformation() {
         return TRANSFORMATION;
     }
+    
+    @Override
+    public int getNonceLength() {
+        return 0;
+    }
 
     @Override
     protected Cipher getCipher() throws FatalImplementationException {

@@ -28,15 +28,17 @@ class CipherTest {
       public SecurityLevel getSecurityLevel() {
         return null;
       }
-
       @Override
       public int getKeyBits() {
         return 0;
       }
-
       @Override
       public String getAlgorithm() {
         return null;
+      }
+      @Override
+      public int getNonceLength() {
+        return 0;
       }
     };
     
@@ -56,6 +58,10 @@ class CipherTest {
       @Override
       public int getKeyBits() {
         return 128;
+      }
+      @Override
+      public int getNonceLength() {
+        return 0;
       }
     };
     

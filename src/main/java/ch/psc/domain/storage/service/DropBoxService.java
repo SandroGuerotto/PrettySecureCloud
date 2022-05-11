@@ -72,7 +72,7 @@ public class DropBoxService implements FileStorage {
     @Override
     public boolean upload(PscFile file, InputStream inputStream) {
         try {
-            client.files().upload(currentPath + "/" + file.getPath()).uploadAndFinish(inputStream);
+            client.files().upload(currentPath + "/" + file.getName()).uploadAndFinish(inputStream);
             return true;
         } catch (IOException | DbxException e) {
             e.printStackTrace();

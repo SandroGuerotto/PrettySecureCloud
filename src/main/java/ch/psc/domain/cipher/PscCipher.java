@@ -72,6 +72,13 @@ public abstract class PscCipher {
      * @return The specific transformation of this cryptographic algorithm.
      */
     public abstract String getTransformation();
+    
+    /**
+     * Returns the length of the used nonce/initialization vector.
+     * 
+     * @return 0 if no nonce is used
+     */
+    public abstract int getNonceLength();
 
     /**
      * Creates the {@link AlgorithmParameterSpec} required for this encryption method.
