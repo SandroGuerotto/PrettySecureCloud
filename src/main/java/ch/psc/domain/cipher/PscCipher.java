@@ -87,7 +87,7 @@ public abstract class PscCipher {
     public AlgorithmParameterSpec getAlgorithmSpecification(PscFile file) {
         return null;
     }
-
+    
     /**
      * Encrypts a list of {@link PscFile}s. The encryption is done asynchronously and the method returns as soon as all threads are started.
      *
@@ -203,6 +203,27 @@ public abstract class PscCipher {
             throw new FatalImplementationException("Transformation '" + getTransformation() + "' is illegal", e);
         }
     }
+    
+    /**
+     * Method used to find the {@link Key} used to encrypt data.
+     * 
+     * @param keyChain Map with Key-name and {@link Key}
+     * @return the {@link Key} with {@link PscCipher#getAlgorithm()} as map-key
+     */
+    public Key findEncryptionKey(Map<String, Key> keyChain) {
+      return keyChain.get(getAlgorithm());
+    }
+    
+    /**
+     * Method used to find the {@link Key} used to decrypt data.
+     * <b>Needs to be overwritten by Public-/Privatekey implementations!</b> 
+     * 
+     * @param keyChain Map with Key-name and {@link Key}
+     * @return the {@link Key} with {@link PscCipher#getAlgorithm()} as map-key.
+     */
+    public Key findDecryptionKey(Map<String, Key> keyChain) {
+      return keyChain.get(getAlgorithm());
+    }
 
     /**
      * Creates a {@link Key} from a {@link Key} which contains {@link SecretKey}s in order to work with {@link javax.crypto.Cipher}s.
@@ -213,6 +234,5 @@ public abstract class PscCipher {
         KeyGenerator keyGenerator = new KeyGenerator();
         return keyGenerator.generateKey(getKeyBits(), getAlgorithm());
     }
-
 
 }

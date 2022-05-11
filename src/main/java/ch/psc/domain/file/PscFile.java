@@ -14,19 +14,20 @@ public class PscFile {
     private byte[] nonce;
 
     public PscFile(String name, String path) {
-        this(name, path, 0, null, false);
+        this(name, path, EncryptionState.DECRYPTED, 0, null, false);
     }
 
-    public PscFile(String name, String path, long size, Date lastModified, boolean isDirectory) {
+    public PscFile(String name, String path, EncryptionState encryptionState, long size, Date lastModified, boolean isDirectory) {
         this.path = path;
         this.name = name;
         this.isDirectory = isDirectory;
+        this.encryptionState = encryptionState;
         this.size = size;
         this.lastModified = lastModified;
     }
 
     public PscFile() {
-        this("", "", 0, null, false);
+        this("", "", EncryptionState.DECRYPTED, 0, null, false);
     }
 
     public long getFileSize() {
