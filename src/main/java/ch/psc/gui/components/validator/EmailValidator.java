@@ -6,16 +6,13 @@ import javafx.scene.control.TextInputControl;
 import java.util.regex.Pattern;
 
 /**
- * Validator for the purpose to validate text fields
+ * Validator for the purpose to validate text fields,
  * that require a valid email address from the user, matching the criteria of the {@link #EMAIL_PATTERN}.
  *
  * @author bananasprout
  */
 
 public class EmailValidator extends ValidatorBase {
-
-    //private final static String EMAIL_PATTERN = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$";
-    //^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\\\.[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\\\.[a-zA-Z0-9-]+)*$
     private final static String EMAIL_PATTERN = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
     private final Pattern regexPatternCompiled;
 
