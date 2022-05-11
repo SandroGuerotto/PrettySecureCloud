@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public class ChooseEncryption extends VBox implements SignUpFlow {
 
     private final Map<String, Key> generatedKeys = new HashMap<>();
+    private JFXComboBox<CipherAlgorithms> cipherAlgorithmDropDown = new JFXComboBox<>();
 
     /**
      * Creates encryption algorithm picker.
@@ -68,10 +69,8 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
         ObservableList<CipherAlgorithms> algorithms = FXCollections.observableArrayList();
         algorithms.addAll(cipherAlgorithms);
 
-        JFXComboBox<CipherAlgorithms> cipherAlgorithmDropDown = new JFXComboBox<>();
         cipherAlgorithmDropDown.setItems(algorithms);
 
-        //TODO aktuell wird bei jeder auswahl ein neuer cipher hinzugefügt, müsste eig. erst gelockt werden, sobald man auf next drückt
         cipherAlgorithmDropDown.setOnAction(e -> register(cipherAlgorithmDropDown.getValue()));
         return cipherAlgorithmDropDown;
     }
@@ -87,6 +86,7 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
 
         try {
             PscCipher pscCipher = CipherFactory.createCipher(cipherAlgorithms.name());
+            generatedKeys.clear();
             generatedKeys.putAll(pscCipher.generateKey());
             System.out.println("algo selected = " + pscCipher);
 
@@ -102,8 +102,7 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
 
     @Override
     public boolean isValid() {
-//        return !generatedKeys.isEmpty();
-        return true;//TODO remove after testing
+        return !generatedKeys.isEmpty() || !cipherAlgorithmDropDown.getSelectionModel().isEmpty();
     }
 
     @Override
