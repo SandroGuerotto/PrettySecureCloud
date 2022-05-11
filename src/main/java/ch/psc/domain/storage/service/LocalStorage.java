@@ -35,6 +35,14 @@ public class LocalStorage implements FileStorage {
         setMaxStorage();
     }
 
+    /**
+     * This method will save a given file.
+     *
+     * @param file to download
+     * @param inputStream of the file to be saved
+     * @return boolean false if any error occured
+     */
+
     @Override
     public boolean upload(PscFile file, InputStream inputStream) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(currentPath + file.getName())) {
@@ -80,6 +88,13 @@ public class LocalStorage implements FileStorage {
         return new BigDecimal(maxStorage);
     }
 
+
+    /**
+     * Creates a list with all files/folders in directory, adds filesize, lastModified and isDirectory
+     * to PscFile attributes
+     * @param path of directory
+     * @return List with all files/folders in directory
+     */
     @Override
     public List<PscFile> getFiles(String path) {
         currentPath = path;
