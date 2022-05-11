@@ -55,4 +55,13 @@ public class PlainTextCipher extends PscCipher {
         return new HashMap<>();
     }
 
+    @Override
+    public Key findEncryptionKey(Map<String, Key> keyChain) {
+      return new Key(null);
+    }
+    
+    @Override
+    public Key findDecryptionKey(Map<String, Key> keyChain) {
+      return new Key(null);
+    }
 }

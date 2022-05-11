@@ -12,7 +12,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,6 +21,7 @@ import java.util.stream.Collectors;
 import ch.psc.domain.cipher.CipherFactory;
 import ch.psc.domain.cipher.Key;
 import ch.psc.domain.cipher.KeyGenerator;
+import ch.psc.domain.cipher.PlainTextCipher;
 import ch.psc.domain.cipher.PscCipher;
 import ch.psc.domain.common.context.AuthenticationContext;
 import ch.psc.domain.file.EncryptionState;
@@ -146,10 +146,13 @@ public class StorageManager {
     }
     
     private PscCipher findFirstCipher() throws FatalImplementationException {
-      Optional<Entry<String, Key>> firstPrivate = user.getKeyChain().entrySet().stream()
+      Entry<String, Key> firstPrivate = user.getKeyChain().entrySet().stream()
           .filter(e -> e.getKey().contains(KeyGenerator.PUBLIC_KEY_POSTFIX)==false)
-          .findFirst();
-      return CipherFactory.createCipher(firstPrivate.get().getValue().getType());
+          .findFirst().orElse(null);
+      if(firstPrivate == null) {
+        return new PlainTextCipher();
+      }
+      return CipherFactory.createCipher(firstPrivate.getValue().getType());
     }
 
 }
