@@ -22,6 +22,8 @@ dependencies {
 
     implementation "de.jensd:fontawesomefx-fontawesome:4.7.0-9.1.2"
 
+
+	implementation'org.bouncycastle:bcpkix-jdk15on:1.70'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'org.hildan.fxgson:fx-gson:4.0.1'
     implementation 'com.dropbox.core:dropbox-core-sdk:5.2.0'

@@ -1,11 +1,10 @@
 package ch.psc.domain.storage.service;
 
-import ch.psc.domain.file.PscFile;
-import javafx.beans.property.ObjectProperty;
-
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
+import ch.psc.domain.file.PscFile;
+import javafx.beans.property.ObjectProperty;
 
 public interface FileStorage {
   

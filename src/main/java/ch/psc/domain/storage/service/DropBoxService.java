@@ -1,5 +1,6 @@
 package ch.psc.domain.storage.service;
 
+import ch.psc.domain.file.EncryptionState;
 import ch.psc.domain.file.PscFile;
 import com.dropbox.core.*;
 import com.dropbox.core.json.JsonReader;
@@ -71,7 +72,7 @@ public class DropBoxService implements FileStorage {
     @Override
     public boolean upload(PscFile file, InputStream inputStream) {
         try {
-            client.files().upload(currentPath + "/" + file.getPath()).uploadAndFinish(inputStream);
+            client.files().upload(currentPath + "/" + file.getName()).uploadAndFinish(inputStream);
             return true;
         } catch (IOException | DbxException e) {
             e.printStackTrace();
@@ -123,9 +124,9 @@ public class DropBoxService implements FileStorage {
                     PscFile file;
 
                     if (metadata instanceof FileMetadata fileMetadata) {
-                        file = new PscFile(metadata.getName(), metadata.getPathLower(), fileMetadata.getSize(), fileMetadata.getClientModified(), false);
+                        file = new PscFile(metadata.getName(), metadata.getPathLower(),EncryptionState.ENCRYPTED , fileMetadata.getSize(), fileMetadata.getClientModified(), false);
                     } else {
-                        file = new PscFile(metadata.getName(), metadata.getPathLower(), 0, null, true);
+                        file = new PscFile(metadata.getName(), metadata.getPathLower(), EncryptionState.ENCRYPTED, 0, null, true);
                     }
                     list.add(file);
                 }

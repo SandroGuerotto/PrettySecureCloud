@@ -18,6 +18,7 @@ import ch.psc.datasource.JSONWriterReader;
 import ch.psc.domain.cipher.Key;
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.exceptions.AuthenticationException;
+import ch.psc.exceptions.KeyDeSerializationException;
 import ch.psc.exceptions.UpdateUserException;
 
 /**
@@ -100,7 +101,7 @@ class JSONAuthenticationServiceTest {
             assertEquals(expUser.getStorageServiceConfig(), act.getStorageServiceConfig());
             assertKeyChain(expUser.getKeyChain(), act.getKeyChain());
 
-        } catch (UpdateUserException e) {
+        } catch (UpdateUserException | KeyDeSerializationException e) {
             fail(e.getMessage());
         }
     }
