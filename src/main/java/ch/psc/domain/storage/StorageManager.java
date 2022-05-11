@@ -1,6 +1,7 @@
 package ch.psc.domain.storage;
 
 import ch.psc.domain.common.context.AuthenticationContext;
+import ch.psc.domain.file.EncryptionState;
 import ch.psc.domain.file.PscFile;
 import ch.psc.domain.storage.service.FileStorage;
 import ch.psc.domain.storage.service.StorageServiceFactory;
@@ -31,7 +32,7 @@ public class StorageManager {
                 // todo encrypt
                 callback.accept(ProcessEvent.ENCRYPTED);
                 callback.accept(ProcessEvent.UPLOADING);
-                storage.upload(new PscFile(file.getPath(), file.getName(), file.length(), null, false), new FileInputStream(file));
+                storage.upload(new PscFile(file.getPath(), file.getName(),EncryptionState.ENCRYPTED , file.length(), null, false), new FileInputStream(file));
                 callback.accept(ProcessEvent.UPLOADED);
                 callback.accept(ProcessEvent.FINISHED);
             } catch (FileNotFoundException e) {
