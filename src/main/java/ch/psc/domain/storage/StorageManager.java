@@ -73,35 +73,15 @@ public class StorageManager {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             
             try {
-                Path outputPath = Paths.get(System.getProperty("user.home") + "\\Downloads\\" + file.getName());
+                Path outputPath = Paths.get(user.getDownloadPath() + file.getName());
                 try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile())) {
                   fileOutputStream.write(bufferedInputStream.readAllBytes());
                 }
                 callback.accept(ProcessEvent.DOWNLOADED);
     
                 callback.accept(ProcessEvent.DECRYPTING);
-                PscCipher cipher = findFirstCipher();
-                PscFile pscFile = new PscFile(file.getName(), file.getPath(), EncryptionState.ENCRYPTED, file.getFileSize(), null, false);
-                byte[] fileContent = null;
-                try(FileInputStream is = new FileInputStream(outputPath.toFile()) ) {
-                  fileContent = is.readAllBytes();
-                }
-
-                assert(fileContent != null);
-                assert(fileContent.length > 0);
-                byte[] nonce = new byte[cipher.getNonceLength()];
-                byte[] data = new byte[fileContent.length - cipher.getNonceLength()];
-                System.arraycopy(fileContent, 0, nonce, 0, cipher.getNonceLength());
-                System.arraycopy(fileContent, cipher.getNonceLength(), data, 0, fileContent.length - cipher.getNonceLength());
-                pscFile.setData(data);
-                pscFile.setNonce(nonce);
-                List<Future<PscFile>> decFiles = cipher.decrypt(cipher.findDecryptionKey(user.getKeyChain()), Arrays.asList(pscFile));
-                PscFile dec = decFiles.get(0).get();
-
-                try(FileOutputStream os = new FileOutputStream(outputPath.toFile())) {
-                  os.write(dec.getData());
-                  callback.accept(ProcessEvent.DECRYPTED);
-                }
+                decrypt(file, outputPath);
+                callback.accept(ProcessEvent.DECRYPTED);
             } catch (IOException | FatalImplementationException | InterruptedException | ExecutionException e) {
               e.printStackTrace();
             }
@@ -147,6 +127,30 @@ public class StorageManager {
       List<Future<PscFile>> futureFiles = cipher.encrypt(cipher.findEncryptionKey(user.getKeyChain()), Arrays.asList(pscFile));
       PscFile encrypted = futureFiles.get(0).get();
       return encrypted;
+    }
+    
+    private void decrypt(PscFile file, Path ioPath) throws FatalImplementationException, FileNotFoundException, IOException, InterruptedException, ExecutionException {
+      PscCipher cipher = findFirstCipher();
+      PscFile pscFile = new PscFile(file.getName(), file.getPath(), EncryptionState.ENCRYPTED, file.getFileSize(), null, false);
+      byte[] fileContent = null;
+      try(FileInputStream is = new FileInputStream(ioPath.toFile()) ) {
+        fileContent = is.readAllBytes();
+      }
+
+      assert(fileContent != null);
+      assert(fileContent.length > 0);
+      byte[] nonce = new byte[cipher.getNonceLength()];
+      byte[] data = new byte[fileContent.length - cipher.getNonceLength()];
+      System.arraycopy(fileContent, 0, nonce, 0, cipher.getNonceLength());
+      System.arraycopy(fileContent, cipher.getNonceLength(), data, 0, fileContent.length - cipher.getNonceLength());
+      pscFile.setData(data);
+      pscFile.setNonce(nonce);
+      
+      List<Future<PscFile>> decFiles = cipher.decrypt(cipher.findDecryptionKey(user.getKeyChain()), Arrays.asList(pscFile));
+      PscFile decrypted = decFiles.get(0).get();
+      try(FileOutputStream os = new FileOutputStream(ioPath.toFile())) {
+        os.write(decrypted.getData());
+      }
     }
     
     private PscCipher findFirstCipher() throws FatalImplementationException {
