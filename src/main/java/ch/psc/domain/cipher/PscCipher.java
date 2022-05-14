@@ -72,10 +72,10 @@ public abstract class PscCipher {
      * @return The specific transformation of this cryptographic algorithm.
      */
     public abstract String getTransformation();
-    
+
     /**
      * Returns the length of the used nonce/initialization vector.
-     * 
+     *
      * @return 0 if no nonce is used
      */
     public abstract int getNonceLength();
@@ -94,7 +94,7 @@ public abstract class PscCipher {
     public AlgorithmParameterSpec getAlgorithmSpecification(PscFile file) {
         return null;
     }
-    
+
     /**
      * Encrypts a list of {@link PscFile}s. The encryption is done asynchronously and the method returns as soon as all threads are started.
      *
@@ -150,7 +150,7 @@ public abstract class PscCipher {
         javax.crypto.Cipher cipher = getCipher();
         cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, key, getAlgorithmSpecification(file));
         byte[] unencryptedData = file.getData();
-        PscFile encryptedFile = new PscFile(file.getName(),file.getPath());
+        PscFile encryptedFile = new PscFile(file.getName(), file.getPath());
         encryptedFile.setNonce(file.getNonce());
         performCipher(unencryptedData, encryptedFile, cipher);
         encryptedFile.setEncryptionState(EncryptionState.ENCRYPTED);
@@ -174,7 +174,7 @@ public abstract class PscCipher {
         cipher.init(javax.crypto.Cipher.DECRYPT_MODE, key, getAlgorithmSpecification(file));
 
         byte[] encryptedData = file.getData();
-        PscFile decryptedFile = new PscFile(file.getName(),file.getPath());
+        PscFile decryptedFile = new PscFile(file.getName(), file.getPath());
         performCipher(encryptedData, decryptedFile, cipher);
         decryptedFile.setEncryptionState(EncryptionState.DECRYPTED);
 
@@ -214,26 +214,26 @@ public abstract class PscCipher {
             throw new FatalImplementationException("Transformation '" + getTransformation() + "' is illegal", e);
         }
     }
-    
+
     /**
      * Method used to find the {@link Key} used to encrypt data.
-     * 
+     *
      * @param keyChain Map with Key-name and {@link Key}
      * @return the {@link Key} with {@link PscCipher#getAlgorithm()} as map-key
      */
     public Key findEncryptionKey(Map<String, Key> keyChain) {
-      return keyChain.get(getAlgorithm());
+        return keyChain.get(getAlgorithm());
     }
-    
+
     /**
      * Method used to find the {@link Key} used to decrypt data.
-     * <b>Needs to be overwritten by Public-/Privatekey implementations!</b> 
-     * 
+     * <b>Needs to be overwritten by Public-/Privatekey implementations!</b>
+     *
      * @param keyChain Map with Key-name and {@link Key}
      * @return the {@link Key} with {@link PscCipher#getAlgorithm()} as map-key.
      */
     public Key findDecryptionKey(Map<String, Key> keyChain) {
-      return keyChain.get(getAlgorithm());
+        return keyChain.get(getAlgorithm());
     }
 
     /**

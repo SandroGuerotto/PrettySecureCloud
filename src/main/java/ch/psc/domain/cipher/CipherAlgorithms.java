@@ -2,6 +2,8 @@ package ch.psc.domain.cipher;
 
 /**
  * Contains all available cipher algorithms used by PSC.
+ *
+ * @author Tristan, Lorenz
  */
 public enum CipherAlgorithms {
     PLAIN_TEXT(true, PlainTextCipher.class),
