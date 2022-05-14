@@ -41,7 +41,12 @@ public class AesCipher extends PscCipher {
     public String getTransformation() {
         return TRANSFORMATION;
     }
-
+    
+    @Override
+    public int getNonceLength() {
+      return GCM_NONCE_LENGTH;
+    }
+    
     /**
      * This method is a specification for the AES algorithm which makes use of
      * so called initialization vectors (IV). The relevant parameters (nonce) must be
