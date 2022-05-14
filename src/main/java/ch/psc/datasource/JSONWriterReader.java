@@ -5,6 +5,8 @@ import org.hildan.fxgson.FxGson;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -16,6 +18,8 @@ import java.nio.file.Paths;
  * @version 1.0
  */
 public class JSONWriterReader {
+  
+    private static final Charset ENCODING = StandardCharsets.UTF_8; 
 
     /**
      * Writes object as a json object. Support Lists and simple Objects.
@@ -27,7 +31,7 @@ public class JSONWriterReader {
      */
     public boolean writeToJson(String filePath, Object object) {
 
-        try(FileWriter writer = new FileWriter(filePath))  {
+        try(FileWriter writer = new FileWriter(filePath, ENCODING))  {
             String json = FxGson.coreBuilder()
                     .setPrettyPrinting()
                     .create().toJson(object);
@@ -49,7 +53,7 @@ public class JSONWriterReader {
      * @throws IOException if file could not be read
      */
     public <T> T readFromJson(String path, Class<T> clazz) throws IOException {
-        Reader reader = Files.newBufferedReader(Paths.get(path));
+        Reader reader = Files.newBufferedReader(Paths.get(path), ENCODING);
         return FxGson.create().fromJson(reader, clazz);
     }
 }

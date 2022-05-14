@@ -5,6 +5,7 @@ import java.util.Date;
 public class PscFile {
 
     public static final String PSC_FILE_EXTENSION = ".psc";
+
     private final String name;
     private final String path;
     private byte[] data;

@@ -13,9 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CipherTest {
   
-  private static final String AES_128_KEY = "7CC52B54762BFD9726DF44F0422AB34D";
-  private static final String AES_192_KEY = "4D92199549E0F2EF009B4160F3582E5528A11A45017F3EF8";
-
   private PscCipher unimplementedCipher;
   private PscCipher aesCipher;
   private PscFile file;
@@ -31,15 +28,17 @@ class CipherTest {
       public SecurityLevel getSecurityLevel() {
         return null;
       }
-
       @Override
       public int getKeyBits() {
         return 0;
       }
-
       @Override
       public String getAlgorithm() {
         return null;
+      }
+      @Override
+      public int getNonceLength() {
+        return 0;
       }
     };
     
@@ -59,6 +58,10 @@ class CipherTest {
       @Override
       public int getKeyBits() {
         return 128;
+      }
+      @Override
+      public int getNonceLength() {
+        return 0;
       }
     };
     

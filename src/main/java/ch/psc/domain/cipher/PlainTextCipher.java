@@ -33,6 +33,11 @@ public class PlainTextCipher extends PscCipher {
     public String getTransformation() {
         return TRANSFORMATION;
     }
+    
+    @Override
+    public int getNonceLength() {
+        return 0;
+    }
 
     @Override
     protected Cipher getCipher() throws FatalImplementationException {
@@ -50,4 +55,13 @@ public class PlainTextCipher extends PscCipher {
         return new HashMap<>();
     }
 
+    @Override
+    public Key findEncryptionKey(Map<String, Key> keyChain) {
+      return new Key(null);
+    }
+    
+    @Override
+    public Key findDecryptionKey(Map<String, Key> keyChain) {
+      return new Key(null);
+    }
 }

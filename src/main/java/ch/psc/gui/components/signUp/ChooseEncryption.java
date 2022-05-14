@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public class ChooseEncryption extends VBox implements SignUpFlow {
 
     private final Map<String, Key> generatedKeys = new HashMap<>();
+    private JFXComboBox<CipherAlgorithms> cipherAlgorithmDropDown = new JFXComboBox<>();
 
     /**
      * Creates encryption algorithm picker.
@@ -45,7 +46,7 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
         this.setSpacing(50);
         this.setPadding(new Insets(10, 20, 10, 20));
 
-        JFXComboBox<CipherAlgorithms> algorithms = createStorageDropDown(Arrays.stream(CipherAlgorithms.values())
+        JFXComboBox<CipherAlgorithms> algorithms = createCipherAlgoDropDown(Arrays.stream(CipherAlgorithms.values())
                 .filter(CipherAlgorithms::isSupported)
                 .collect(Collectors.toList()));
 
@@ -64,11 +65,10 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
      * @param cipherAlgorithms supported algorithms for ciphers
      * @return designed button
      */
-    private JFXComboBox<CipherAlgorithms> createStorageDropDown(List<CipherAlgorithms> cipherAlgorithms) {
+    private JFXComboBox<CipherAlgorithms> createCipherAlgoDropDown(List<CipherAlgorithms> cipherAlgorithms) {
         ObservableList<CipherAlgorithms> algorithms = FXCollections.observableArrayList();
         algorithms.addAll(cipherAlgorithms);
 
-        JFXComboBox<CipherAlgorithms> cipherAlgorithmDropDown = new JFXComboBox<>();
         cipherAlgorithmDropDown.setItems(algorithms);
 
         cipherAlgorithmDropDown.setOnAction(e -> register(cipherAlgorithmDropDown.getValue()));
@@ -86,7 +86,9 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
 
         try {
             PscCipher pscCipher = CipherFactory.createCipher(cipherAlgorithms.name());
+            generatedKeys.clear();
             generatedKeys.putAll(pscCipher.generateKey());
+            System.out.println("algo selected = " + pscCipher);
 
         } catch (FatalImplementationException e) {
             e.printStackTrace(); //TODO sophisticated error logging
@@ -100,9 +102,7 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
 
     @Override
     public boolean isValid() {
-//        return !generatedKeys.isEmpty();
-
-        return true;//TODO remove after testing
+        return !generatedKeys.isEmpty() || !cipherAlgorithmDropDown.getSelectionModel().isEmpty();
     }
 
     @Override

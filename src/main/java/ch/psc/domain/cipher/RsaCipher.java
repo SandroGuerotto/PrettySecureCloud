@@ -1,5 +1,6 @@
 package ch.psc.domain.cipher;
 
+import java.util.Map;
 import ch.psc.domain.file.PscFile;
 
 /**
@@ -35,5 +36,17 @@ public class RsaCipher extends PscCipher {
     public String getTransformation() {
         return TRANSFORMATION;
     }
+    
+    @Override
+    public int getNonceLength() {
+        return 0;
+    }
 
+    /**
+     * @return The Key with {@link RsaCipher#getAlgorithm()} + {@link KeyGenerator#PUBLIC_KEY_POSTFIX} as key-value.
+     */
+    @Override
+    public Key findDecryptionKey(Map<String, Key> keyChain) {
+        return keyChain.get(getAlgorithm() + KeyGenerator.PUBLIC_KEY_POSTFIX);
+    }
 }

@@ -1,5 +1,6 @@
 package ch.psc.domain.storage.service;
 
+import ch.psc.domain.file.EncryptionState;
 import ch.psc.domain.file.PscFile;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -101,7 +102,7 @@ public class LocalStorage implements FileStorage {
         List<PscFile> fileList = new ArrayList<>();
         for (File child : Objects.requireNonNull(new File(path).listFiles())) {
             fileList.add(
-                    new PscFile(child.getName(), child.getPath(), child.length(), new Date(child.lastModified()), child.isDirectory()));
+                    new PscFile(child.getName(), child.getPath(), EncryptionState.ENCRYPTED, child.length(), new Date(child.lastModified()), child.isDirectory()));
         }
 
         return fileList;
