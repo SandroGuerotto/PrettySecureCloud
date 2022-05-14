@@ -1,7 +1,8 @@
 package ch.psc.domain.cipher;
 
-import java.util.Map;
 import ch.psc.domain.file.PscFile;
+
+import java.util.Map;
 
 /**
  * Implementation of the abstract base class {@link PscCipher}.<br />
@@ -36,7 +37,7 @@ public class RsaCipher extends PscCipher {
     public String getTransformation() {
         return TRANSFORMATION;
     }
-    
+
     @Override
     public int getNonceLength() {
         return 0;

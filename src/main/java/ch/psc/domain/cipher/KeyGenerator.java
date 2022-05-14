@@ -8,14 +8,26 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
- * TODO Javadoc
+ * Following the Factory Pattern, this class handles the creation
+ * of required {@link java.security.Key} for the selected cipher.
+ * In particular, this class assess the cipher algorithm and creates either
+ * a symmetric key or an asymmetric key pair.
+ *
+ * @author Tristan, Lorenz
  */
 public class KeyGenerator {
 
     public static final String PUBLIC_KEY_POSTFIX = ".pub";
 
+    /**
+     * Generates and returns the required {@link java.security.Key} based on provided parameters
+     *
+     * @param keyBits   length of key in bits
+     * @param algorithm selected algorithm, e.g. "AES"
+     * @return Map<String, Key> containing 1 or 2 keys
+     * @throws FatalImplementationException
+     */
     public Map<String, Key> generateKey(int keyBits, String algorithm) throws FatalImplementationException {
         KeyType type = testKeyType(algorithm);
         Map<String, Key> keyChain = null;

@@ -88,8 +88,6 @@ public class ChooseEncryption extends VBox implements SignUpFlow {
             PscCipher pscCipher = CipherFactory.createCipher(cipherAlgorithms.name());
             generatedKeys.clear();
             generatedKeys.putAll(pscCipher.generateKey());
-            System.out.println("algo selected = " + pscCipher);
-
         } catch (FatalImplementationException e) {
             e.printStackTrace(); //TODO sophisticated error logging
         }

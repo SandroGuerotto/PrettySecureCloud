@@ -1,11 +1,15 @@
 package ch.psc.domain.cipher;
 
 import ch.psc.exceptions.FatalImplementationException;
-
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * Following the Factory Pattern, this class handles the creation
+ * of required {@link PscCipher}.
+ *
+ * @author Tristan, Lorenz
+ */
 public class CipherFactory {
-
 
     /**
      * Creates a new Instance of the provided {@code type}.

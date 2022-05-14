@@ -2,7 +2,6 @@ package ch.psc.domain.cipher;
 
 import ch.psc.domain.file.EncryptionState;
 import ch.psc.domain.file.PscFile;
-
 import javax.crypto.spec.GCMParameterSpec;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
