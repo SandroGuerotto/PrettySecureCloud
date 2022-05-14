@@ -1,15 +1,26 @@
 package ch.psc.domain.user;
 
+import ch.psc.datasource.JSONWriterReader;
+import ch.psc.domain.cipher.Key;
+import ch.psc.domain.storage.service.StorageService;
+import ch.psc.exceptions.AuthenticationException;
+import ch.psc.exceptions.KeyDeSerializationException;
+import ch.psc.exceptions.UpdateUserException;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
+import org.bouncycastle.openssl.jcajce.JcaPKCS8Generator;
+import org.bouncycastle.util.io.pem.PemObject;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
@@ -17,20 +28,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
-import org.bouncycastle.openssl.jcajce.JcaPKCS8Generator;
-import org.bouncycastle.util.io.pem.PemObject;
-import ch.psc.datasource.JSONWriterReader;
-import ch.psc.domain.cipher.Key;
-import ch.psc.domain.storage.service.StorageService;
-import ch.psc.exceptions.AuthenticationException;
-import ch.psc.exceptions.KeyDeSerializationException;
-import ch.psc.exceptions.UpdateUserException; 
 
 /**
  * Implementation of a basic authentication service.
@@ -64,7 +61,7 @@ public class JSONAuthenticationService implements AuthenticationService {
      * @return path to file
      */
     private String buildPath(String hash) {
-        return String.format(DEFAULT_FILE_PATH, hash.replace("/",""));
+        return String.format(DEFAULT_FILE_PATH, hash.replace("/", ""));
     }
 
     @Override
@@ -72,7 +69,7 @@ public class JSONAuthenticationService implements AuthenticationService {
         String hash = buildHash(user.getMail(), user.getPassword());
         String path = buildPath(hash);
         if (!jsonWriterReader.writeToJson(path, JSONUser.toJson(user)))
-            throw new  AuthenticationException("Failed to write");
+            throw new AuthenticationException("Failed to write");
         return readUser(path);
     }
 
@@ -99,14 +96,14 @@ public class JSONAuthenticationService implements AuthenticationService {
     }
 
     @Override
-    public User update(User user) throws UpdateUserException, KeyDeSerializationException {
+    public User update(User user) throws UpdateUserException {
         String hash = buildHash(user.getMail(), user.getPassword());
         String path = buildPath(hash);
-        if (!jsonWriterReader.writeToJson(path, JSONUser.toJson(user)))
-            throw new UpdateUserException("Failed to update user. Write not possible");
         try {
+            if (!jsonWriterReader.writeToJson(path, JSONUser.toJson(user)))
+                throw new UpdateUserException("Failed to update user. Write not possible");
             return readUser(path);
-        } catch (AuthenticationException e) {
+        } catch (Exception e) {
             throw new UpdateUserException("Failed to update user. Read failed", e);
         }
     }
@@ -157,7 +154,7 @@ public class JSONAuthenticationService implements AuthenticationService {
          *
          * @param user user object
          * @return serializable user object
-         * @throws KeyDeSerializationException 
+         * @throws KeyDeSerializationException if key serialization failed
          */
         public static JSONUser toJson(User user) throws KeyDeSerializationException {
             return new JSONUser(
@@ -175,14 +172,14 @@ public class JSONAuthenticationService implements AuthenticationService {
          *
          * @param keyChain keychain of user
          * @return serialized keychain
-         * @throws KeyDeSerializationException 
+         * @throws KeyDeSerializationException if key serialization failed
          */
         private static Map<String, Map<String, String>> serializeKeyChain(Map<String, Key> keyChain) throws KeyDeSerializationException {
             Map<String, Map<String, String>> serialized = new HashMap<>();
-            for(Entry<String, Key> entry : keyChain.entrySet()) {
-              serialized.put(entry.getKey(), serializeKey(entry.getValue()));
+            for (Entry<String, Key> entry : keyChain.entrySet()) {
+                serialized.put(entry.getKey(), serializeKey(entry.getValue()));
             }
-            
+
             return serialized;
         }
 
@@ -191,35 +188,35 @@ public class JSONAuthenticationService implements AuthenticationService {
          *
          * @param secretKey encryption key
          * @return map with algorithm and secret
-         * @throws KeyDeSerializationException 
+         * @throws KeyDeSerializationException if key serialization failed
          */
         private static Map<String, String> serializeKey(Key secretKey) throws KeyDeSerializationException {
             assert secretKey != null;
-            
+
             String key = new String(secretKey.getKey().getEncoded(), KEY_ENCODING);
             try {
-              if (secretKey.getKey() instanceof PrivateKey) {
-                PrivateKey priv = (PrivateKey) secretKey.getKey();
-                JcaPKCS8Generator generator = new JcaPKCS8Generator(priv, null);
-                PemObject obj = generator.generate();
-                StringWriter sWriter = new StringWriter();
-                try (JcaPEMWriter pemWriter = new JcaPEMWriter(sWriter)) {
-                  pemWriter.writeObject(obj);
-                }
-                key = sWriter.toString();
-              } else if (secretKey.getKey() instanceof PublicKey) {
-                PublicKey pub = (PublicKey) secretKey.getKey();
-                StringWriter sWriter = new StringWriter();
-                try (JcaPEMWriter writer = new JcaPEMWriter(sWriter)) {
-                  writer.writeObject(pub);
-                }
-                key = sWriter.toString();
+                if (secretKey.getKey() instanceof PrivateKey) {
+                    PrivateKey priv = (PrivateKey) secretKey.getKey();
+                    JcaPKCS8Generator generator = new JcaPKCS8Generator(priv, null);
+                    PemObject obj = generator.generate();
+                    StringWriter sWriter = new StringWriter();
+                    try (JcaPEMWriter pemWriter = new JcaPEMWriter(sWriter)) {
+                        pemWriter.writeObject(obj);
+                    }
+                    key = sWriter.toString();
+                } else if (secretKey.getKey() instanceof PublicKey) {
+                    PublicKey pub = (PublicKey) secretKey.getKey();
+                    StringWriter sWriter = new StringWriter();
+                    try (JcaPEMWriter writer = new JcaPEMWriter(sWriter)) {
+                        writer.writeObject(pub);
+                    }
+                    key = sWriter.toString();
 
-              }
+                }
             } catch (IOException e) {
-              throw new KeyDeSerializationException("Cannot serialize Key!", e);
+                throw new KeyDeSerializationException("Cannot serialize Key!", e);
             }
-            
+
             Map<String, String> mapped = new HashMap<>();
             mapped.put(JSON_TOKEN_IS_PUBLIC, String.valueOf(secretKey.getKey() instanceof PublicKey));
             mapped.put(JSON_TOKEN_ALGORITHM, secretKey.getType());
@@ -228,36 +225,34 @@ public class JSONAuthenticationService implements AuthenticationService {
         }
 
         private static Key deserializeToKey(Map<String, String> map) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
-            boolean isPublic = Boolean.valueOf(map.get(JSON_TOKEN_IS_PUBLIC));
+            boolean isPublic = Boolean.parseBoolean(map.get(JSON_TOKEN_IS_PUBLIC));
             String algorythm = map.get(JSON_TOKEN_ALGORITHM);
             java.security.Key secretKey = null;
-            
-            if(algorythm.contains("RSA")) {
-                KeyFactory factory = KeyFactory.getInstance(map.get(JSON_TOKEN_ALGORITHM));
-                if(isPublic) {
-                  try(StringReader reader = new StringReader(map.get(JSON_TOKEN_SECRET))) {
-                    PEMParser parser = new PEMParser(reader);
-                    SubjectPublicKeyInfo publicKeyInfo = (SubjectPublicKeyInfo) parser.readObject();
-                    byte[] encoded = publicKeyInfo.getEncoded();
-                    X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
-                    secretKey = factory.generatePublic(keySpec);
-                  }
-                }
-                else {
-                  try(StringReader reader = new StringReader(map.get(JSON_TOKEN_SECRET))) {
-                    PEMParser pemparser = new PEMParser(reader);
-                    PrivateKeyInfo keyInfo = (PrivateKeyInfo) pemparser.readObject();
 
-                    PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyInfo.getEncoded());
-                    secretKey = factory.generatePrivate(keySpec);
-                    
-                  }
+            if (algorythm.contains("RSA")) {
+                KeyFactory factory = KeyFactory.getInstance(map.get(JSON_TOKEN_ALGORITHM));
+                if (isPublic) {
+                    try (StringReader reader = new StringReader(map.get(JSON_TOKEN_SECRET))) {
+                        PEMParser parser = new PEMParser(reader);
+                        SubjectPublicKeyInfo publicKeyInfo = (SubjectPublicKeyInfo) parser.readObject();
+                        byte[] encoded = publicKeyInfo.getEncoded();
+                        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+                        secretKey = factory.generatePublic(keySpec);
+                    }
+                } else {
+                    try (StringReader reader = new StringReader(map.get(JSON_TOKEN_SECRET))) {
+                        PEMParser pemparser = new PEMParser(reader);
+                        PrivateKeyInfo keyInfo = (PrivateKeyInfo) pemparser.readObject();
+
+                        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyInfo.getEncoded());
+                        secretKey = factory.generatePrivate(keySpec);
+
+                    }
                 }
-            }
-            else {
+            } else {
                 secretKey = new SecretKeySpec(map.get(JSON_TOKEN_SECRET).getBytes(KEY_ENCODING), map.get(JSON_TOKEN_ALGORITHM));
             }
-            
+
             return new Key(secretKey);
         }
 
@@ -267,16 +262,16 @@ public class JSONAuthenticationService implements AuthenticationService {
          *
          * @param keyChain string-map of algorithm and secret
          * @return map of type and {@link Key}
-         * @throws KeyDeSerializationException If a Key cannot be deserialized, the cause is wrapped in this exception. 
+         * @throws KeyDeSerializationException If a Key cannot be deserialized, the cause is wrapped in this exception.
          */
         private static Map<String, Key> deserializeKeyChain(Map<String, Map<String, String>> keyChain) throws KeyDeSerializationException {
             Map<String, Key> deserialized = new HashMap<>();
             if (keyChain != null)
-                for(Entry<String, Map<String, String>> entry : keyChain.entrySet()) {
+                for (Entry<String, Map<String, String>> entry : keyChain.entrySet()) {
                     try {
-                      deserialized.put(entry.getKey(), deserializeToKey(entry.getValue()));
+                        deserialized.put(entry.getKey(), deserializeToKey(entry.getValue()));
                     } catch (NoSuchAlgorithmException | InvalidKeySpecException | IOException e) {
-                      throw new KeyDeSerializationException("Could not deserialize Key with name '" + entry.getKey() + "'", e);
+                        throw new KeyDeSerializationException("Could not deserialize Key with name '" + entry.getKey() + "'", e);
                     }
                 }
             return deserialized;

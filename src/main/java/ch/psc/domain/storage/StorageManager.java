@@ -1,29 +1,6 @@
 package ch.psc.domain.storage;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import ch.psc.domain.cipher.CipherFactory;
-import ch.psc.domain.cipher.Key;
-import ch.psc.domain.cipher.KeyGenerator;
-import ch.psc.domain.cipher.PlainTextCipher;
-import ch.psc.domain.cipher.PscCipher;
+import ch.psc.domain.cipher.*;
 import ch.psc.domain.common.context.AuthenticationContext;
 import ch.psc.domain.file.EncryptionState;
 import ch.psc.domain.file.PscFile;
@@ -32,10 +9,20 @@ import ch.psc.domain.storage.service.StorageServiceFactory;
 import ch.psc.domain.user.User;
 import ch.psc.exceptions.FatalImplementationException;
 
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 /**
  * Handles all communication with the cipher implementation and storage service.
- *
- *
  */
 public class StorageManager {
 
@@ -49,27 +36,25 @@ public class StorageManager {
     }
 
     /**
+     * Encrypts the file and uploads it to the selected storage service.
+     * After each encrypting process {@link ProcessEvent} the callback function is called with the appropriate event.
      *
-     * @param storage
-     * @param file
-     * @param callback
+     * @param storage  selected storage service
+     * @param file     file to upload
+     * @param callback callback function after each process event
      */
     public void uploadFiles(FileStorage storage, File file, Consumer<ProcessEvent> callback) {
         executorService.submit(() -> {
             try {
                 callback.accept(ProcessEvent.ENCRYPTING);
                 PscFile encrypted = encrypt(file);
-                File temp = Files.createTempFile(encrypted.getName(), ".psc").toFile();
-                try(FileOutputStream os = new FileOutputStream(temp)) {
-                  if(encrypted.getNonce() != null) {
-                    os.write(encrypted.getNonce());
-                  }
-                  os.write(encrypted.getData());
-                }
+                InputStream inputStream = createUploadStream(encrypted);
                 callback.accept(ProcessEvent.ENCRYPTED);
+
                 callback.accept(ProcessEvent.UPLOADING);
-                storage.upload(encrypted, new FileInputStream(temp));
+                storage.upload(encrypted.getName(), inputStream);
                 callback.accept(ProcessEvent.UPLOADED);
+
             } catch (IOException | FatalImplementationException | InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
@@ -77,48 +62,78 @@ public class StorageManager {
         });
     }
 
-    /***
+    /**
+     * Creates a {@link ByteArrayInputStream} from a file.
+     * Combines nonce and data bytes together.
      *
-     * @param storage
-     * @param file
-     * @param callback
+     * @param encrypted encrypted file
+     * @return {@link ByteArrayInputStream} with nonce and data bytes
+     */
+    private InputStream createUploadStream(PscFile encrypted) {
+        byte[] encryptedBytes = new byte[encrypted.getNonce().length + encrypted.getData().length];
+        System.arraycopy(encrypted.getNonce(), 0, encryptedBytes, 0, encrypted.getNonce().length);
+        System.arraycopy(encrypted.getData(), 0, encryptedBytes, encrypted.getNonce().length, encrypted.getData().length);
+        return new ByteArrayInputStream(encryptedBytes);
+    }
+
+    /**
+     * Downloads a selected file from the selected storage services and encrypts it if necessary.
+     * After each decrypting process {@link ProcessEvent} the callback function is called with the appropriate event.
+     *
+     * @param storage  selected storage service
+     * @param file     file to download
+     * @param callback callback function after each process event
      */
     public void downloadFiles(FileStorage storage, PscFile file, Consumer<ProcessEvent> callback) {
         executorService.submit(() -> {
             callback.accept(ProcessEvent.DOWNLOADING);
-            InputStream inputStream = storage.download(file);
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-            
+            InputStream inputStream = storage.download(file.getPath());
             try {
-                Path outputPath = Paths.get(user.getDownloadPath() + file.getName().replace(PscFile.PSC_FILE_EXTENSION, ""));
-                try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile())) {
-                  fileOutputStream.write(bufferedInputStream.readAllBytes());
-                }
                 callback.accept(ProcessEvent.DOWNLOADED);
-    
                 callback.accept(ProcessEvent.DECRYPTING);
-                decrypt(file, outputPath);
+                if (file.getEncryptionState().equals(EncryptionState.ENCRYPTED))
+                    inputStream = decrypt(file, inputStream);
                 callback.accept(ProcessEvent.DECRYPTED);
+
+                writeDecryptedFile(downloadPath(file.getName()), inputStream);
+
             } catch (IOException | FatalImplementationException | InterruptedException | ExecutionException e) {
-              e.printStackTrace();
+                e.printStackTrace();
             }
 
             callback.accept(ProcessEvent.FINISHED);
         });
     }
 
+    private String downloadPath(String fileName) {
+        return user.getDownloadPath() + System.getProperty("file.separator") + fileName.replace(PscFile.PSC_FILE_EXTENSION, "");
+    }
+
+    /**
+     * Loads the current directory from the selected storage service and return a list to the callback function
+     *
+     * @param storage  active storage
+     * @param path     current directory
+     * @param callback callback function after directory is loaded
+     */
     public void loadManagedFiles(FileStorage storage, String path, Consumer<List<PscFile>> callback) {
         if (storage != null) {
-            executorService.submit(() -> {
-                callback.accept(storage.getFiles(path));
-            });
+            executorService.submit(() -> callback.accept(storage.getFiles(path)));
         }
     }
 
+    /**
+     * Returns all connected storage services by the user.
+     *
+     * @return registered storage services
+     */
     public List<FileStorage> getStorageOptions() {
         return storageOptions;
     }
 
+    /**
+     * Creates all connected storage services.
+     */
     public void loadStorageServices() {
         storageOptions = user.getStorageServiceConfig()
                 .entrySet().stream()
@@ -131,53 +146,81 @@ public class StorageManager {
         }
     }
 
-    public User getUser() {
-        return user;
+    /**
+     * Takes a file, reads all bytes and encrypts it with the user-selected cipher-type.
+     *
+     * @param unencrypted unencrypted file
+     * @return encrypted file
+     * @throws IOException                  if source con not be read
+     * @throws FatalImplementationException if cipher-type is invalid
+     * @throws InterruptedException         if encrypting failed
+     * @throws ExecutionException           if encrypting failed
+     */
+    private PscFile encrypt(File unencrypted) throws IOException, FatalImplementationException, InterruptedException, ExecutionException {
+        PscFile pscFile = new PscFile(unencrypted.getName(), unencrypted.getPath(), unencrypted.length(), null, false);
+        try (FileInputStream is = new FileInputStream(unencrypted)) {
+            pscFile.setData(is.readAllBytes());
+        }
+        PscCipher cipher = findFirstCipher();
+        List<Future<PscFile>> futureFiles = cipher.encrypt(cipher.findEncryptionKey(user.getKeyChain()), List.of(pscFile));
+        return futureFiles.get(0).get();
     }
-    
-    private PscFile encrypt(File unencrypted) throws FileNotFoundException, IOException, FatalImplementationException, InterruptedException, ExecutionException {
-      PscFile pscFile = new PscFile(unencrypted.getName() + PscFile.PSC_FILE_EXTENSION, unencrypted.getPath(),EncryptionState.DECRYPTED , unencrypted.length(), null, false);
-      try(FileInputStream is = new FileInputStream(unencrypted)) {
-        pscFile.setData(is.readAllBytes());
-      }
-      PscCipher cipher = findFirstCipher();
-      List<Future<PscFile>> futureFiles = cipher.encrypt(cipher.findEncryptionKey(user.getKeyChain()), Arrays.asList(pscFile));
-      PscFile encrypted = futureFiles.get(0).get();
-      return encrypted;
-    }
-    
-    private void decrypt(PscFile file, Path ioPath) throws FatalImplementationException, FileNotFoundException, IOException, InterruptedException, ExecutionException {
-      PscCipher cipher = findFirstCipher();
-      PscFile pscFile = new PscFile(file.getName(), file.getPath(), EncryptionState.ENCRYPTED, file.getFileSize(), null, false);
-      byte[] fileContent = null;
-      try(FileInputStream is = new FileInputStream(ioPath.toFile()) ) {
-        fileContent = is.readAllBytes();
-      }
 
-      assert(fileContent != null);
-      assert(fileContent.length > 0);
-      byte[] nonce = new byte[cipher.getNonceLength()];
-      byte[] data = new byte[fileContent.length - cipher.getNonceLength()];
-      System.arraycopy(fileContent, 0, nonce, 0, cipher.getNonceLength());
-      System.arraycopy(fileContent, cipher.getNonceLength(), data, 0, fileContent.length - cipher.getNonceLength());
-      pscFile.setData(data);
-      pscFile.setNonce(nonce);
-      
-      List<Future<PscFile>> decFiles = cipher.decrypt(cipher.findDecryptionKey(user.getKeyChain()), Arrays.asList(pscFile));
-      PscFile decrypted = decFiles.get(0).get();
-      try(FileOutputStream os = new FileOutputStream(ioPath.toFile())) {
-        os.write(decrypted.getData());
-      }
+    /**
+     * @param file        target file
+     * @param inputStream source input
+     * @return {@link ByteArrayInputStream} with decrypted data
+     * @throws IOException                  if source con not be read
+     * @throws FatalImplementationException if cipher-type is invalid
+     * @throws InterruptedException         if decrypting failed
+     * @throws ExecutionException           if decrypting failed
+     */
+    private InputStream decrypt(PscFile file, InputStream inputStream) throws FatalImplementationException, IOException, InterruptedException, ExecutionException {
+        PscCipher cipher = findFirstCipher();
+        byte[] fileContent = inputStream.readAllBytes();
+
+        assert (fileContent != null);
+        assert (fileContent.length > 0);
+        byte[] nonce = new byte[cipher.getNonceLength()];
+        byte[] data = new byte[fileContent.length - cipher.getNonceLength()];
+        System.arraycopy(fileContent, 0, nonce, 0, cipher.getNonceLength());
+        System.arraycopy(fileContent, cipher.getNonceLength(), data, 0, fileContent.length - cipher.getNonceLength());
+
+        file.setData(data);
+        file.setNonce(nonce);
+
+        List<Future<PscFile>> decFiles = cipher.decrypt(cipher.findDecryptionKey(user.getKeyChain()), List.of(file));
+        return new ByteArrayInputStream(decFiles.get(0).get().getData());
     }
-    
+
+    /**
+     * Writes data to given target path
+     *
+     * @param path        target path
+     * @param inputStream data source
+     * @throws IOException if write failed
+     */
+    private void writeDecryptedFile(String path, InputStream inputStream) throws IOException {
+        Path outputPath = Paths.get(path);
+        try (FileOutputStream os = new FileOutputStream(outputPath.toFile())) {
+            os.write(inputStream.readAllBytes());
+        }
+    }
+
+    /**
+     * Creates the correct cipher implementation
+     *
+     * @return cipher implementation
+     * @throws FatalImplementationException if cipher is not supported
+     */
     private PscCipher findFirstCipher() throws FatalImplementationException {
-      Entry<String, Key> firstPrivate = user.getKeyChain().entrySet().stream()
-          .filter(e -> e.getKey().contains(KeyGenerator.PUBLIC_KEY_POSTFIX)==false)
-          .findFirst().orElse(null);
-      if(firstPrivate == null) {
-        return new PlainTextCipher();
-      }
-      return CipherFactory.createCipher(firstPrivate.getValue().getType());
+        Entry<String, Key> firstPrivate = user.getKeyChain().entrySet().stream()
+                .filter(e -> !e.getKey().contains(KeyGenerator.PUBLIC_KEY_POSTFIX))
+                .findFirst().orElse(null);
+        if (firstPrivate == null) {
+            return new PlainTextCipher();
+        }
+        return CipherFactory.createCipher(firstPrivate.getValue().getType());
     }
 
 }

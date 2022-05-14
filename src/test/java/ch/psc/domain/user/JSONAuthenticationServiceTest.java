@@ -1,25 +1,24 @@
 package ch.psc.domain.user;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import javax.crypto.spec.SecretKeySpec;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import ch.psc.datasource.JSONWriterReader;
 import ch.psc.domain.cipher.Key;
 import ch.psc.domain.storage.service.StorageService;
 import ch.psc.exceptions.AuthenticationException;
-import ch.psc.exceptions.KeyDeSerializationException;
 import ch.psc.exceptions.UpdateUserException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 /**
  * Test class for {@link JSONAuthenticationService}.
@@ -87,9 +86,9 @@ class JSONAuthenticationServiceTest {
             fail(e);
         }
     }
+
     @Test
     void updateUser() {
-
         when(jsonWriterReaderMock.writeToJson(anyString(), any())).thenReturn(true);
         fakeRead();
         try {
@@ -101,7 +100,7 @@ class JSONAuthenticationServiceTest {
             assertEquals(expUser.getStorageServiceConfig(), act.getStorageServiceConfig());
             assertKeyChain(expUser.getKeyChain(), act.getKeyChain());
 
-        } catch (UpdateUserException | KeyDeSerializationException e) {
+        } catch (UpdateUserException e) {
             fail(e.getMessage());
         }
     }

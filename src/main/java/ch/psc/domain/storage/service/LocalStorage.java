@@ -1,6 +1,5 @@
 package ch.psc.domain.storage.service;
 
-import ch.psc.domain.file.EncryptionState;
 import ch.psc.domain.file.PscFile;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -36,46 +35,28 @@ public class LocalStorage implements FileStorage {
         setMaxStorage();
     }
 
-    /**
-     * This method will save a given file.
-     *
-     * @param file to download
-     * @param inputStream of the file to be saved
-     * @return boolean false if any error occured
-     */
 
     @Override
-    public boolean upload(PscFile file, InputStream inputStream) {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(currentPath + file.getName())) {
+    public void upload(String fileName, InputStream inputStream) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(currentPath + fileName)) {
             fileOutputStream.write(inputStream.readAllBytes());
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
     }
 
-    /**
-     * This method will download a given file
-     *
-     * @param file to download
-     * @return InputStream of the file to be downloaded
-     */
+
     @Override
-    public InputStream download(PscFile file) {
+    public InputStream download(String path) {
         try {
-            return new FileInputStream(file.getPath());
+            return new FileInputStream(path);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    /**
-     * Returns a double value with the free memory in bytes
-     *
-     * @return Amount of free space in the system in bytes
-     */
+
     @Override
     public BigDecimal getUsedStorageSpace() {
         File root = new File(rootPath);
@@ -90,19 +71,13 @@ public class LocalStorage implements FileStorage {
     }
 
 
-    /**
-     * Creates a list with all files/folders in directory, adds filesize, lastModified and isDirectory
-     * to PscFile attributes
-     * @param path of directory
-     * @return List with all files/folders in directory
-     */
     @Override
     public List<PscFile> getFiles(String path) {
         currentPath = path;
         List<PscFile> fileList = new ArrayList<>();
         for (File child : Objects.requireNonNull(new File(path).listFiles())) {
             fileList.add(
-                    new PscFile(child.getName(), child.getPath(), EncryptionState.ENCRYPTED, child.length(), new Date(child.lastModified()), child.isDirectory()));
+                    new PscFile(child.getName(), child.getPath(), child.length(), new Date(child.lastModified()), child.isDirectory()));
         }
 
         return fileList;

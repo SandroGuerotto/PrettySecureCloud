@@ -122,8 +122,10 @@ public class FileBrowserController extends ControlledScreen {
     }
 
     /**
-     * @param fileStorage
-     * @return
+     * Create a tree view from given storage service.
+     *
+     * @param fileStorage current storage service
+     * @return file browser tree view
      */
     private FileBrowserTreeTableView buildTreeView(FileStorage fileStorage) {
         FileBrowserTreeTableView tree = new FileBrowserTreeTableView();

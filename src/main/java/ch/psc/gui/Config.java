@@ -19,7 +19,7 @@ public class Config {
     public static final int MIN_WIDTH = 730;
 
     /**
-     * No Instanz requered
+     * No Instanz required
      */
     private Config() {
     }

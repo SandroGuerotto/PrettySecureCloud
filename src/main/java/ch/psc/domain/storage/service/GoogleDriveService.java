@@ -17,13 +17,12 @@ public class GoogleDriveService implements FileStorage {
   }
 
   @Override
-  public boolean upload(PscFile file, InputStream inputStream) {
+  public void upload(String fileName, InputStream inputStream) {
     // TODO Auto-generated method stub
-    return false;
   }
 
   @Override
-  public InputStream download(PscFile file) {
+  public InputStream download(String path) {
     // TODO Auto-generated method stub
     return null;
   }

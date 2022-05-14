@@ -6,7 +6,7 @@ public class PscFile {
 
     public static final String PSC_FILE_EXTENSION = ".psc";
 
-    private final String name;
+    private String name;
     private final String path;
     private byte[] data;
     private final boolean isDirectory;
@@ -54,6 +54,11 @@ public class PscFile {
 
     public void setEncryptionState(EncryptionState encryptionState) {
         this.encryptionState = encryptionState;
+        if (encryptionState.equals(EncryptionState.ENCRYPTED)) {
+            name += PSC_FILE_EXTENSION;
+        } else {
+            name = name.replace(PscFile.PSC_FILE_EXTENSION, "");
+        }
     }
 
     public void setData(byte[] data) {

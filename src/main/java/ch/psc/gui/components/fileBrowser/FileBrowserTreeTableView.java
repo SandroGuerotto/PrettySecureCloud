@@ -1,6 +1,7 @@
 package ch.psc.gui.components.fileBrowser;
 
 import ch.psc.domain.file.EncryptionState;
+import ch.psc.gui.Config;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -9,7 +10,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TreeTableColumn;
 
 /**
- *
+ * Creates a tree table view with columns: name, size, last changed.
  */
 public class FileBrowserTreeTableView extends JFXTreeTableView<FileRow> {
 
@@ -18,7 +19,7 @@ public class FileBrowserTreeTableView extends JFXTreeTableView<FileRow> {
     }
 
     /**
-     *
+     * Creates all column for the table view.
      */
     private void buildColumn() {
         JFXTreeTableColumn<FileRow, SimpleObjectProperty<FontAwesomeIconView>> iconCol = new JFXTreeTableColumn<>("");
@@ -28,16 +29,16 @@ public class FileBrowserTreeTableView extends JFXTreeTableView<FileRow> {
                 new SimpleObjectProperty(createIcon(param.getValue().getValue()))
         );
 
-        JFXTreeTableColumn<FileRow, String> nameCol = new JFXTreeTableColumn<>("Name");
+        JFXTreeTableColumn<FileRow, String> nameCol = new JFXTreeTableColumn<>(Config.getResourceText("fileBrowserColumn.name"));
 
         nameCol.setPrefWidth(300);
         nameCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) -> param.getValue().getValue().nameProperty());
 
-        JFXTreeTableColumn<FileRow, String> sizeCol = new JFXTreeTableColumn<>("Size");
+        JFXTreeTableColumn<FileRow, String> sizeCol = new JFXTreeTableColumn<>(Config.getResourceText("fileBrowserColumn.size"));
         sizeCol.setPrefWidth(150);
         sizeCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) -> param.getValue().getValue().sizeProperty());
 
-        JFXTreeTableColumn<FileRow, String> lastChange = new JFXTreeTableColumn<>("last changed on");
+        JFXTreeTableColumn<FileRow, String> lastChange = new JFXTreeTableColumn<>(Config.getResourceText("fileBrowserColumn.lastChangedOn"));
         lastChange.setPrefWidth(160);
         lastChange.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) -> param.getValue().getValue().lastChangedProperty());
 

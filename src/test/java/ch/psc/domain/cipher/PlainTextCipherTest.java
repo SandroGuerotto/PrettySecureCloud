@@ -41,20 +41,28 @@ class PlainTextCipherTest {
     List<PscFile> fileList = Arrays.asList(file1);
     List<Future<PscFile>> futureFiles = cipher.encrypt(key, fileList);
     PscFile encrypted = futureFiles.get(0).get();
-    
+
     assertEquals(EncryptionState.ENCRYPTED, encrypted.getEncryptionState());
-    compareFileContents(file1, encrypted);
+
+    PscFile exp = new PscFile("file1.psc","test/file1");
+    exp.setData("Hello World!".getBytes());
+
+    compareFileContents(exp, encrypted);
   }
   
   @Test
-  public void decriptionTest() throws InterruptedException, ExecutionException {
+  public void decryptionTest() throws InterruptedException, ExecutionException {
     file1.setEncryptionState(EncryptionState.ENCRYPTED);
     List<PscFile> fileList = Arrays.asList(file1);
     List<Future<PscFile>> futureFiles = cipher.decrypt(key, fileList);
     PscFile decrypted = futureFiles.get(0).get();
     
     assertEquals(EncryptionState.DECRYPTED, decrypted.getEncryptionState());
-    compareFileContents(file1, decrypted);
+
+    PscFile exp = new PscFile("file1","test/file1");
+    exp.setData("Hello World!".getBytes());
+
+    compareFileContents(exp, decrypted);
   }
   
   @Test
@@ -63,9 +71,13 @@ class PlainTextCipherTest {
     List<Future<PscFile>> futureFiles = cipher.encrypt(key, fileList);
     
     for(Future<PscFile> future : futureFiles) {
-      PscFile file = future.get();
-      assertEquals(EncryptionState.ENCRYPTED, file.getEncryptionState());
-      compareFileContents(file);
+      PscFile act = future.get();
+      assertEquals(EncryptionState.ENCRYPTED, act.getEncryptionState());
+
+      PscFile exp = new PscFile(act.getName(),act.getPath());
+      exp.setData(act.getData());
+
+      compareFileContents(exp,act);
     }
   }
   
@@ -75,27 +87,16 @@ class PlainTextCipherTest {
     List<Future<PscFile>> futureFiles = cipher.decrypt(key, fileList);
     
     for(Future<PscFile> future : futureFiles) {
-      PscFile file = future.get();
-      assertEquals(EncryptionState.DECRYPTED, file.getEncryptionState());
-      compareFileContents(file);
+      PscFile act = future.get();
+      assertEquals(EncryptionState.DECRYPTED, act.getEncryptionState());
+
+      PscFile exp = new PscFile(act.getName(),act.getPath());
+      exp.setData(act.getData());
+
+      compareFileContents(exp,act);
     }
   }
-  
-  private void compareFileContents(PscFile toCompare) {
-    if(file1.getName().equals(toCompare.getName())) {
-      compareFileContents(file1, toCompare);
-    }
-    else if(file2.getName().equals(toCompare.getName())) {
-      compareFileContents(file2, toCompare);
-    }
-    else if(file3.getName().equals(toCompare.getName())) {
-      compareFileContents(file3, toCompare);
-    }
-    else {
-      fail("file name was messed up: " + toCompare.getName());
-    }
-  }
-  
+
   private void compareFileContents(PscFile expected, PscFile actual) {
     assertArrayEquals(expected.getData(), actual.getData());
     assertEquals(expected.getName(), actual.getName());
