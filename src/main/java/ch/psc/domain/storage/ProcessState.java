@@ -6,7 +6,7 @@ package ch.psc.domain.storage;
  *
  * @author SandroGuerotto
  */
-public enum ProcessEvent {
+public enum ProcessState {
     DOWNLOADING, DOWNLOADED, ENCRYPTING, ENCRYPTED, FINISHED,
     UPLOADING, UPLOADED, DECRYPTING, DECRYPTED
 }

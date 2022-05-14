@@ -37,28 +37,28 @@ public class StorageManager {
 
     /**
      * Encrypts the file and uploads it to the selected storage service.
-     * After each encrypting process {@link ProcessEvent} the callback function is called with the appropriate event.
+     * After each encrypting process {@link ProcessState} the callback function is called with the appropriate event.
      *
      * @param storage  selected storage service
      * @param file     file to upload
      * @param callback callback function after each process event
      */
-    public void uploadFiles(FileStorage storage, File file, Consumer<ProcessEvent> callback) {
+    public void uploadFiles(FileStorage storage, File file, Consumer<ProcessState> callback) {
         executorService.submit(() -> {
             try {
-                callback.accept(ProcessEvent.ENCRYPTING);
+                callback.accept(ProcessState.ENCRYPTING);
                 PscFile encrypted = encrypt(file);
                 InputStream inputStream = createUploadStream(encrypted);
-                callback.accept(ProcessEvent.ENCRYPTED);
+                callback.accept(ProcessState.ENCRYPTED);
 
-                callback.accept(ProcessEvent.UPLOADING);
+                callback.accept(ProcessState.UPLOADING);
                 storage.upload(encrypted.getName(), inputStream);
-                callback.accept(ProcessEvent.UPLOADED);
+                callback.accept(ProcessState.UPLOADED);
 
             } catch (IOException | FatalImplementationException | InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
-            callback.accept(ProcessEvent.FINISHED);
+            callback.accept(ProcessState.FINISHED);
         });
     }
 
@@ -78,22 +78,22 @@ public class StorageManager {
 
     /**
      * Downloads a selected file from the selected storage services and encrypts it if necessary.
-     * After each decrypting process {@link ProcessEvent} the callback function is called with the appropriate event.
+     * After each decrypting process {@link ProcessState} the callback function is called with the appropriate event.
      *
      * @param storage  selected storage service
      * @param file     file to download
      * @param callback callback function after each process event
      */
-    public void downloadFiles(FileStorage storage, PscFile file, Consumer<ProcessEvent> callback) {
+    public void downloadFiles(FileStorage storage, PscFile file, Consumer<ProcessState> callback) {
         executorService.submit(() -> {
-            callback.accept(ProcessEvent.DOWNLOADING);
+            callback.accept(ProcessState.DOWNLOADING);
             InputStream inputStream = storage.download(file.getPath());
             try {
-                callback.accept(ProcessEvent.DOWNLOADED);
-                callback.accept(ProcessEvent.DECRYPTING);
+                callback.accept(ProcessState.DOWNLOADED);
+                callback.accept(ProcessState.DECRYPTING);
                 if (file.getEncryptionState().equals(EncryptionState.ENCRYPTED))
                     inputStream = decrypt(file, inputStream);
-                callback.accept(ProcessEvent.DECRYPTED);
+                callback.accept(ProcessState.DECRYPTED);
 
                 writeDecryptedFile(downloadPath(file.getName()), inputStream);
 
@@ -101,7 +101,7 @@ public class StorageManager {
                 e.printStackTrace();
             }
 
-            callback.accept(ProcessEvent.FINISHED);
+            callback.accept(ProcessState.FINISHED);
         });
     }
 

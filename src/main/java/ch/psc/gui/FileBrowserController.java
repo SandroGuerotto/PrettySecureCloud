@@ -2,7 +2,7 @@ package ch.psc.gui;
 
 import ch.psc.domain.common.context.UserContext;
 import ch.psc.domain.file.PscFile;
-import ch.psc.domain.storage.ProcessEvent;
+import ch.psc.domain.storage.ProcessState;
 import ch.psc.domain.storage.StorageManager;
 import ch.psc.domain.storage.service.FileStorage;
 import ch.psc.exceptions.ScreenSwitchException;
@@ -288,12 +288,12 @@ public class FileBrowserController extends ControlledScreen {
      * @param activeStorageService storage to upload
      * @param file                 file to upload
      */
-    private void uploadProgress(ProcessEvent progress, FileStorage activeStorageService, File file) {
+    private void uploadProgress(ProcessState progress, FileStorage activeStorageService, File file) {
         Platform.runLater(() -> {
             final Label label = getProgressLabel("u-" + file.getName());
 
             label.setText(progress.name() + " " + file.getName() + " ...");
-            if (progress.equals(ProcessEvent.FINISHED)) {
+            if (progress.equals(ProcessState.FINISHED)) {
                 activeStorageService.getUsedStorageSpace();
                 FadeTransition fade = new FadeTransition(Duration.millis(2500), label);
                 fade.setOnFinished(event -> statusPane.getChildren().remove(label));
@@ -317,12 +317,12 @@ public class FileBrowserController extends ControlledScreen {
      * @param progress current download state
      * @param file     file to download
      */
-    private void downloadProgress(ProcessEvent progress, PscFile file) {
+    private void downloadProgress(ProcessState progress, PscFile file) {
         Platform.runLater(() -> {
             final Label label = getProgressLabel("d-" + file.getName());
 
             label.setText(progress.name() + " " + file.getName() + " ...");
-            if (progress.equals(ProcessEvent.FINISHED)) {
+            if (progress.equals(ProcessState.FINISHED)) {
                 FadeTransition fade = new FadeTransition(Duration.millis(2500), label);
                 fade.setOnFinished(event -> statusPane.getChildren().remove(label));
                 fade.play();
