@@ -27,6 +27,11 @@ public class LocalStorage implements FileStorage {
 
     private static final String FILE_SEPARATOR = System.getProperty("file.separator");
 
+    /**
+     * Creates new LocalStorage and sets rootPath
+     *
+     * @param rootPath Path where the root is located on the system
+     */
     public LocalStorage(String rootPath) {
         this.rootPath = rootPath;
         String[] parts = rootPath.split("\\\\");
@@ -36,6 +41,12 @@ public class LocalStorage implements FileStorage {
     }
 
 
+    /**
+     * Stores a file on the local System
+     *
+     * @param fileName    to upload
+     * @param inputStream of the file to be saved
+     */
     @Override
     public void upload(String fileName, InputStream inputStream) {
         try (FileOutputStream fileOutputStream = new FileOutputStream(currentPath + fileName)) {
@@ -45,7 +56,12 @@ public class LocalStorage implements FileStorage {
         }
     }
 
-
+    /**
+     * Downloads the file from local storage
+     *
+     * @param path to download
+     * @return InputStream of specified file
+     */
     @Override
     public InputStream download(String path) {
         try {
@@ -57,6 +73,12 @@ public class LocalStorage implements FileStorage {
     }
 
 
+    /**
+     * Gets the used space on the System
+     * in GB.
+     *
+     * @return BigDezimal in GB
+     */
     @Override
     public BigDecimal getUsedStorageSpace() {
         File root = new File(rootPath);
@@ -65,12 +87,23 @@ public class LocalStorage implements FileStorage {
         return usedStorageSpaceProperty.get();
     }
 
+    /**
+     * Gets the total storage space in
+     * GB.
+     *
+     * @return BigDezimal in GB
+     */
     @Override
     public BigDecimal getTotalStorageSpace() {
         return new BigDecimal(maxStorage);
     }
 
-
+    /**
+     * Get files in specified path in PscFile object format.
+     *
+     * @param path of directory
+     * @return List of PscFiles
+     */
     @Override
     public List<PscFile> getFiles(String path) {
         currentPath = path;
@@ -83,27 +116,52 @@ public class LocalStorage implements FileStorage {
         return fileList;
     }
 
+    /**
+     * Name of local storage
+     *
+     * @return String name of local storage
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     * Get usage storage Space property for gui.
+     * Indication for used space on local system in
+     * GB.
+     *
+     * @return ObjectProperty BigDecimal in GB
+     */
     @Override
     public ObjectProperty<BigDecimal> getUsedStorageSpaceProperty() {
         return usedStorageSpaceProperty;
     }
 
+    /**
+     * Gets rootPath
+     *
+     * @return rootPath
+     */
     @Override
     public String getRoot() {
         return rootPath;
     }
 
+    /**
+     * Gets separator for path fiel operations.
+     *
+     * @return Separator
+     */
     @Override
     public String getSeparator() {
         return FILE_SEPARATOR;
     }
 
 
+    /**
+     * Set maximum storage for local storage.
+     */
     private void setMaxStorage() {
         File[] paths = File.listRoots();
         for (File path : paths) {
