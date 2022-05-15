@@ -73,7 +73,7 @@ public class StorageManager {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             
             try {
-                Path outputPath = Paths.get(user.getDownloadPath() + file.getName().replace(PscFile.PSC_FILE_EXTENSION, ""));
+                Path outputPath = Paths.get(user.getDownloadPath() +"\\"+ file.getName().replace(PscFile.PSC_FILE_EXTENSION, ""));
                 try (FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile())) {
                   fileOutputStream.write(bufferedInputStream.readAllBytes());
                 }
@@ -125,8 +125,7 @@ public class StorageManager {
       }
       PscCipher cipher = findFirstCipher();
       List<Future<PscFile>> futureFiles = cipher.encrypt(cipher.findEncryptionKey(user.getKeyChain()), Arrays.asList(pscFile));
-      PscFile encrypted = futureFiles.get(0).get();
-      return encrypted;
+        return futureFiles.get(0).get();
     }
     
     private void decrypt(PscFile file, Path ioPath) throws FatalImplementationException, FileNotFoundException, IOException, InterruptedException, ExecutionException {
