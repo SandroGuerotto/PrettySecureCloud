@@ -1,27 +1,25 @@
-package ch.psc.domain.storage.service;
+package ch.psc.domain.storage;
 
-import ch.psc.domain.cipher.*;
+import ch.psc.domain.cipher.AesCipher;
+import ch.psc.domain.cipher.Key;
+import ch.psc.domain.cipher.KeyGenerator;
+import ch.psc.domain.cipher.PscCipher;
 import ch.psc.domain.file.PscFile;
-import ch.psc.domain.storage.ProcessEvent;
-import ch.psc.domain.storage.StorageManager;
+import ch.psc.domain.storage.service.LocalStorage;
 import ch.psc.domain.user.User;
 import ch.psc.exceptions.FatalImplementationException;
-import org.bouncycastle.crypto.digests.ParallelHash;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import static org.mockito.Mockito.when;
-
-
+import org.mockito.Mockito;
 
 import java.io.File;
-import java.nio.file.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -44,9 +42,9 @@ public class StorageManagerTest {
     Path testFileDirectory;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         //folder uploadFiles erstellen
-        testFileDirectory = Paths.get("src","test","testFiles");
+        testFileDirectory = Paths.get("src", "test", "resources");
 
         //user mock
         testUser = Mockito.mock(User.class);
@@ -55,34 +53,36 @@ public class StorageManagerTest {
         try {
             keyChain = keyGenerator.generateKey(cipher.getKeyBits(), cipher.getAlgorithm());
         } catch (FatalImplementationException e) {
-            e.printStackTrace();
+            fail(e.getMessage());
         }
         when(testUser.getKeyChain()).thenReturn(keyChain);
-        when(testUser.getDownloadPath()).thenReturn(testFileDirectory.toFile().getPath()+"\\downloadFiles");
+        when(testUser.getDownloadPath()).thenReturn(testFileDirectory.toFile().getPath());
 
         //testPscFile mock
         testPscFile = Mockito.mock(PscFile.class);
         when(testPscFile.getName()).thenReturn("test.txt.psc");
-        when(testPscFile.getPath()).thenReturn(testFileDirectory.toFile().getPath()+"\\test.txt.psc");
+        when(testPscFile.getPath()).thenReturn(testFileDirectory.toFile().getPath() + "\\test.txt.psc");
 
 
         //testklasse
         storageManager = new StorageManager(testUser);
 
         //consumer Mock
-        testConsumer = processEvent -> System.out.println("Consumer activated");
+        AtomicInteger eventCounter = new AtomicInteger(0);
+        testConsumer = processEvent -> {
+            eventCounter.set(eventCounter.get() + 1);
+            if (processEvent.equals(ProcessEvent.FINISHED))
+                assertEquals(5, eventCounter.get());
+        };
 
     }
 
     @Test
     public void testUploadFiles() {
         //folder uploadFiles erstellen
-        testFile = new File(testFileDirectory.toFile().getAbsolutePath()+"\\test.txt");
-        uploadFiles = new File (testFileDirectory.toFile().getAbsolutePath()+"\\uploadFiles");
-        if (uploadFiles.exists()){
-            deleteDir(uploadFiles);
-        }
-        uploadFiles.mkdirs();
+        testFile = new File(testFileDirectory.toFile().getAbsolutePath() + "\\test.txt");
+        uploadFiles = new File(testFileDirectory.toFile().getAbsolutePath());
+
 
         //local storage erstellen
         localStorage = new LocalStorage(uploadFiles.getAbsolutePath());
@@ -91,45 +91,24 @@ public class StorageManagerTest {
         //check if file exists
         assertTrue(fileExists(uploadFiles.getAbsolutePath()));
 
-        //delete folder afterwards
-        deleteDir(uploadFiles);
     }
 
     @Test
-    public void testDownloadFiles(){
+    public void testDownloadFiles() {
         //folder downloadFiles erstellen
-        testFile = new File(testFileDirectory.toFile().getAbsolutePath()+"\\test.txt.psc");
+        testFile = new File(testFileDirectory.toFile().getAbsolutePath() + "\\test.txt.psc");
 
-        downloadFiles = new File (testFileDirectory.toFile().getAbsolutePath()+"\\downloadFiles");
-        if (downloadFiles.exists()){
-            deleteDir(downloadFiles);
-        }
-        downloadFiles = new File (testFileDirectory.toFile().getAbsolutePath()+"\\downloadFiles");
-        downloadFiles.mkdirs();
+        downloadFiles = new File(testFileDirectory.toFile().getAbsolutePath());
 
         localStorage = new LocalStorage(downloadFiles.getAbsolutePath());
         storageManager.downloadFiles(localStorage, testPscFile, testConsumer);
 
         //check if file exists
         assertTrue(fileExists(downloadFiles.getAbsolutePath()));
-
-        //delete folder afterwards
-        deleteDir(downloadFiles);
-
-
     }
 
-    private void deleteDir(File file) {
-        File[] contents = file.listFiles();
-        if (contents != null) {
-            for (File f : contents) {
-                deleteDir(f);
-            }
-        }
-        file.delete();
-    }
 
-    private boolean fileExists (String filePath){
+    private boolean fileExists(String filePath) {
         File f = new File(filePath);
         return f.exists();
     }
