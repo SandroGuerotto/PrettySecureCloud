@@ -4,75 +4,81 @@ import java.util.Date;
 
 public class PscFile {
 
-    public static final String PSC_FILE_EXTENSION = ".psc";
-  
-    private final String name;
-    private final String path;
-    private byte[] data;
-    private final boolean isDirectory;
-    private EncryptionState encryptionState;
-    private final long size;
-    private final Date lastModified;
-    private byte[] nonce;
+  public static final String PSC_FILE_EXTENSION = ".psc";
 
-    public PscFile(String name, String path) {
-        this(name, path, EncryptionState.DECRYPTED, 0, null, false);
-    }
+  private String name;
+  private final String path;
+  private byte[] data;
+  private final boolean isDirectory;
+  private EncryptionState encryptionState;
+  private final long size;
+  private final Date lastModified;
+  private byte[] nonce;
 
-    public PscFile(String name, String path, EncryptionState encryptionState, long size, Date lastModified, boolean isDirectory) {
-        this.path = path;
-        this.name = name;
-        this.isDirectory = isDirectory;
-        this.encryptionState = encryptionState;
-        this.size = size;
-        this.lastModified = lastModified;
-    }
+  public PscFile(String name, String path) {
+    this(name, path, 0, null, false);
+  }
 
-    public PscFile() {
-        this("", "", EncryptionState.DECRYPTED, 0, null, false);
-    }
+  public PscFile(String name, String path, long size, Date lastModified, boolean isDirectory) {
+    this.path = path;
+    this.name = name;
+    this.isDirectory = isDirectory;
+    this.size = size;
+    this.lastModified = lastModified;
+    this.encryptionState =
+        name.contains(PSC_FILE_EXTENSION) ? EncryptionState.ENCRYPTED : EncryptionState.DECRYPTED;
+  }
 
-    public long getFileSize() {
-        return size;
-    }
-    
-    public String getName() {
-        return name;
-    }
+  public PscFile() {
+    this("", "", 0, null, false);
+  }
 
-    public String getPath() {
-        return path;
-    }
+  public long getFileSize() {
+    return size;
+  }
 
-    public byte[] getData() {
-        return data;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public EncryptionState getEncryptionState() {
-        return encryptionState;
-    }
+  public String getPath() {
+    return path;
+  }
 
-    public void setEncryptionState(EncryptionState encryptionState) {
-        this.encryptionState = encryptionState;
-    }
+  public byte[] getData() {
+    return data;
+  }
 
-    public void setData(byte[] data) {
-        this.data = data;
-    }
+  public EncryptionState getEncryptionState() {
+    return encryptionState;
+  }
 
-    public boolean isDirectory() {
-        return isDirectory;
+  public void setEncryptionState(EncryptionState encryptionState) {
+    this.encryptionState = encryptionState;
+    if (encryptionState.equals(EncryptionState.ENCRYPTED)) {
+      name += PSC_FILE_EXTENSION;
+    } else {
+      name = name.replace(PscFile.PSC_FILE_EXTENSION, "");
     }
+  }
 
-    public Date getLastModified() {
-        return lastModified;
-    }
+  public void setData(byte[] data) {
+    this.data = data;
+  }
 
-    public byte[] getNonce() {
-        return nonce;
-    }
+  public boolean isDirectory() {
+    return isDirectory;
+  }
 
-    public void setNonce(byte[] nonce) {
-        this.nonce = nonce;
-    }
+  public Date getLastModified() {
+    return lastModified;
+  }
+
+  public byte[] getNonce() {
+    return nonce;
+  }
+
+  public void setNonce(byte[] nonce) {
+    this.nonce = nonce;
+  }
 }

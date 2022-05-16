@@ -33,9 +33,10 @@ public class IntegrationTest {
     services.put(StorageService.DROPBOX, Collections.singletonMap("token", "abc"));
     userData = new User("foo", "bar", "baz", services, new HashMap<String, Key>(), "download");
   }
-  
+
   @Test
-  public void aesIntegrationTest() throws FatalImplementationException, AuthenticationException, InterruptedException, ExecutionException {
+  public void aesIntegrationTest() throws FatalImplementationException, AuthenticationException,
+      InterruptedException, ExecutionException {
     AesCipher cipher = new AesCipher();
     Map<String, Key> keyChain = cipher.generateKey();
 
@@ -46,27 +47,30 @@ public class IntegrationTest {
     assertKeyEquals(userData.getKey(cipher.getAlgorithm()), actUser.getKey(cipher.getAlgorithm()));
     assertEncryptDecrypt(cipher, actUser.getKeyChain());
   }
-  
+
   @Test
-  public void rsaIntegragionTest() throws FatalImplementationException, AuthenticationException, InterruptedException, ExecutionException {
+  public void rsaIntegragionTest() throws FatalImplementationException, AuthenticationException,
+      InterruptedException, ExecutionException {
     RsaCipher cipher = new RsaCipher();
     Map<String, Key> keyChain = cipher.generateKey();
-    
+
     userData.getKeyChain().putAll(keyChain);
     authService.signup(userData);
     User actUser = authService.authenticate(userData.getMail(), userData.getPassword());
-    
+
     assertKeyEquals(userData.getKey(cipher.getAlgorithm()), actUser.getKey(cipher.getAlgorithm()));
-    assertKeyEquals(userData.getKey(cipher.getAlgorithm()+KeyGenerator.PUBLIC_KEY_POSTFIX), actUser.getKey(cipher.getAlgorithm()+KeyGenerator.PUBLIC_KEY_POSTFIX));
+    assertKeyEquals(userData.getKey(cipher.getAlgorithm() + KeyGenerator.PUBLIC_KEY_POSTFIX),
+        actUser.getKey(cipher.getAlgorithm() + KeyGenerator.PUBLIC_KEY_POSTFIX));
     assertEncryptDecrypt(cipher, actUser.getKeyChain());
   }
-  
+
   private void assertKeyEquals(Key expected, Key actual) {
     assertEquals(expected.getType(), actual.getType());
     assertArrayEquals(expected.getKey().getEncoded(), expected.getKey().getEncoded());
   }
 
-  private void assertEncryptDecrypt(PscCipher cipher, Map<String, Key> keyChain) throws InterruptedException, ExecutionException {
+  private void assertEncryptDecrypt(PscCipher cipher, Map<String, Key> keyChain)
+      throws InterruptedException, ExecutionException {
     PscFile file = new PscFile();
     file.setData(SECRET_MESSAGE.getBytes());
 

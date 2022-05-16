@@ -12,25 +12,25 @@ import ch.psc.domain.user.User;
  */
 public class UserContext {
 
-    private static final ThreadLocal<User> userContext = new ThreadLocal<>();
+  private static final ThreadLocal<User> userContext = new ThreadLocal<>();
 
-    /**
-     * Get authorized / logged-in user.
-     *
-     * @return authorized user
-     */
-    public static User getAuthorizedUser() {
-        return userContext.get();
-    }
+  /**
+   * Get authorized / logged-in user.
+   *
+   * @return authorized user
+   */
+  public static User getAuthorizedUser() {
+    return userContext.get();
+  }
 
-    /**
-     * Set authorized / logged-in user.
-     *
-     * @param user authorized user
-     */
-    public static void setAuthorizedUser(User user) {
-        userContext.set(user);
-    }
+  /**
+   * Set authorized / logged-in user.
+   *
+   * @param user authorized user
+   */
+  public static void setAuthorizedUser(User user) {
+    userContext.set(user);
+  }
 
 
 }

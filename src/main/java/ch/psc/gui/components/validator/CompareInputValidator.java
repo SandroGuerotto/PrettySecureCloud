@@ -11,24 +11,23 @@ import javafx.scene.control.TextInputControl;
 
 public class CompareInputValidator extends ValidatorBase {
 
-    private final TextInputControl comparingText;
+  private final TextInputControl comparingText;
 
-    public CompareInputValidator(String message, TextInputControl comparingText) {
-        super(message);
-        this.comparingText = comparingText;
+  public CompareInputValidator(String message, TextInputControl comparingText) {
+    super(message);
+    this.comparingText = comparingText;
+  }
+
+  @Override
+  protected void eval() {
+    if (srcControl.get() instanceof TextInputControl) {
+      evalTextInputField();
     }
+  }
 
-    @Override
-    protected void eval() {
-        if (srcControl.get() instanceof TextInputControl) {
-            evalTextInputField();
-        }
-    }
-
-    private void evalTextInputField(){
-        TextInputControl textField = (TextInputControl) srcControl.get();
-        hasErrors.set(!textField.getText().equals(comparingText.getText()));
-    }
-
+  private void evalTextInputField() {
+    TextInputControl textField = (TextInputControl) srcControl.get();
+    hasErrors.set(!textField.getText().equals(comparingText.getText()));
+  }
 
 }

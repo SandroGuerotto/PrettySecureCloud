@@ -11,14 +11,21 @@ import ch.psc.gui.util.JavaFxUtils;
  */
 public class ScreenSwitchException extends Exception {
 
-    /**
-     * Generates a new ScreenSwitchException
-     *
-     * @param currentScreen current screen
-     * @param newScreen    new screen
-     */
-    public ScreenSwitchException(JavaFxUtils.RegisteredScreen currentScreen, JavaFxUtils.RegisteredScreen newScreen) {
-        super(String.format(Config.getResourceText("screenChangeException.errorMessage"), currentScreen.name(), newScreen.name()));
-    }
+  /**
+  * 
+  */
+  private static final long serialVersionUID = 8394666211251679384L;
+
+  /**
+   * Generates a new ScreenSwitchException
+   *
+   * @param currentScreen current screen
+   * @param newScreen new screen
+   */
+  public ScreenSwitchException(JavaFxUtils.RegisteredScreen currentScreen,
+      JavaFxUtils.RegisteredScreen newScreen) {
+    super(String.format(Config.getResourceText("screenChangeException.errorMessage"),
+        currentScreen.name(), newScreen.name()));
+  }
 }
 

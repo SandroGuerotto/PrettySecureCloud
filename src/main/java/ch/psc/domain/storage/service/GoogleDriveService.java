@@ -1,11 +1,10 @@
 package ch.psc.domain.storage.service;
 
-import ch.psc.domain.file.PscFile;
-import javafx.beans.property.ObjectProperty;
-
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
+import ch.psc.domain.file.PscFile;
+import javafx.beans.property.ObjectProperty;
 
 public class GoogleDriveService implements FileStorage {
 
@@ -17,13 +16,12 @@ public class GoogleDriveService implements FileStorage {
   }
 
   @Override
-  public boolean upload(PscFile file, InputStream inputStream) {
+  public void upload(String fileName, InputStream inputStream) {
     // TODO Auto-generated method stub
-    return false;
   }
 
   @Override
-  public InputStream download(PscFile file) {
+  public InputStream download(String path) {
     // TODO Auto-generated method stub
     return null;
   }
@@ -55,9 +53,14 @@ public class GoogleDriveService implements FileStorage {
     return null;
   }
 
-    @Override
-    public String getRoot() {
-        return null;
-    }
+  @Override
+  public String getRoot() {
+    return null;
+  }
+
+  @Override
+  public String getSeparator() {
+    return null;
+  }
 
 }
