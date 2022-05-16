@@ -12,6 +12,7 @@ import ch.psc.exceptions.FatalImplementationException;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
@@ -89,13 +90,14 @@ public class StorageManager {
             callback.accept(ProcessState.DOWNLOADING);
             InputStream inputStream = storage.download(file.getPath());
             try {
-                callback.accept(ProcessState.DOWNLOADED);
-                callback.accept(ProcessState.DECRYPTING);
-                if (file.getEncryptionState().equals(EncryptionState.ENCRYPTED))
-                    inputStream = decrypt(file, inputStream);
-                callback.accept(ProcessState.DECRYPTED);
+              callback.accept(ProcessState.DOWNLOADED);
+              callback.accept(ProcessState.DECRYPTING);
+              if (file.getEncryptionState().equals(EncryptionState.ENCRYPTED))
+                  inputStream = decrypt(file, inputStream);
+              callback.accept(ProcessState.DECRYPTED);
 
-                writeDecryptedFile(downloadPath(file.getName()), inputStream);
+              writeDecryptedFile(downloadPath(file.getName()), inputStream);
+  
 
             } catch (IOException | FatalImplementationException | InterruptedException | ExecutionException e) {
                 e.printStackTrace();
@@ -157,13 +159,13 @@ public class StorageManager {
      * @throws ExecutionException           if encrypting failed
      */
     private PscFile encrypt(File unencrypted) throws IOException, FatalImplementationException, InterruptedException, ExecutionException {
-        PscFile pscFile = new PscFile(unencrypted.getName(), unencrypted.getPath(), unencrypted.length(), null, false);
-        try (FileInputStream is = new FileInputStream(unencrypted)) {
-            pscFile.setData(is.readAllBytes());
-        }
-        PscCipher cipher = findFirstCipher();
-        List<Future<PscFile>> futureFiles = cipher.encrypt(cipher.findEncryptionKey(user.getKeyChain()), List.of(pscFile));
-        return futureFiles.get(0).get();
+      PscFile pscFile = new PscFile(unencrypted.getName() + PscFile.PSC_FILE_EXTENSION, unencrypted.getPath() , unencrypted.length(), null, false);
+      try(FileInputStream is = new FileInputStream(unencrypted)) {
+        pscFile.setData(is.readAllBytes());
+      }
+      PscCipher cipher = findFirstCipher();
+      List<Future<PscFile>> futureFiles = cipher.encrypt(cipher.findEncryptionKey(user.getKeyChain()), Arrays.asList(pscFile));
+      return futureFiles.get(0).get();
     }
 
     /**

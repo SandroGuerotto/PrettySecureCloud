@@ -6,6 +6,9 @@ import javafx.beans.property.SimpleObjectProperty;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,8 +52,15 @@ public class LocalStorage implements FileStorage {
      */
     @Override
     public void upload(String fileName, InputStream inputStream) {
-        try (FileOutputStream fileOutputStream = new FileOutputStream(currentPath + fileName)) {
-            fileOutputStream.write(inputStream.readAllBytes());
+        String stringPath = currentPath+"\\"+fileName;
+        File f = new File(stringPath);
+        Path path = Paths.get(stringPath);
+        try {
+            if (!f.exists()){
+                f.createNewFile();
+            }
+            byte [] strToBytes = inputStream.readAllBytes();
+            Files.write(path, strToBytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
