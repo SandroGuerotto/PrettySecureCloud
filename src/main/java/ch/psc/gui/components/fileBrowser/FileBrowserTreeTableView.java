@@ -27,28 +27,28 @@ public class FileBrowserTreeTableView extends JFXTreeTableView<FileRow> {
     iconCol.setMaxWidth(30);
     iconCol.setMinWidth(30);
     iconCol.setCellValueFactory((
-        TreeTableColumn.CellDataFeatures<FileRow, SimpleObjectProperty<FontAwesomeIconView>> param) -> new SimpleObjectProperty(
-            createIcon(param.getValue().getValue())));
+        TreeTableColumn.CellDataFeatures<FileRow, SimpleObjectProperty<FontAwesomeIconView>> param) ->
+            new SimpleObjectProperty(createIcon(param.getValue().getValue())));
 
     JFXTreeTableColumn<FileRow, String> nameCol =
         new JFXTreeTableColumn<>(Config.getResourceText("fileBrowserColumn.name"));
 
     nameCol.setPrefWidth(300);
-    nameCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) -> param
-        .getValue().getValue().nameProperty());
+    nameCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) ->
+        param.getValue().getValue().nameProperty());
 
     JFXTreeTableColumn<FileRow, String> sizeCol =
         new JFXTreeTableColumn<>(Config.getResourceText("fileBrowserColumn.size"));
     sizeCol.setPrefWidth(150);
-    sizeCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) -> param
-        .getValue().getValue().sizeProperty());
+    sizeCol.setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) ->
+        param.getValue().getValue().sizeProperty());
 
     JFXTreeTableColumn<FileRow, String> lastChange =
         new JFXTreeTableColumn<>(Config.getResourceText("fileBrowserColumn.lastChangedOn"));
     lastChange.setPrefWidth(160);
     lastChange
-        .setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) -> param
-            .getValue().getValue().lastChangedProperty());
+        .setCellValueFactory((TreeTableColumn.CellDataFeatures<FileRow, String> param) ->
+            param.getValue().getValue().lastChangedProperty());
 
 
     this.setShowRoot(false);
