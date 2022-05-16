@@ -7,6 +7,5 @@ package ch.psc.domain.file;
  * Currently, no further functionality provided by this enum class.
  */
 public enum EncryptionState {
-    ENCRYPTED,
-    DECRYPTED
+  ENCRYPTED, DECRYPTED
 }

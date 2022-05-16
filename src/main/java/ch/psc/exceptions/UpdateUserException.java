@@ -7,14 +7,14 @@ import java.io.Serial;
  */
 public class UpdateUserException extends Exception {
 
-    @Serial
-    private static final long serialVersionUID = -7412996196801148451L;
+  @Serial
+  private static final long serialVersionUID = -7412996196801148451L;
 
-    public UpdateUserException(String message, Throwable e) {
-        super(message, e);
-    }
+  public UpdateUserException(String message, Throwable e) {
+    super(message, e);
+  }
 
-    public UpdateUserException(String message) {
-        super(message);
-    }
+  public UpdateUserException(String message) {
+    super(message);
+  }
 }

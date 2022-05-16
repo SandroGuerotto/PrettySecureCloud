@@ -1,7 +1,7 @@
 package ch.psc.exceptions;
 
 public class FatalImplementationException extends Exception {
-  
+
   /**
    * 
    */
@@ -10,7 +10,7 @@ public class FatalImplementationException extends Exception {
   public FatalImplementationException(String message) {
     super(message);
   }
-  
+
   public FatalImplementationException(String message, Throwable parent) {
     super(message, parent);
   }
