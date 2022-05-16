@@ -52,7 +52,7 @@ public class LocalStorage implements FileStorage {
      */
     @Override
     public void upload(String fileName, InputStream inputStream) {
-        String stringPath = currentPath+"\\"+fileName;
+        String stringPath = currentPath+ getSeparator() +fileName;
         File f = new File(stringPath);
         Path path = Paths.get(stringPath);
         try {
@@ -159,7 +159,7 @@ public class LocalStorage implements FileStorage {
     }
 
     /**
-     * Gets separator for path fiel operations.
+     * Gets separator for this file-system.
      *
      * @return Separator
      */
