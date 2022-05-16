@@ -92,7 +92,7 @@ public class StorageManagerTest {
         assertTrue(fileExists(uploadFiles.getAbsolutePath()));
 
         //delete folder afterwards
-        //deleteDir(uploadFiles);
+        deleteDir(uploadFiles);
     }
 
     @Test
@@ -114,7 +114,7 @@ public class StorageManagerTest {
         assertTrue(fileExists(downloadFiles.getAbsolutePath()));
 
         //delete folder afterwards
-        //deleteDir(downloadFiles);
+        deleteDir(downloadFiles);
 
 
     }
