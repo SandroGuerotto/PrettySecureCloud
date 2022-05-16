@@ -1,0 +1,222 @@
+@font-face {
+    src: url('../fonts/Roboto.ttf');
+}
+
+* {
+    -fx-font-family: "Roboto";
+
+    -fx-main: #4A4A4A;
+    -fx-main2: #717171;
+    -fx-accent1: #71A5DE;
+    -fx-accent3: #E1ECF7;
+    -fx-error: #EE4035;
+    -fx-warn: #F37736;
+    -fx-warn2: #FDF498;
+    -fx-green: #7BC043;
+}
+
+.label {
+    -fx-text-fill: -fx-main;
+    -fx-fill: -fx-main;
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+}
+
+.jfx-button {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-text-fill: -fx-main;
+    -fx-fill: -fx-main;
+    -fx-font-size: 15;
+}
+
+.jfx-control-button {
+    -fx-text-fill: #4A4A4A;
+    -fx-fill: #4A4A4A;
+}
+
+.jfx-control-button:focused, .control-button:focused .glyph-icon,
+.control-button:hover, .control-button:hover .glyph-icon {
+    -fx-text-fill: -fx-main2;
+    -fx-fill: -fx-main2;
+}
+
+.jfx-button-DROPBOX .glyph-icon {
+    -fx-text-fill: #007FE6;
+    -fx-fill: #007FE6;
+}
+
+.jfx-button-DROPBOX:focused, .button-DROPBOX:focused .glyph-icon,
+.jfx-button-DROPBOX:hover, .button-DROPBOX:hover .glyph-icon {
+    -fx-text-fill: #0066b9;
+    -fx-fill: #0066b9;
+}
+
+.jfx-text-field {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    /*-fx-border-color: transparent transparent -fx-main2 transparent ; */
+    -fx-border-width: 2;
+    -fx-outline: 0;
+    -fx-prompt-text-fill: -fx-main2;
+}
+
+.error {
+    -fx-text-fill: -fx-error;
+    -fx-fill: -fx-error;
+}
+
+.error-label {
+    -fx-text-fill: -fx-error;
+    -fx-fill: -fx-error;
+    -fx-font-family: "Roboto";
+    -fx-font-size: 10;
+}
+
+
+.jfx-passwordfield-login {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    /*-fx-border-width: 0 0 2 0;
+    -fx-border-color: -fx-main;
+    -fx-border-color: transparent transparent -fx-main2 transparent;
+     */
+    -fx-border-width: 2;
+    -fx-outline: 0;
+    -fx-prompt-text-fill: -fx-main2;
+}
+
+.jfx-textfield-login {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-border-width: 0 0 2 0;
+    -fx-prompt-text-fill: -fx-main2, fontawe;
+}
+
+
+.jfx-button-login:focused {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-font-size: 15;
+}
+
+.jfx-button-login:hover, .jfx-button-login:hover .glyph-icon {
+    -fx-text-fill: -fx-main2;
+    -fx-fill: -fx-main2;
+}
+
+
+.jfx-button-register-login {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-font-size: 15;
+    -fx-underline: true, -fx-main;
+    -fx-text-fill: -fx-main;
+}
+
+.jfx-button-register-login:hover {
+    -fx-text-fill: -fx-accent1;
+}
+
+.progress-bar .track {
+    -fx-text-box-border: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-border-color: -fx-main2;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+
+}
+
+.progress-bar .bar {
+    -fx-background-insets: 0;
+    -fx-background-radius: 3;
+}
+.progress-red .bar{
+    -fx-background-color: -fx-error;
+}
+.progress-orange .bar{
+    -fx-background-color: -fx-warn;
+}
+.progress-green .bar{
+    -fx-background-color: -fx-green;
+}
+.progress-yellow .bar{
+    -fx-background-color: -fx-warn2;
+}
+.progress-bar {
+    -fx-background-radius: 3;
+}
+/****************************************************************************************************************/
+/* FILE BROWSER */
+.file-browser-view{
+    -fx-background-color: transparent;
+}
+.file-browser-view .column-header .label{
+    -fx-background-insets: 0;
+    -fx-text-fill: -fx-main;
+    -fx-padding: 5;
+}
+
+.file-browser-view .table-column {
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 15 15 8 15;
+}
+
+.file-browser-view .table-cell{
+    -fx-padding: 2 0 2 10px;
+}
+
+.file-browser-view .tree-table-row-cell:odd{
+    -fx-background-color: white;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.file-browser-view .tree-table-row-cell:even{
+    -fx-background-color: -fx-accent3;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+.file-browser-view:focused .tree-table-row-cell:selected {
+    -fx-background-color: -fx-accent1;
+    -fx-table-cell-border-color: -fx-tree-table-color;
+    -fx-text-fill: -fx-main;
+}
+
+.file-browser-view .glyph-icon {
+    -fx-text-fill: -fx-main2;
+    -fx-fill: -fx-main2;
+}
+.file-browser-view .virtual-flow .scroll-bar:vertical,
+.file-browser-view .virtual-flow .scroll-bar:vertical .track,
+.file-browser-view .virtual-flow .scroll-bar:vertical .track-background,
+.file-browser-view .virtual-flow .scroll-bar:horizontal,
+.file-browser-view .virtual-flow .scroll-bar:horizontal .track,
+.file-browser-view .virtual-flow .scroll-bar:horizontal .track-background {
+    -fx-background-color: transparent;
+}
+.file-browser-view .virtual-flow .scroll-bar .increment-button,
+.file-browser-view .virtual-flow .scroll-bar .decrement-button {
+    -fx-opacity: 0;
+    -fx-padding: 2;
+}
+.file-browser-view .virtual-flow .scroll-bar:vertical .thumb{
+    -fx-background-color:  -fx-accent1;
+}
+.file-browser-view .virtual-flow .scroll-bar:horizontal .thumb {
+    -fx-background-color:  -fx-accent1;
+}
+
+.file-browser-control .glyph-icon{
+    -fx-text-fill: -fx-main;
+    -fx-fill: -fx-main;
+}
+
+.jfx-tab-pane .tab-header-background {
+    -fx-background-color: -fx-accent1;
+}
+
+/* Changes line color under selected tab */
+.jfx-tab-pane .tab-selected-line {
+    -fx-background-color:  -fx-accent3;
+}
+
+#statusPane .label{
+    -fx-text-fill: -fx-main;
+    -fx-fill: -fx-main;
+    -fx-font-size: 13;
+}
