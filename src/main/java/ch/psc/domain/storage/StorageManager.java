@@ -79,10 +79,16 @@ public class StorageManager {
    * @return {@link ByteArrayInputStream} with nonce and data bytes
    */
   private InputStream createUploadStream(PscFile encrypted) {
-    byte[] encryptedBytes = new byte[encrypted.getNonce().length + encrypted.getData().length];
-    System.arraycopy(encrypted.getNonce(), 0, encryptedBytes, 0, encrypted.getNonce().length);
-    System.arraycopy(encrypted.getData(), 0, encryptedBytes, encrypted.getNonce().length,
-        encrypted.getData().length);
+    int nonceLenght = 0;
+    if(encrypted.getNonce() != null) {
+      nonceLenght += encrypted.getNonce().length;
+    }
+    byte[] encryptedBytes = new byte[nonceLenght + encrypted.getData().length];
+    
+    if(encrypted.getNonce() != null) {
+      System.arraycopy(encrypted.getNonce(), 0, encryptedBytes, 0, encrypted.getNonce().length);
+    }
+    System.arraycopy(encrypted.getData(), 0, encryptedBytes, nonceLenght, encrypted.getData().length);
     return new ByteArrayInputStream(encryptedBytes);
   }
 
